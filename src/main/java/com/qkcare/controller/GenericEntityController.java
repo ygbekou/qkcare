@@ -1,13 +1,9 @@
 package com.qkcare.controller;
-
-import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import org.javatuples.Pair;
@@ -27,11 +23,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.qkcare.domain.GenericDto;
 import com.qkcare.model.BaseEntity;
-import com.qkcare.model.DoctorOrder;
-import com.qkcare.model.User;
-import com.qkcare.model.Visit;
-import com.qkcare.model.VisitVaccine;
-import com.qkcare.model.VitalSign;
 import com.qkcare.service.GenericService;
 import com.qkcare.util.Constants;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -168,5 +159,5 @@ public class GenericEntityController extends BaseController {
 			this.genericService.delete(this.getClass(entity), ids);
 			return "SUCCESS";
 		}
-		
+	
 }

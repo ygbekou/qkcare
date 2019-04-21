@@ -10,25 +10,52 @@ import javax.persistence.Table;
 import com.qkcare.model.BaseEntity;
 
 @Entity
-@Table(name="SECTION")
+@Table(name = "SECTION")
 public class Section extends BaseEntity {
-	
+
 	@Id
-	@Column(name ="SECTION_ID")
+	@Column(name = "SECTION_ID")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
-	private String name;
-	
-	private String title;
-	
-	private String description;
-	
-	@Column(name ="PICTURE")
-	private String fileLocation;
 
+	private String name;
+
+	private String title;
+
+	private String description;
+
+	@Column(name = "PICTURE")
+	private String fileLocation;
+	private Integer status;
+	@Column(name="SHOW_IN_MENU")
+	private String showInMenu;
 	
+	private String language;
 	
+	public String getShowInMenu() {
+		return showInMenu;
+	}
+
+	public void setShowInMenu(String showInMenu) {
+		this.showInMenu = showInMenu;
+	}
+
+	public String getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
+	}
+
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+
 	public Long getId() {
 		return id;
 	}

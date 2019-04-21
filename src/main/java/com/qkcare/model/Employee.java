@@ -14,7 +14,6 @@ import com.qkcare.model.enums.BloodGroup;
 @Entity
 @Table(name = "EMPLOYEE")
 public class Employee extends BaseEntity {
-	
 	@Id
 	@Column(name = "EMPLOYEE_ID")
 	@GeneratedValue
@@ -33,6 +32,7 @@ public class Employee extends BaseEntity {
 	private BloodGroup bloodGroup;
 	private String resume;
 	private int status;
+	private int managing;
 	
 	
 	public Employee() {}
@@ -42,6 +42,14 @@ public class Employee extends BaseEntity {
 	}
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public int getManaging() {
+		return managing;
+	}
+
+	public void setManaging(int managing) {
+		this.managing = managing;
 	}
 
 	public User getUser() {
