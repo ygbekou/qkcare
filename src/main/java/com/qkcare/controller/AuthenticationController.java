@@ -27,34 +27,30 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin
 public class AuthenticationController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+	@Autowired
+	private AuthenticationManager authenticationManager;
 
-    @Autowired
-    private JwtTokenUtil jwtTokenUtil;
+	@Autowired
+	private JwtTokenUtil jwtTokenUtil;
 
-    @Autowired
-    private UserService userService;
-    
-    @Autowired
-    BCryptPasswordEncoder encoder;
+	@Autowired
+	private UserService userService;
 
-    @RequestMapping(value = "/generate-token", method = RequestMethod.POST)
-    public ResponseEntity<?> register(@RequestBody LoginUser loginUser) throws AuthenticationException {
+	@Autowired
+	BCryptPasswordEncoder encoder;
 
-        final Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginUser.getUserName(),
-                        loginUser.getPassword()
-                )
-        );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        final User user = userService.getUser(null,loginUser.getUserName(), null);
-        final String token = jwtTokenUtil.generateToken(user);
-        return ResponseEntity.ok(new AuthToken(token, loginUser.getUserName(), loginUser.getPassword(), 
-        		user.getFirstName(), user.getLastName(), "Admin", user.getPicture(), 
-        		Arrays.asList(new Long[]{user.getUserGroup().getId()})));
-        
-    }
+	@RequestMapping(value = "/generate-token", method = RequestMethod.POST)
+	public ResponseEntity<?> register(@RequestBody LoginUser loginUser) throws AuthenticationException {
+
+		final Authentication authentication = authenticationManager.authenticate(
+				new UsernamePasswordAuthenticationToken(loginUser.getUserName(), loginUser.getPassword()));
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+		final User user = userService.getUser(null, loginUser.getUserName(), null);
+		final String token = jwtTokenUtil.generateToken(user);
+		return ResponseEntity.ok(new AuthToken(token, loginUser.getUserName(), loginUser.getPassword(),
+				user.getFirstName(), user.getLastName(), user.getUserGroup().getName(), user.getPicture(),
+				user.getFirstTimeLogin(), Arrays.asList(new Long[] { user.getUserGroup().getId() })));
+
+	}
 
 }

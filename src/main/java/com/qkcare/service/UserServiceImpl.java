@@ -8,12 +8,15 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.RandomStringGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.qkcare.dao.UserDao;
 import com.qkcare.model.BaseEntity;
+import com.qkcare.model.Company;
 import com.qkcare.model.User;
 import com.qkcare.util.Constants;
 
@@ -22,6 +25,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import static org.apache.commons.text.CharacterPredicates.DIGITS;
+import static org.apache.commons.text.CharacterPredicates.LETTERS;
 
 @Service(value="userService")
 public class UserServiceImpl  implements UserService, UserDetailsService {
@@ -34,6 +39,17 @@ public class UserServiceImpl  implements UserService, UserDetailsService {
 	
 	@Autowired
 	BCryptPasswordEncoder encoder;
+	
+	@Autowired
+	@Qualifier("myMailSender")
+	MyMailSender mailSender;
+	
+	private static RandomStringGenerator stringGenerator;
+	
+	static {
+		stringGenerator = new RandomStringGenerator.Builder()
+			     .withinRange('0', 'z').filteredBy(LETTERS, DIGITS).build();
+	}
 	
 	@Transactional
 	public BaseEntity save(BaseEntity entity, MultipartFile file) {		
@@ -127,5 +143,50 @@ public class UserServiceImpl  implements UserService, UserDetailsService {
 	
 	private List<SimpleGrantedAuthority> getAuthority() {
 		return Arrays.asList(new SimpleGrantedAuthority("ADMIN"));
+	}
+	
+	@Transactional
+	public String sendPassword(User user, String password) {		
+		String generatedPassword = StringUtils.isEmpty(password) ?  stringGenerator.generate(8) : password;
+		try {
+			User storedUser = this.getUser(user.getEmail(), user.getUserName(), null);
+			
+			if (StringUtils.isEmpty(password)) {
+				storedUser.setPassword(encoder.encode(generatedPassword));	
+				storedUser.setFirstTimeLogin("Y");
+			    this.genericService.save(storedUser);
+			}
+			
+			Company company = this.genericService.getCompany("EN");
+			
+			String emailMessage = "Your password is: " + generatedPassword + ". Please keep it safe.";
+			
+			mailSender.sendMail(company.getFromEmail(), storedUser.getEmail().split("'"), 
+					"Message from " + company.getName(), emailMessage);
+		} catch(Exception ex) {
+			ex.printStackTrace();
+			return "Failure";
+		}
+		
+		return "Success";
+		
+	}
+	
+	@Transactional
+	public String changePassword(User user, String password) {		
+		try {
+			User storedUser = this.getUser(user.getEmail(), user.getUserName(), null);
+			
+			if (!StringUtils.isEmpty(password)) {
+				storedUser.setPassword(encoder.encode(password));	
+				storedUser.setFirstTimeLogin("N");
+			    this.genericService.save(storedUser);
+			}
+		} catch(Exception ex) {
+			return "Failure";
+		}
+		
+		return "Success";
+		
 	}
 }

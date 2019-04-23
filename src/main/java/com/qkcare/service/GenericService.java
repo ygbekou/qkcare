@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.qkcare.model.BaseEntity;
+import com.qkcare.model.Company;
 
 @Service(value="genericService")
 public interface GenericService {
@@ -24,4 +25,5 @@ public interface GenericService {
 			String orderBy, String groupBy);
 	public Integer deleteByCriteria(String queryStr, List<Quartet<String, String, String, String>> parameters);
 	public Session getConnection();
+	public Company getCompany(String language);
 }

@@ -11,6 +11,7 @@ public class AuthToken {
     private String token;
     private String roleName;
     private String picture;
+    private String firstTimeLogin;
     private List authorities;
 
     public AuthToken(){
@@ -19,7 +20,7 @@ public class AuthToken {
 
     public AuthToken(String token, String userName, String password, 
     		String firstName, String lastName, String roleName,
-    		String picture, List authorities){
+    		String picture, String firstTimeLogin, List authorities){
         this.token = token;
         this.userName = userName;
         this.password = password;
@@ -27,7 +28,9 @@ public class AuthToken {
         this.lastName = lastName;
         this.roleName = roleName;
         this.picture = picture;
+        this.firstTimeLogin = firstTimeLogin;
         this.authorities = authorities;
+        
     }
     
     public String getToken() {
@@ -72,6 +75,13 @@ public class AuthToken {
 	public void setPicture(String picture) {
 		this.picture = picture;
 	}
+	public String getFirstTimeLogin() {
+		return firstTimeLogin;
+	}
+	public void setFirstTimeLogin(String firstTimeLogin) {
+		this.firstTimeLogin = firstTimeLogin;
+	}
+
 	public List getAuthorities() {
 		return authorities;
 	}

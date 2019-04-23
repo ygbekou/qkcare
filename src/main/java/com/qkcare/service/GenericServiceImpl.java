@@ -2,6 +2,7 @@ package com.qkcare.service;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -18,7 +19,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.qkcare.dao.GenericDao;
 import com.qkcare.model.BaseEntity;
-import com.qkcare.util.Constants;
+import com.qkcare.model.Company;
+import com.qkcare.util.Constants; 
 
 @Service(value="genericService")
 public class GenericServiceImpl implements GenericService {
@@ -147,5 +149,21 @@ public class GenericServiceImpl implements GenericService {
 		}
 		
 		return null;
+	}
+	
+	
+	public Company getCompany(String language) {
+		List<Quartet<String, String, String, String>> paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
+		
+		paramTupleList.add(Quartet.with("c.language = ", "language", language, "String"));
+		paramTupleList.add(Quartet.with("c.status = ", "status", "0", "Integer"));
+		String queryStr =  "SELECT c FROM Company c WHERE 1 = 1"; 
+		List<BaseEntity> companies = this.getByCriteria(queryStr, paramTupleList, null);
+		if (companies.size() > 0) {
+			return (Company) companies.get(0);
+		}
+		
+		return null;
+		
 	}
 }

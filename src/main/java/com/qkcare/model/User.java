@@ -47,6 +47,16 @@ public class User extends BaseEntity {
 	@Column(name = "ZIP_CODE")
 	private String zipCode;
 	private int status;
+	@Column(name="FIRST_TIME_LOGIN")
+	private String firstTimeLogin;
+	
+	public String getFirstTimeLogin() {
+		return firstTimeLogin;
+	}
+
+	public void setFirstTimeLogin(String firstTimeLogin) {
+		this.firstTimeLogin = firstTimeLogin;
+	}
 
 	public User() {
 	}
