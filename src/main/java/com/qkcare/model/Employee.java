@@ -2,6 +2,8 @@ package com.qkcare.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -29,6 +31,7 @@ public class Employee extends BaseEntity {
 	private String shortBiographie;
 	private String specialist;
 	@Column(name="BLOOD_GROUP")
+	@Enumerated(EnumType.STRING)
 	private BloodGroupEnum bloodGroupEnum;
 	private String resume;
 	private int status;
