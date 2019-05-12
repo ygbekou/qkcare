@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -71,6 +73,7 @@ public class Patient extends BaseEntity {
 	private String responsiblePartyLastName;
 	@Column(name="ACCOUNT_NUMBER")
 	private String accountNumber;
+	@Enumerated(EnumType.STRING)
 	@Column(name="BLOOD_GROUP")
 	private BloodGroupEnum bloodGroupEnum;
 	
