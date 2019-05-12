@@ -1,7 +1,8 @@
 package com.qkcare.model.enums;
 
-public enum BloodGroup {
+public enum BloodGroupEnum {
 
+	EMPTY(""),
 	A_PLUS("A+"),
     A_MOINS("A-"),
     B_PLUS("B+"),
@@ -13,7 +14,7 @@ public enum BloodGroup {
 
     private String bloodGroup;
 
-    BloodGroup(String bloodGroup) {
+    BloodGroupEnum(String bloodGroup) {
         this.bloodGroup = bloodGroup;
     }
 

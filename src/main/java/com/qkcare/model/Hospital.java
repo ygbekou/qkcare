@@ -24,7 +24,7 @@ public class Hospital extends BaseEntity {
 	private String address;
 	@Column(name = "EMAIL")
 	private String email;
-	@Column(name = "PHONE")
+	@Column(name = "PHONE_NUMBER")
 	private String phone;
 	private String logo;
 	private String favicon;

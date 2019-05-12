@@ -9,7 +9,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import com.qkcare.model.enums.BloodGroup;
+import com.qkcare.model.enums.BloodGroupEnum;
 
 @Entity
 @Table(name = "EMPLOYEE")
@@ -29,7 +29,7 @@ public class Employee extends BaseEntity {
 	private String shortBiographie;
 	private String specialist;
 	@Column(name="BLOOD_GROUP")
-	private BloodGroup bloodGroup;
+	private BloodGroupEnum bloodGroupEnum;
 	private String resume;
 	private int status;
 	private int managing;
@@ -92,12 +92,11 @@ public class Employee extends BaseEntity {
 		this.specialist = specialist;
 	}
 
-	public BloodGroup getBloodGroup() {
-		return bloodGroup;
+	public BloodGroupEnum getBloodGroupEnum() {
+		return bloodGroupEnum;
 	}
-
-	public void setBloodGroup(BloodGroup bloodGroup) {
-		this.bloodGroup = bloodGroup;
+	public void setBloodGroupEnum(BloodGroupEnum bloodGroupEnum) {
+		this.bloodGroupEnum = bloodGroupEnum;
 	}
 
 	public String getResume() {
@@ -149,6 +148,15 @@ public class Employee extends BaseEntity {
 		return this.user.getUserGroup().getName();
 	}
 	
+	// From str value to Enum
+	public String getBloodGroup() {
+		return bloodGroupEnum.getBloodGroup();
+	}
+	public void setBloodGroup(String bloodGroup) {
+		this.setBloodGroupEnum(BloodGroupEnum.valueOf(bloodGroup));
+	}
+		
+		
 	// Overriding equals() to compare two Complex objects
     @Override
     public boolean equals(Object o) {
