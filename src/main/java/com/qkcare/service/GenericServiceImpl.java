@@ -125,7 +125,7 @@ public class GenericServiceImpl implements GenericService {
 				// transfer to upload folder
 				String storageDirectory = null;
 				if (entityName != null) {					
-					storageDirectory = Constants.DOC_FOLDER	+ entityName + File.separator;
+					storageDirectory = Constants.IMAGE_FOLDER	+ entityName.toLowerCase() + File.separator;
 					File dir = new File(storageDirectory);
 					if (!dir.exists()) {
 						dir.mkdirs();
@@ -136,7 +136,7 @@ public class GenericServiceImpl implements GenericService {
 				}
 				
 				String newFilename = null;
-				newFilename = fileLabel + originalFileExtension;
+				newFilename = fileLabel;
 				
 				File newFile = new File(storageDirectory + "/" + newFilename);
 		        file.transferTo(newFile);
@@ -165,5 +165,34 @@ public class GenericServiceImpl implements GenericService {
 		
 		return null;
 		
+	}
+	
+	@Transactional
+	public BaseEntity saveWithFiles(BaseEntity entity, List<MultipartFile> files, 
+			boolean useId, List<String> attributeNames) {
+		this.save(entity);
+		
+		try {
+			int i = 0;
+			for (MultipartFile file : files) {
+				String originalFileExtension = file.getOriginalFilename()
+						.substring(file.getOriginalFilename().lastIndexOf("."));
+				
+				String fileName = saveFile(file, entity.getClass().getSimpleName(), 
+						useId ? entity.getId() + originalFileExtension : file.getOriginalFilename());
+				
+				String fieldName = useId ? attributeNames.get(i) : file.getOriginalFilename().split("\\.")[0];
+				
+				Field field = entity.getClass().getDeclaredField(fieldName);
+				field.setAccessible(true);
+		        field.set(entity, fileName);
+		        this.save(entity);
+		        i++;
+			}
+		} catch(Exception ex) {
+			ex.printStackTrace();
+		}
+				
+		return entity;
 	}
 }

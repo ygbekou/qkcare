@@ -26,4 +26,6 @@ public interface GenericService {
 	public Integer deleteByCriteria(String queryStr, List<Quartet<String, String, String, String>> parameters);
 	public Session getConnection();
 	public Company getCompany(String language);
+	public BaseEntity saveWithFiles(BaseEntity entity, List<MultipartFile> files, 
+			boolean useId, List<String> attributeNames);
 }
