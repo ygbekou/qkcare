@@ -4,13 +4,13 @@ public enum BloodGroupEnum {
 
 	EMPTY(""),
 	A_PLUS("A+"),
-    A_MOINS("A-"),
+    A_MINUS("A-"),
     B_PLUS("B+"),
-    B_MOINS("B-"),
+    B_MINUS("B-"),
     O_PLUS("O+"),
-    O_MOINS("O-"),
+    O_MINUS("O-"),
     AB_PLUS("AB+"),
-    AB_MOINS("AB-");
+    AB_MINUS("AB-");
 
     private String bloodGroup;
 
