@@ -26,6 +26,7 @@ import com.qkcare.model.BaseEntity;
 import com.qkcare.service.GenericService;
 import com.qkcare.util.Constants;
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -100,6 +101,7 @@ public class GenericEntityController extends BaseController {
 			return obj;
 		}
 		
+		/*
 		@RequestMapping(value="/saveWithFile",method = RequestMethod.POST)
 		public BaseEntity saveWithFile(@PathVariable("entity") String entity, 
 				@RequestPart("file") MultipartFile file, @RequestPart("dto") GenericDto dto) throws JsonParseException, 
@@ -127,7 +129,7 @@ public class GenericEntityController extends BaseController {
 			}
 			return obj;
 		}
-		
+		*/
 		@RequestMapping(value="/saveHospital",method = RequestMethod.POST)
 		public BaseEntity saveHospital(@PathVariable("entity") String entity, 
 				@RequestPart("logo") MultipartFile logo, @RequestPart("favicon") MultipartFile favicon, 
@@ -159,5 +161,53 @@ public class GenericEntityController extends BaseController {
 			this.genericService.delete(this.getClass(entity), ids);
 			return "SUCCESS";
 		}
+		
+		@RequestMapping(value="/saveWithFile",method = RequestMethod.POST)
+		public BaseEntity saveWithFile(@PathVariable("entity") String entity, 
+				@RequestPart("file") MultipartFile file, @RequestPart("dto") GenericDto dto) throws JsonParseException, 
+		JsonMappingException, IOException, ClassNotFoundException, NoSuchMethodException, SecurityException, BeansException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+			mapper.configure(Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
+			BaseEntity obj = (BaseEntity) mapper.readValue(dto.getJson().replaceAll("'", "\"")
+					.replaceAll("/", "\\/").replaceAll("&#039;", "'"), 
+					this.getClass(entity));
+			
+			Pair<Boolean, List<String>> results = Pair.with(true, new ArrayList());
+			try {
+				Class validator = this.getClass(Constants.VALIDATOR_PACKAGE_NAME + entity + "CustomValidator"); 
+				Method aMethod = validator.getMethod("validate", BaseEntity.class);
+				results = (Pair<Boolean, List<String>>) aMethod.invoke(context.getBean(validator), obj);
+			}
+			catch (ClassNotFoundException ex) {
+				
+			}
+				
+			if (results.getValue0()) {
+				this.genericService.saveWithFiles(obj, Arrays.asList(file), true, Arrays.asList("fileLocation"));
+			}
+			else {
+				obj.setErrors(results.getValue1());
+			}
+			return obj;
+		}
+				
+		@RequestMapping(value="/saveCompany",method = RequestMethod.POST)
+		public BaseEntity saveCompany(@PathVariable("entity") String entity, 
+				@RequestPart("file[]") MultipartFile[] files,
+				@RequestPart("dto") GenericDto dto) throws JsonParseException, 
+			JsonMappingException, IOException, ClassNotFoundException {
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+			mapper.configure(Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
+			BaseEntity obj = (BaseEntity) mapper.readValue(dto.getJson().replaceAll("'", "\"")
+					.replaceAll("/", "\\/").replaceAll("&#039;", "'"), 
+					this.getClass(entity));
+
+			this.genericService.saveWithFiles(obj, Arrays.asList(files), false, null);
+			
+			return obj;
+		}
+		
 	
 }
