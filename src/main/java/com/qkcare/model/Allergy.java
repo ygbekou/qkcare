@@ -66,6 +66,7 @@ public class Allergy extends BaseEntity {
 	public String getCategoryName() {
 		return this.category.getName();
 	}
+	
 	public String getStatusDesc() {
 		return status == 0 ? "Active" : "Inactive";
 	}

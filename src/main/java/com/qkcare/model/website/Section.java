@@ -26,12 +26,14 @@ public class Section extends BaseEntity {
 
 	@Column(name = "PICTURE")
 	private String fileLocation;
+	
 	private Integer status;
-	@Column(name="SHOW_IN_MENU")
+	@Column(name = "SHOW_IN_MENU")
+	
 	private String showInMenu;
-	
+
 	private String language;
-	
+
 	public String getShowInMenu() {
 		return showInMenu;
 	}
@@ -94,5 +96,9 @@ public class Section extends BaseEntity {
 
 	public void setFileLocation(String fileLocation) {
 		this.fileLocation = fileLocation;
+	}
+	
+	public String getStatusDesc() {
+		return status == 0 ? "Active" : "Inactive";
 	}
 }
