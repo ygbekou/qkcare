@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.javatuples.Pair;
 import org.javatuples.Quartet;
 import org.springframework.beans.BeansException;
@@ -36,6 +37,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RequestMapping(value="/service/{entity}")
 @CrossOrigin
 public class GenericEntityController extends BaseController {
+	
+		private static final Logger LOGGER = Logger.getLogger(AccountController.class);
 
 		@Autowired
 		@Qualifier("genericService")
@@ -77,20 +80,9 @@ public class GenericEntityController extends BaseController {
 		@RequestMapping(value="/save",method = RequestMethod.POST)
 		public BaseEntity save(@PathVariable("entity") String entity, @RequestBody GenericDto dto) throws JsonParseException, 
 		JsonMappingException, IOException, ClassNotFoundException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException {
-			ObjectMapper mapper = new ObjectMapper();
-			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-			BaseEntity obj = (BaseEntity) mapper.readValue(dto.getJson().replaceAll("'", "\"").replaceAll("/", "\\/"), 
-					this.getClass(this.convertEntity(entity)));
+			BaseEntity obj = (BaseEntity) this.genericDtoToEntiityClassObject(dto, entity);
 			
-			Pair<Boolean, List<String>> results = Pair.with(true, new ArrayList());
-			try {
-				Class validator = this.getClass(Constants.VALIDATOR_PACKAGE_NAME + entity + "CustomValidator"); 
-				Method aMethod = validator.getMethod("validate", BaseEntity.class);
-				results = (Pair<Boolean, List<String>>) aMethod.invoke(context.getBean(validator), obj);
-			}
-			catch (ClassNotFoundException ex) {
-				
-			}
+			Pair<Boolean, List<String>> results = this.validateEntity(context, obj, entity);
 				
 			if (results.getValue0()) {
 				genericService.save(obj);
@@ -101,35 +93,7 @@ public class GenericEntityController extends BaseController {
 			return obj;
 		}
 		
-		/*
-		@RequestMapping(value="/saveWithFile",method = RequestMethod.POST)
-		public BaseEntity saveWithFile(@PathVariable("entity") String entity, 
-				@RequestPart("file") MultipartFile file, @RequestPart("dto") GenericDto dto) throws JsonParseException, 
-		JsonMappingException, IOException, ClassNotFoundException, NoSuchMethodException, SecurityException, BeansException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-			ObjectMapper mapper = new ObjectMapper();
-			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-			BaseEntity obj = (BaseEntity) mapper.readValue(dto.getJson().replaceAll("'", "\"").replaceAll("/", "\\/"), 
-					this.getClass(entity));
-			
-			Pair<Boolean, List<String>> results = Pair.with(true, new ArrayList());
-			try {
-				Class validator = this.getClass(Constants.VALIDATOR_PACKAGE_NAME + entity + "CustomValidator"); 
-				Method aMethod = validator.getMethod("validate", BaseEntity.class);
-				results = (Pair<Boolean, List<String>>) aMethod.invoke(context.getBean(validator), obj);
-			}
-			catch (ClassNotFoundException ex) {
-				
-			}
-				
-			if (results.getValue0()) {
-				this.genericService.saveWithFiles(obj, Arrays.asList(file), Arrays.asList("fileLocation"), true);
-			}
-			else {
-				obj.setErrors(results.getValue1());
-			}
-			return obj;
-		}
-		*/
+		
 		@RequestMapping(value="/saveHospital",method = RequestMethod.POST)
 		public BaseEntity saveHospital(@PathVariable("entity") String entity, 
 				@RequestPart("logo") MultipartFile logo, @RequestPart("favicon") MultipartFile favicon, 
