@@ -30,9 +30,6 @@ public class Employee extends BaseEntity {
 	@Column(name="SHORT_BIOGRAPHIE")
 	private String shortBiographie;
 	private String specialist;
-	@Column(name="BLOOD_GROUP")
-	@Enumerated(EnumType.STRING)
-	private BloodGroupEnum bloodGroupEnum;
 	private String resume;
 	private int status;
 	private int managing;
@@ -95,13 +92,6 @@ public class Employee extends BaseEntity {
 		this.specialist = specialist;
 	}
 
-	public BloodGroupEnum getBloodGroupEnum() {
-		return bloodGroupEnum;
-	}
-	public void setBloodGroupEnum(BloodGroupEnum bloodGroupEnum) {
-		this.bloodGroupEnum = bloodGroupEnum;
-	}
-
 	public String getResume() {
 		return resume;
 	}
@@ -151,14 +141,6 @@ public class Employee extends BaseEntity {
 		return this.user.getUserGroup().getName();
 	}
 	
-	// From str value to Enum
-	public String getBloodGroup() {
-		return bloodGroupEnum.getBloodGroup();
-	}
-	public void setBloodGroup(String bloodGroup) {
-		this.setBloodGroupEnum(BloodGroupEnum.valueOf(bloodGroup));
-	}
-		
 		
 	// Overriding equals() to compare two Complex objects
     @Override
