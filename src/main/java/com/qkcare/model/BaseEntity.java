@@ -8,7 +8,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient; 
 
 @MappedSuperclass
-public abstract class BaseEntity {
+public class BaseEntity {
 
 
 	@Column(name = "CREATE_DATE")
@@ -25,7 +25,9 @@ public abstract class BaseEntity {
 	@Transient
 	public String customValidator = "";
 	
-	public abstract Long getId() ;
+	public Long getId() {
+		return null;
+	}
 
 	public Date getModDate() {
 		return modDate;

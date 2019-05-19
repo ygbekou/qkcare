@@ -54,35 +54,30 @@ public class UserController extends BaseController {
 		JsonMappingException, IOException, ClassNotFoundException {
 			BaseEntity obj = null;
 			try {
-				ObjectMapper mapper = new ObjectMapper();
-				mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-				obj = (BaseEntity) mapper.readValue(dto.getJson().replaceAll("'", "\"").replaceAll("/", "\\/"),
-						Class.forName(Constants.PACKAGE_NAME + entity));
+				obj = (BaseEntity) this.genericDtoToEntiityClassObject(dto, entity);
 				userService.save(obj, file);
-			}
-			catch(Exception e) {
+			} catch(Exception e) {
 				e.printStackTrace();
 				obj.setErrors(Arrays.asList(e.getMessage()));
 			}
+			
 			return obj;
 		}
 		
 		@RequestMapping(value="/saveWithoutPicture",method = RequestMethod.POST)
 		public BaseEntity saveWithoutPicture(@PathVariable("entity") String entity,
-				@RequestBody GenericDto dto) throws JsonParseException, 
-		JsonMappingException, IOException, ClassNotFoundException {
+				@RequestBody GenericDto dto) throws Exception {
+			
 			BaseEntity obj = null;
 			try {
-				ObjectMapper mapper = new ObjectMapper();
-				mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-				obj = (BaseEntity) mapper.readValue(dto.getJson().replaceAll("'", "\"").replaceAll("/", "\\/"),
-						Class.forName(Constants.PACKAGE_NAME + entity));
-				userService.save(obj, null);
-			}
-			catch(Exception e) {
+				obj = (BaseEntity) this.genericDtoToEntiityClassObject(dto, entity);
+				if (obj.getErrors() == null || obj.getErrors().size() == 0)
+					userService.save(obj, null);
+			} catch(Exception e) {
 				e.printStackTrace();
 				obj.setErrors(Arrays.asList(e.getMessage()));
 			}
+			
 			return obj;
 		}
 		
