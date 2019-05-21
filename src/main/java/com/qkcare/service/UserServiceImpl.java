@@ -155,28 +155,22 @@ public class UserServiceImpl  implements UserService, UserDetailsService {
 				storedUser.setPassword(encoder.encode(generatedPassword));	
 				storedUser.setFirstTimeLogin("Y");
 			    this.genericService.save(storedUser);
-			}
-			
-			Company company = this.genericService.getCompany("EN");
-			
-			String emailMessage = "Your password is: " + generatedPassword + ". Please keep it safe.";
-			
+			}			
+			Company company = this.genericService.getCompany("EN");			
+			String emailMessage = "Your password is: " + generatedPassword + ". Please keep it safe.";			
 			mailSender.sendMail(company.getFromEmail(), storedUser.getEmail().split("'"), 
 					"Message from " + company.getName(), emailMessage);
 		} catch(Exception ex) {
 			ex.printStackTrace();
 			return "Failure";
-		}
-		
-		return "Success";
-		
+		}		
+		return "Success";		
 	}
 	
 	@Transactional
 	public String changePassword(User user, String password) {		
 		try {
-			User storedUser = this.getUser(user.getEmail(), user.getUserName(), null);
-			
+			User storedUser = this.getUser(user.getEmail(), user.getUserName(), null);			
 			if (!StringUtils.isEmpty(password)) {
 				storedUser.setPassword(encoder.encode(password));	
 				storedUser.setFirstTimeLogin("N");
@@ -184,9 +178,7 @@ public class UserServiceImpl  implements UserService, UserDetailsService {
 			}
 		} catch(Exception ex) {
 			return "Failure";
-		}
-		
-		return "Success";
-		
+		}		
+		return "Success";		
 	}
 }
