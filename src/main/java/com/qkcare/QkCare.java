@@ -39,6 +39,6 @@ public class QkCare {
 		MultipartFilter multipartFilter = new MultipartFilter();
 		multipartFilter.setMultipartResolverBeanName("multipartReso‌​lver");
 		return multipartFilter;
-	}
+	} 
 
 }
