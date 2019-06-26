@@ -3,6 +3,7 @@ package com.qkcare.model;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -29,9 +30,15 @@ public class Visit extends BaseEntity {
 	@ManyToOne
 	@JoinColumn(name = "PACKAGE_ID")
 	private com.qkcare.model.Package pckage;
+	
 	@ManyToOne
 	@JoinColumn(name = "DOCTOR_ID")
 	private Employee doctor;
+	
+	@ManyToOne
+	@JoinColumn(name = "APPOINTMENT_ID")
+	private Appointment appointment;
+	
 	@Column(name = "CHIEF_OF_COMPLAIN")
 	private String chiefOfComplain;
 	@Column(name = "VISIT_DATETIME")
@@ -61,10 +68,28 @@ public class Visit extends BaseEntity {
 	@Transient
 	private Set<Long> selectedSocialHistories;
 	
+	public Appointment getAppointment() {
+		return appointment;
+	}
+
+	public void setAppointment(Appointment appointment) {
+		this.appointment = appointment;
+	}
+
 	public Visit() {}
 	
 	public Visit(Long id) {
 		this.id = id;
+	}
+
+	public Visit(Appointment apt) {
+		// TODO Auto-generated constructor stub
+		this.appointment=apt;
+		this.doctor=apt.getDoctor();
+		this.status=2;
+		this.patient=apt.getPatient();
+		this.visitDatetime= new Timestamp(new Date().getTime());
+		this.chiefOfComplain=apt.getProblem(); 
 	}
 
 	public Long getId() {

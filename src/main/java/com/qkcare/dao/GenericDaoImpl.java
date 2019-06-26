@@ -47,13 +47,6 @@ public class GenericDaoImpl<E, K> implements GenericDao<E, K> {
 	}
 
 	public void delete(Class cl, List<Long> ids) {
-		/*CriteriaDelete criteria = entityManager.getCriteriaBuilder().createCriteriaDelete(cl);
-		Root root = criteria.from(cl);
-		criteria.where(root.get("id").in(ids));
-
-		int result = entityManager.createQuery(criteria).executeUpdate();
-		logger.info("delete @" + result);*/
-		
 		for (Long id : ids) {
 			this.delete(this.find(cl, id));
 		}
@@ -71,27 +64,21 @@ public class GenericDaoImpl<E, K> implements GenericDao<E, K> {
 	}
 
 	public List<E> getByCriteria(String queryStr, List<Quartet<String, String, String, String>> parameters, String orderBy) {
-		
 		Query query = this.buildQuery(queryStr, parameters, orderBy, null, false);
-		
 	    List<E> ListOfEmailDomains = query.getResultList();
 	    return ListOfEmailDomains;
 	}
 	
 	
 	public List<Object[]> getNativeByCriteria(String queryStr, List<Quartet<String, String, String, String>> parameters, 
-			String orderBy, String groupBy) {
-		
-		Query query = this.buildQuery(queryStr, parameters, orderBy, groupBy, true);
-		
+			String orderBy, String groupBy) {		
+		Query query = this.buildQuery(queryStr, parameters, orderBy, groupBy, true);		
 	    List<Object[]> list = query.getResultList();
 	    return list;
 	}
 	
 	public Integer deleteByCriteria(String queryStr, List<Quartet<String, String, String, String>> parameters) {
-		
 		Query query = this.buildQuery(queryStr, parameters, null, null, false);
-		
 	    Integer nbDel = query.executeUpdate();
 	    return nbDel;
 	}

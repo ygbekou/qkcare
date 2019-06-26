@@ -72,7 +72,7 @@ public class GenericEntityController extends BaseController {
 			
 			String queryStr =  "SELECT e FROM " + this.convertEntity(entity) + " e WHERE 1 = 1";
 			List<BaseEntity> entities = genericService.getByCriteria(queryStr, paramTupleList, null);
-			System.out.println(entities);
+			//System.out.println(entities);
 			return entities;
 		}		
 

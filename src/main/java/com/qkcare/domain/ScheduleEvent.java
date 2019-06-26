@@ -8,13 +8,28 @@ public class ScheduleEvent {
 	private String end;
 	private String className;
 	private String color;
+	private String phone;
+	private String docName;	
 	
 	
+	public String getDocName() {
+		return docName;
+	}
+	public void setDocName(String docName) {
+		this.docName = docName;
+	}
 	public Long getId() {
 		return id;
 	}
 	public void setId(Long id) {
 		this.id = id;
+	}
+	
+	public String getPhone() {
+		return phone;
+	}
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 	public String getTitle() {
 		return title;

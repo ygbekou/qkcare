@@ -146,8 +146,7 @@ public class CacheUtil implements InitializingBean {
 		this.addCacheToManager(PRESCRIPTION_TYPE, "SELECT PRESCRIPTION_TYPE_ID, NAME "
 				+ "FROM PRESCRIPTION_TYPE ", this::getReferences);
 		
-	}
-	
+	}	
 	
 	private void addCacheToManager(String cacheKey, String sqlQuery, Function<String, List<GenericVO>> getCatg) {
 		CACHE_MANAGER.addCache(cacheKey);

@@ -15,8 +15,17 @@ public class SearchCriteria implements Serializable {
 	Department department;
 	HospitalLocation hospitalLocation;
 	Employee doctor;
+	Integer topN;
 	
 	public SearchCriteria() {}
+
+	public Integer getTopN() {
+		return topN;
+	}
+
+	public void setTopN(Integer topN) {
+		this.topN = topN;
+	}
 
 	public Long getId() {
 		return id;

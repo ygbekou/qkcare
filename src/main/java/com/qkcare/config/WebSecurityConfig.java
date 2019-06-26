@@ -62,6 +62,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/service/Company/*").permitAll()              
                 .antMatchers("/service/UserGroup/all").permitAll()
                 .antMatchers("/service/ContactUsMessage/save").permitAll()
+                .antMatchers("/service/appointment/*").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
