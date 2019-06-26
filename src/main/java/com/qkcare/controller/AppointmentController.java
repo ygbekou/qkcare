@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qkcare.domain.GenericDto;
+import com.qkcare.domain.GenericResponse;
 import com.qkcare.domain.ScheduleEvent;
 import com.qkcare.domain.SearchCriteria;
 import com.qkcare.model.Appointment;
@@ -59,24 +60,34 @@ public class AppointmentController extends BaseController {
 	}
 
 	@RequestMapping(value = "/cancel", method = RequestMethod.POST)
-	public String cancel(@RequestBody Long id) {
-
-		// Cancel appointment
-		Appointment apt = (Appointment) genericService.find(Appointment.class, id);
-		apt.setStatus(0);
-		genericService.save(apt);
-		return "Success";
+	public GenericResponse cancel(@RequestBody Long id) {
+		GenericResponse gr = new GenericResponse();
+		try {
+			// Cancel appointment
+			Appointment apt = (Appointment) genericService.find(Appointment.class, id);
+			apt.setStatus(0);
+			genericService.save(apt);
+			gr.setResult("Success");
+		} catch (Exception e) {
+			gr.setResult(e.getMessage());
+		}
+		return gr;
 	}
 
 	@RequestMapping(value = "/confirm", method = RequestMethod.POST)
-	public String confirm(@RequestBody Long id) {
-
-		// Confirm appointment
-		Appointment apt = (Appointment) genericService.find(Appointment.class, id);
-		apt.setStatus(3);
-		genericService.save(apt);
-		genericService.save(new Visit(apt));
-		return "Success";
+	public GenericResponse confirm(@RequestBody Long id) {
+		GenericResponse gr = new GenericResponse();
+		try {
+			// Confirm appointment
+			Appointment apt = (Appointment) genericService.find(Appointment.class, id);
+			apt.setStatus(3);
+			genericService.save(apt);
+			genericService.save(new Visit(apt));
+			gr.setResult("Success");
+		} catch (Exception e) {
+			gr.setResult(e.getMessage());
+		}
+		return gr;
 	}
 
 	@RequestMapping(value = "/prescription/save", method = RequestMethod.POST)
