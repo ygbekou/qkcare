@@ -94,7 +94,8 @@ public class AppointmentDaoImpl implements AppointmentDao {
 			 */
 			StringBuilder sqlBuilder = new StringBuilder("SELECT AP.APPOINTMENT_ID, U.FIRST_NAME, U.MIDDLE_NAME, "
 					+ "U.LAST_NAME, AP.APPOINTMENT_DATE, AP.BEGIN_TIME, AP.END_TIME, AP.STATUS, U.HOME_PHONE, "
-					+ "CONCAT_WS (' ',EMP.DESIGNATION,U2.FIRST_NAME, U2.MIDDLE_NAME, U2.LAST_NAME) DOCNAME "
+					+ "CONCAT_WS (' ',EMP.DESIGNATION,U2.FIRST_NAME, U2.MIDDLE_NAME, U2.LAST_NAME) DOCNAME, "
+					+ "P.PATIENT_ID, EMP.EMPLOYEE_ID "
 					+ "FROM APPOINTMENT AP " + "JOIN PATIENT P ON AP.PATIENT_ID = P.PATIENT_ID "
 					+ "JOIN USERS U ON P.USER_ID = U.USER_ID "
 					+ "JOIN EMPLOYEE EMP ON (EMP.EMPLOYEE_ID = AP.DOCTOR_ID) "
@@ -120,6 +121,8 @@ public class AppointmentDaoImpl implements AppointmentDao {
 					event.setColor(scheduleAppointmentConfirmColor);
 				event.setPhone((String) obj[8]);
 				event.setDocName((String) obj[9]);
+				event.setPatientId(new Long(obj[10].toString()));
+				event.setEmployeeId(new Long(obj[11].toString()));
 				events.add(event);
 			}
 

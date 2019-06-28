@@ -9,7 +9,7 @@ import com.qkcare.model.User;
 @Service(value="userService")
 public interface UserService {
 	
-	public BaseEntity save(BaseEntity entity, MultipartFile file);
+	public BaseEntity save(BaseEntity entity, MultipartFile file) throws Exception;
 	
 	public User getUser(String email, String userName, String password);
 }

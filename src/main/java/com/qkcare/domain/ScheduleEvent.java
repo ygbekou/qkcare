@@ -3,15 +3,29 @@ package com.qkcare.domain;
 public class ScheduleEvent {
 
 	private Long id;
+	private Long patientId;
+	private Long employeeId;
 	private String title;
 	private String start;
 	private String end;
 	private String className;
 	private String color;
 	private String phone;
-	private String docName;	
+	private String docName;		
 	
-	
+ 
+	public Long getEmployeeId() {
+		return employeeId;
+	}
+	public void setEmployeeId(Long employeeId) {
+		this.employeeId = employeeId;
+	}
+	public Long getPatientId() {
+		return patientId;
+	}
+	public void setPatientId(Long patientId) {
+		this.patientId = patientId;
+	}
 	public String getDocName() {
 		return docName;
 	}
