@@ -30,5 +30,7 @@ public interface VisitService {
 	public List<GenericVO> getSocialHistories();
 	
 	public Map<Integer, List<Visit>> getVisitsByMonth();
+
+	public List<Visit> getWaitList(int id);
 	
 }

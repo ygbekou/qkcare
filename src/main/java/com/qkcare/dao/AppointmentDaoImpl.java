@@ -36,7 +36,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
 			StringBuilder sqlBuilder = new StringBuilder("SELECT AP.APPOINTMENT_ID, U.FIRST_NAME, U.MIDDLE_NAME, "
 					+ "U.LAST_NAME, AP.APPOINTMENT_DATE, AP.BEGIN_TIME, AP.END_TIME, AP.STATUS "
 					+ "FROM APPOINTMENT AP " + "JOIN PATIENT P ON AP.PATIENT_ID = P.PATIENT_ID "
-					+ "JOIN USERS U ON P.USER_ID = U.USER_ID " + "WHERE 1 = 1 AND AP.STATUS != 0 ");
+					+ "JOIN USERS U ON P.USER_ID = U.USER_ID " + "WHERE 1 = 1 AND AP.STATUS <3 ");
 
 			if (searchCriteria.hasDoctorId()) {
 				sqlBuilder.append(" AND AP.DOCTOR_ID = :doctorId ");
@@ -69,9 +69,9 @@ public class AppointmentDaoImpl implements AppointmentDao {
 				event.setStart(obj[4].toString().split(" ")[0] + "T" + obj[5].toString());
 				event.setEnd(obj[4].toString().split(" ")[0] + "T" + obj[6].toString());
 				event.setClassName("availability");
-				if (obj[7].toString().equals("1")) // This is for saved ones
+				if (obj[7].toString().equals("0")) // This is for saved ones
 					event.setColor(scheduleAppointmentNewColor);
-				else if (obj[7].toString().equals("2")) // This is for confirmed ones
+				else if (obj[7].toString().equals("1")) // This is for confirmed ones
 					event.setColor(scheduleAppointmentConfirmColor);
 				events.add(event);
 			}
@@ -90,7 +90,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
 		List<ScheduleEvent> events = new ArrayList<ScheduleEvent>();
 		try {
 			/**
-			 * Status 1- new STatus 2- confirmed
+			 * Status 0- new STatus 1- confirmed
 			 */
 			StringBuilder sqlBuilder = new StringBuilder("SELECT AP.APPOINTMENT_ID, U.FIRST_NAME, U.MIDDLE_NAME, "
 					+ "U.LAST_NAME, AP.APPOINTMENT_DATE, AP.BEGIN_TIME, AP.END_TIME, AP.STATUS, U.HOME_PHONE, "
@@ -100,7 +100,7 @@ public class AppointmentDaoImpl implements AppointmentDao {
 					+ "JOIN USERS U ON P.USER_ID = U.USER_ID "
 					+ "JOIN EMPLOYEE EMP ON (EMP.EMPLOYEE_ID = AP.DOCTOR_ID) "
 					+ "JOIN USERS U2 ON (U2.USER_ID = EMP.USER_ID) "
-					+ "WHERE 1 = 1 AND AP.STATUS IN (1,2) "
+					+ "WHERE 1 = 1 AND AP.STATUS IN (0,1) "
 					+ "AND DATE_FORMAT(SYSDATE(), '%Y-%m-01') = DATE_FORMAT(AP.APPOINTMENT_DATE, '%Y-%m-01') "
 					+ "ORDER BY AP.APPOINTMENT_DATE, AP.BEGIN_TIME  " + "LIMIT " + searchCriteria.getTopN());
 
@@ -115,9 +115,9 @@ public class AppointmentDaoImpl implements AppointmentDao {
 				event.setStart(obj[5].toString());
 				event.setEnd(obj[6].toString());
 				event.setClassName("availability");
-				if (obj[7].toString().equals("1")) // This is for saved ones
+				if (obj[7].toString().equals("0")) // This is for saved ones
 					event.setColor(scheduleAppointmentNewColor);
-				else if (obj[7].toString().equals("2")) // This is for confirmed ones
+				else if (obj[7].toString().equals("1")) // This is for confirmed ones
 					event.setColor(scheduleAppointmentConfirmColor);
 				event.setPhone((String) obj[8]);
 				event.setDocName((String) obj[9]);

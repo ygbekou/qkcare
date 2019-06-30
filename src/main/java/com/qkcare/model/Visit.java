@@ -86,7 +86,7 @@ public class Visit extends BaseEntity {
 		// TODO Auto-generated constructor stub
 		this.appointment=apt;
 		this.doctor=apt.getDoctor();
-		this.status=2;
+		this.status=0;
 		this.patient=apt.getPatient();
 		this.visitDatetime= new Timestamp(new Date().getTime());
 		this.chiefOfComplain=apt.getProblem(); 

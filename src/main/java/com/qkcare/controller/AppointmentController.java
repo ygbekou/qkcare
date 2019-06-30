@@ -65,7 +65,7 @@ public class AppointmentController extends BaseController {
 		try {
 			// Cancel appointment
 			Appointment apt = (Appointment) genericService.find(Appointment.class, id);
-			apt.setStatus(0);
+			apt.setStatus(3);
 			genericService.save(apt);
 			gr.setResult("Success");
 		} catch (Exception e) {
@@ -80,7 +80,7 @@ public class AppointmentController extends BaseController {
 		try {
 			// Confirm appointment
 			Appointment apt = (Appointment) genericService.find(Appointment.class, id);
-			apt.setStatus(3);
+			apt.setStatus(1);
 			genericService.save(apt);
 			genericService.save(new Visit(apt));
 			gr.setResult("Success");

@@ -69,6 +69,13 @@ public class GenericDaoImpl<E, K> implements GenericDao<E, K> {
 	    return ListOfEmailDomains;
 	}
 	
+	public List<E> getByCriteria(String queryStr, List<Quartet<String, String, String, String>> parameters, String orderBy, int maxResult) {
+		Query query = this.buildQuery(queryStr, parameters, orderBy, null, false);
+		query.setMaxResults(maxResult);
+	    List<E> ListOfEmailDomains = query.getResultList();
+	    return ListOfEmailDomains;
+	}
+	
 	
 	public List<Object[]> getNativeByCriteria(String queryStr, List<Quartet<String, String, String, String>> parameters, 
 			String orderBy, String groupBy) {		
