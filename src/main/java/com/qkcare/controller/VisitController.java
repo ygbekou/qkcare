@@ -76,8 +76,7 @@ public class VisitController extends BaseController {
 		public BaseEntity updateStatus(@RequestBody Visit visit) {
 			Visit oldVisit = (Visit) this.genericService.find(Visit.class, visit.getId());
 			oldVisit.setStatus(visit.getStatus());
-			this.genericService.save(oldVisit);
-			
+			this.genericService.save(oldVisit);			
 			return oldVisit;
 		}
 		
