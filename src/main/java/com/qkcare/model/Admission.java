@@ -131,4 +131,8 @@ public class Admission extends BaseEntity {
 	public String getAdmissionNumber() {
 		return this.getId() == null ? "" : this.getId().toString();
 	}
+	
+	public String getStatusDesc() {
+		return this.getStatus() == 0 ? "Actif" : "Inactif";
+	}
 }
