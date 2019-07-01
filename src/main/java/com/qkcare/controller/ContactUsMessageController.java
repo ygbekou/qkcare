@@ -25,10 +25,8 @@ public class ContactUsMessageController extends BaseController {
 	
 	
 		@RequestMapping(value="/save",method = RequestMethod.POST)
-		public BaseEntity save(@RequestBody ContactUsMessage contactUsMessage) {
-				
-			this.contactUsMessageService.save(contactUsMessage);
-			
+		public BaseEntity save(@RequestBody ContactUsMessage contactUsMessage) {				
+			this.contactUsMessageService.save(contactUsMessage);			
 			return contactUsMessage;
 		}
 		

@@ -3,8 +3,9 @@ package com.qkcare.dao;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
-import org.apache.log4j.Logger;
+import org.apache.log4j.Logger; 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -12,33 +13,41 @@ import com.qkcare.model.User;
 
 @SuppressWarnings("unchecked")
 @Repository
-public class UserDaoImpl implements UserDao{
-	private static Logger logger = Logger.getLogger(UserDaoImpl.class) ;
-	
+public class UserDaoImpl implements UserDao {
+	private static Logger logger = Logger.getLogger(UserDaoImpl.class);
 	@Autowired
 	private EntityManager entityManager;
 
 	public User getUser(String email, String userName, String password) {
-
 		User user = null;
-		if(userName == null){
+		if (userName == null) {
 			userName = "";
 		}
-		if(email == null){
+		if (email == null) {
 			email = "";
 		}
-		
-		List list = entityManager.createQuery("SELECT u FROM User u WHERE (u.email = :email OR u.userName = :userName) ")
-			    .setParameter("email", email)
-			    .setParameter("userName", userName)
-			    .getResultList();
-		
+		List list = entityManager
+				.createQuery("SELECT u FROM User u WHERE (u.email = :email OR u.userName = :userName) ")
+				.setParameter("email", email).setParameter("userName", userName).getResultList();
 		if (list.size() > 0) {
 			user = (User) list.get(0);
 		}
-
 		return user;
 	}
 
+	public List<User> findMembers(String firstName, String lastName, String login, String email) {
+		firstName = firstName == null ? "#" : firstName;
+		lastName = lastName == null ? "#" : lastName;
+		login = login == null ? "#" : login;
+		email = email == null ? "#" : email; 
+		Query query = entityManager.createQuery(
+				" FROM User U WHERE (UPPER(U.firstName) = ? AND UPPER(U.lastName) = ?) OR UPPER(U.userName)=? OR UPPER(U.email)=?");
+		query.setParameter(1, firstName.toUpperCase());
+		query.setParameter(2, lastName.toUpperCase());
+		query.setParameter(3, login.toUpperCase());
+		query.setParameter(4, email.toUpperCase());
+		return query.getResultList();
+
+	}
 
 }

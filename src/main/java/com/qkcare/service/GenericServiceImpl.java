@@ -103,6 +103,10 @@ public class GenericServiceImpl implements GenericService {
 		return this.genericDao.getByCriteria(queryStr, parameters, orderBy);
 	}
 
+	public List<BaseEntity> getByCriteria(String queryStr, List<Quartet<String, String, String, String>> parameters, 
+			String orderBy, int maxResult) {
+		return this.genericDao.getByCriteria(queryStr, parameters, orderBy, maxResult);
+	}
 	public List<Object[]> getNativeByCriteria(String queryStr, List<Quartet<String, String, String, String>> parameters, 
 			String orderBy, String groupBy) {
 		return this.genericDao.getNativeByCriteria(queryStr, parameters, orderBy, groupBy);

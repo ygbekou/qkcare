@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qkcare.domain.GenericDto;
+import com.qkcare.domain.GenericResponse;
 import com.qkcare.model.Appointment;
 import com.qkcare.model.BaseEntity;
 import com.qkcare.model.DoctorOrder;
@@ -75,8 +76,7 @@ public class VisitController extends BaseController {
 		public BaseEntity updateStatus(@RequestBody Visit visit) {
 			Visit oldVisit = (Visit) this.genericService.find(Visit.class, visit.getId());
 			oldVisit.setStatus(visit.getStatus());
-			this.genericService.save(oldVisit);
-			
+			this.genericService.save(oldVisit);			
 			return oldVisit;
 		}
 		
@@ -137,4 +137,40 @@ public class VisitController extends BaseController {
 		public Map<Integer, List<Visit>> getVisitsByMonth() {
 			return this.visitService.getVisitsByMonth();
 		}
+		
+		@RequestMapping(value = "/getWaitList/{topN}", method = RequestMethod.GET, headers = "Accept=application/json")
+		public  List<Visit>  getWaitList(@PathVariable("topN") int topN) {
+			return this.visitService.getWaitList(topN);
+		}
+		
+		@RequestMapping(value = "/endVisit", method = RequestMethod.POST)
+		public GenericResponse endVisit(@RequestBody Long id) {
+			GenericResponse gr = new GenericResponse();
+			try {
+				// Confirm appointment
+				Visit visit = (Visit) genericService.find(Visit.class, id);
+				visit.setStatus(1);
+				genericService.save(visit); 
+				gr.setResult("Success");
+			} catch (Exception e) {
+				gr.setResult(e.getMessage());
+			}
+			return gr;
+		}
+		
+		@RequestMapping(value = "/cancelVisit", method = RequestMethod.POST)
+		public GenericResponse cancelVisit(@RequestBody Long id) {
+			GenericResponse gr = new GenericResponse();
+			try {
+				// Confirm appointment
+				Visit visit = (Visit) genericService.find(Visit.class, id);
+				visit.setStatus(3);
+				genericService.save(visit); 
+				gr.setResult("Success");
+			} catch (Exception e) {
+				gr.setResult(e.getMessage());
+			}
+			return gr;
+		}
+
 }

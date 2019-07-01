@@ -330,4 +330,18 @@ public class VisitServiceImpl  implements VisitService {
 		
 		return dataMap;
 	}
+
+
+	@Override
+	public List<Visit> getWaitList(int topN) {
+		
+		List<Quartet<String, String, String, String>> paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
+		
+		String queryStr =  "SELECT e FROM Visit e WHERE DATE_FORMAT(SYSDATE(), '%Y-%m-01') = DATE_FORMAT(e.visitDatetime, '%Y-%m-01') "
+				+ "AND e.status=0 ";
+		
+		List<Visit> visits = (List)this.genericService.getByCriteria(queryStr, 
+				paramTupleList, " ORDER BY e.id",topN);
+		return visits;
+	}
 }

@@ -17,6 +17,8 @@ public interface AppointmentService {
 	
 	public List<ScheduleEvent> getScheduleEvents(SearchCriteria searchCriteria);
 	
+	public List<ScheduleEvent> getTodayAppointments(SearchCriteria searchCriteria);	
+	
 	public BaseEntity save(Prescription prescription);
 	
 	public List<Appointment> getUpcomingAppointments();

@@ -7,4 +7,6 @@ import com.qkcare.domain.SearchCriteria;
 
 public interface AppointmentDao {
 	public List<ScheduleEvent> getScheduleEvents(SearchCriteria searchCriteria);
+
+	public List<ScheduleEvent> getTodayAppointments(SearchCriteria searchCriteria);
 }

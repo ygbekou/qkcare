@@ -4,6 +4,8 @@ public class GenericResponse {
 	
 	private String result;
 	
+	public GenericResponse() {}
+	
 	public GenericResponse(String result) {
 		this.result = result;
 	}

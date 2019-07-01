@@ -277,4 +277,45 @@ VALUES ('bill','Bill Report', 1, NOW(), NOW(), 1 );
 INSERT INTO SERVICE(CREATE_DATE, MOD_DATE, MOD_BY, SERVICE_ID, DOCTOR_ORDER_TYPE_ID, NAME, DESCRIPTION, QUANTITY, RATE) 
 VALUES (now(), now(), 1, 2, 2, 'Laboratory', 'Laboratory', 1, 0);
 
+
+INSERT INTO RELIGION (NAME, DESCRIPTION, CREATE_DATE, MOD_DATE, MOD_BY, STATUS)
+VALUES ('Judaïsme','Judaïsme',NOW(), NOW(), 1, 1),
+('Christianisme','Christianisme',NOW(), NOW(), 1, 1),
+('Mithraïsme','Mithraïsme',NOW(), NOW(), 1, 1),
+('Islam','Islam',NOW(), NOW(), 1, 1),
+('Confucianisme','Confucianisme',NOW(), NOW(), 1, 1),
+('Bouddhisme','Bouddhisme',NOW(), NOW(), 1, 1),
+('Jaïnisme','Jaïnisme',NOW(), NOW(), 1, 1),
+('Zoroastrisme','Zoroastrisme',NOW(), NOW(), 1, 1),
+('Taoïsme','Taoïsme',NOW(), NOW(), 1, 1),
+('Hindouisme','Hindouisme',NOW(), NOW(), 1, 1),
+('Animisme','Animisme',NOW(), NOW(), 1, 1),
+('Autre','Autre',NOW(), NOW(), 1, 1);
+
+
+INSERT INTO OCCUPATION (NAME, DESCRIPTION, CREATE_DATE, MOD_DATE, MOD_BY, STATUS)
+VALUES ('Agricole','Agricole',NOW(), NOW(), 1, 1),
+('Agroalimentaire','Agroalimentaire',NOW(), NOW(), 1, 1),
+('Bancaire et financier','Bancaire et financier',NOW(), NOW(), 1, 1),
+('Energie','Energie',NOW(), NOW(), 1, 1),
+('Communication et des médias','Communication et des médias',NOW(), NOW(), 1, 1),
+('Distribution','Distribution',NOW(), NOW(), 1, 1),
+('Recherche','Recherche',NOW(), NOW(), 1, 1),
+('Santé','Santé',NOW(), NOW(), 1, 1),
+('Constructions mécaniques','Constructions mécaniques',NOW(), NOW(), 1, 1),
+('Industries chimiques','Industries chimiques',NOW(), NOW(), 1, 1),
+('Loisirs et du tourisme','Loisirs et du tourisme',NOW(), NOW(), 1, 1),
+('Matières premières ','Matières premières ',NOW(), NOW(), 1, 1),
+('Services','Services',NOW(), NOW(), 1, 1),
+('Transports','Transports',NOW(), NOW(), 1, 1),
+('Bâtiment','Bâtiment',NOW(), NOW(), 1, 1),
+('Electronique','Electronique',NOW(), NOW(), 1, 1),
+('Informatique','Informatique',NOW(), NOW(), 1, 1),
+('Métallurgique','Métallurgique',NOW(), NOW(), 1, 1),
+('Textile','Textile',NOW(), NOW(), 1, 1),
+('Autre','Autre',NOW(), NOW(), 1, 1);
+
+UPDATE OCCUPATION SET STATUS =0;
+UPDATE RELIGION SET STATUS =0;
+
 COMMIT;

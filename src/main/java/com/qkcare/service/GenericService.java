@@ -21,6 +21,8 @@ public interface GenericService {
 	public List<BaseEntity> getAll(Class cl);
 	public List<BaseEntity> getByCriteria(String queryStr, List<Quartet<String, String, String, String>> parameters, 
 			String orderBy);
+	public List<BaseEntity> getByCriteria(String queryStr, List<Quartet<String, String, String, String>> parameters, 
+			String orderBy, int maxResult);
 	public List<Object[]> getNativeByCriteria(String queryStr, List<Quartet<String, String, String, String>> parameters, 
 			String orderBy, String groupBy);
 	public Integer deleteByCriteria(String queryStr, List<Quartet<String, String, String, String>> parameters);

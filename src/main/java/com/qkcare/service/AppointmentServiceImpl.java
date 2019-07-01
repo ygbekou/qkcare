@@ -52,6 +52,14 @@ public class AppointmentServiceImpl  implements AppointmentService {
 		return scheduleEvents;
 	}
 	
+	/**
+	 * Get today's appointments
+	 */
+	public List<ScheduleEvent> getTodayAppointments(SearchCriteria searchCriteria){
+		List<ScheduleEvent> scheduleEvents = this.appointmentDao.getTodayAppointments(searchCriteria);
+		return scheduleEvents;
+	}
+	
 	@Transactional
 	public BaseEntity save(Prescription prescription) {
 		
