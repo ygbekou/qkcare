@@ -30,4 +30,6 @@ public interface GenericService {
 	public Company getCompany(String language);
 	public BaseEntity saveWithFiles(BaseEntity entity, List<MultipartFile> files, 
 			boolean useId, List<String> attributeNames);
+	public List<BaseEntity> getByCriteria(Class<? extends BaseEntity> c, String parentName, Long parentId);
+
 }

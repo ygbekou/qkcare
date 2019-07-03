@@ -6,6 +6,8 @@ import java.util.List;
 import org.hibernate.Session;
 import org.javatuples.Quartet;
 
+import com.qkcare.model.BaseEntity;
+
 public interface GenericDao<E,K> {
 	public E persist(E entity);
 	public E merge(E entity);
@@ -20,5 +22,6 @@ public interface GenericDao<E,K> {
 			String orderBy, String groupBy);
 	public Integer deleteByCriteria(String queryStr, List<Quartet<String, String, String, String>> parameters);
 	public Session getConnection();
-	
+	public List<BaseEntity> getByCriteria(Class<? extends BaseEntity> c, String parentName, Long parentId) ;
+
 }
