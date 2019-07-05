@@ -67,6 +67,15 @@ public class AppointmentController extends BaseController {
 			Appointment apt = (Appointment) genericService.find(Appointment.class, id);
 			apt.setStatus(3);
 			genericService.save(apt);
+			// cancel visits
+			List<BaseEntity> visits = genericService.getByCriteria(Visit.class, "appointment", id);
+			if (visits != null && visits.size() > 0) {
+				for (BaseEntity b : visits) {
+					Visit v = (Visit) b;
+					v.setStatus(3);
+					genericService.save(v);
+				}
+			}
 			gr.setResult("Success");
 		} catch (Exception e) {
 			gr.setResult(e.getMessage());
@@ -82,7 +91,11 @@ public class AppointmentController extends BaseController {
 			Appointment apt = (Appointment) genericService.find(Appointment.class, id);
 			apt.setStatus(1);
 			genericService.save(apt);
-			genericService.save(new Visit(apt));
+			// cancel visits
+			List<BaseEntity> visits = genericService.getByCriteria(Visit.class, "appointment", id);
+			if (visits == null || visits.size() < 1) {
+				genericService.save(new Visit(apt));
+			}
 			gr.setResult("Success");
 		} catch (Exception e) {
 			gr.setResult(e.getMessage());

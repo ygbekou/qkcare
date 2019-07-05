@@ -71,14 +71,14 @@ public class SearchCriteria implements Serializable {
 	}
 	
 	public boolean hasDoctorId() {
-		return getDoctor() != null && getDoctor().getId() > 0;
+		return getDoctor() != null && getDoctor().getId()!=null&& getDoctor().getId() > 0;
 	}
 	
 	public boolean hasHospitalLocationId() {
-		return getHospitalLocation() != null && getHospitalLocation().getId() > 0;
+		return getHospitalLocation() != null&& getHospitalLocation().getId()!=null && getHospitalLocation().getId() > 0;
 	}
 	
 	public boolean hasDepartmentId() {
-		return getDepartment() != null && getDepartment().getId() > 0;
+		return getDepartment() != null&& getDepartment().getId()!=null && getDepartment().getId() > 0;
 	}
 }
