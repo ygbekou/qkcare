@@ -122,7 +122,7 @@ public class GenericEntityController extends BaseController {
 			return new GenericResponse("SUCCESS");
 		} catch(Exception e) {
 			if(e.getMessage().contains("foreign key")||e.getMessage().contains("ConstraintViolationException")) {
-				return new GenericResponse("Il y a des donnees dependantes");
+				return new GenericResponse("FAILURE");
 			}else {
 				return new GenericResponse(e.getMessage());
 			}
