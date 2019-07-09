@@ -1,8 +1,5 @@
 package com.qkcare.service;
 
-import java.util.List;
-import java.util.Set;
-
 import org.springframework.stereotype.Service;
 import com.qkcare.model.BaseEntity;
 import com.qkcare.model.DoctorOrder;
@@ -14,5 +11,7 @@ public interface DoctorOrderService {
 	public BaseEntity save(DoctorOrder doctorOrder);
 	
 	public BaseEntity save(DoctorOrder doctorOrder, boolean notChildInclude);
+	
+	public BaseEntity getById(Long id);
 	
 }

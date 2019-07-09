@@ -108,7 +108,6 @@ public class PurchasingServiceImpl  implements PurchasingService {
 				" ORDER BY P.NAME ", " GROUP BY PO.PURCHASE_ORDER_ID, POP.PRODUCT_ID ");
 		
 		ReceiveOrder receiveOrder = new ReceiveOrder();
-		PurchaseOrder purchaseOrder = new PurchaseOrder();
 		List<ReceiveOrderProduct> receiveOrderProducts = new ArrayList<ReceiveOrderProduct>();
 		
 		DateFormat format = new SimpleDateFormat("yyyyMMdd");

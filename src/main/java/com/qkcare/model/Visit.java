@@ -240,4 +240,8 @@ public class Visit extends BaseEntity {
 	public String getPicture() {
 		return this.patient.getUser().getPicture();
 	}
+	
+	public String getStatusDesc() {
+		return this.getStatus() == 0 ? "Actif" : "Inactif";
+	}
 }

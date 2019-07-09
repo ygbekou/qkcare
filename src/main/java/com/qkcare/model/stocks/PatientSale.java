@@ -71,6 +71,7 @@ public class PatientSale extends BaseEntity {
 		this.setVisit(doctorOrder.getVisit());
 		this.setNotes(doctorOrder.getDescription());
 		this.setSaleDatetime(doctorOrder.getDoctorOrderDatetime());
+		this.setDoctorOrder(doctorOrder);
 		
 		for (Product product : doctorOrder.getProducts()) {
 			PatientSaleProduct patientSaleProduct = new PatientSaleProduct();

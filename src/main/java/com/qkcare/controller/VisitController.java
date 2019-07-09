@@ -72,7 +72,7 @@ public class VisitController extends BaseController {
 			return obj;
 		}
 		
-		@RequestMapping(value="/visit/updateStatus",method = RequestMethod.POST)
+		@RequestMapping(value="/visit/updateStatus", method = RequestMethod.POST)
 		public BaseEntity updateStatus(@RequestBody Visit visit) {
 			Visit oldVisit = (Visit) this.genericService.find(Visit.class, visit.getId());
 			oldVisit.setStatus(visit.getStatus());
@@ -80,21 +80,21 @@ public class VisitController extends BaseController {
 			return oldVisit;
 		}
 		
-		@RequestMapping(value="visit/get/{id}",method = RequestMethod.GET)
+		@RequestMapping(value="visit/get/{id}", method = RequestMethod.GET)
 		public BaseEntity getVisit(@PathVariable("id") Long id) throws ClassNotFoundException{
 			BaseEntity result = visitService.findVisit(Class.forName(Constants.PACKAGE_NAME + "Visit"), id);
 			
 			return result;
 		}
 		
-		@RequestMapping(value="diagnosis/{id}/all",method = RequestMethod.GET)
+		@RequestMapping(value="diagnosis/{id}/all", method = RequestMethod.GET)
 		public List<BaseEntity> getVisitDiagnoses(@PathVariable("id") Long id) throws ClassNotFoundException{
 			List<BaseEntity> results = visitService.getVisitChilds("VisitDiagnosis", id);
 			
 			return results;
 		}
 		
-		@RequestMapping(value="prescription/{id}/all",method = RequestMethod.GET)
+		@RequestMapping(value="prescription/{id}/all", method = RequestMethod.GET)
 		public List<BaseEntity> getVisitPrescriptions(@PathVariable("id") Long id) throws ClassNotFoundException{
 			List<BaseEntity> results = visitService.getVisitChilds("Prescription", id);
 			
@@ -119,6 +119,15 @@ public class VisitController extends BaseController {
 			
 			return obj;
 		}
+		
+		
+		@RequestMapping(value="doctororder/get/{id}",method = RequestMethod.GET)
+		public BaseEntity getDoctorOrder(@PathVariable("id") Long id) throws ClassNotFoundException{
+			BaseEntity result = doctorOrderService.getById(id);
+			
+			return result;
+		}
+		
 		
 		@RequestMapping(value="/doctororder/changeStatus",method = RequestMethod.POST)
 		public BaseEntity changeStatus(@RequestBody GenericDto dto) throws JsonParseException, 

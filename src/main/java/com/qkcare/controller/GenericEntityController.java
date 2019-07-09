@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.qkcare.domain.GenericDto;
 import com.qkcare.domain.GenericResponse;
 import com.qkcare.model.BaseEntity;
+import com.qkcare.model.SearchAttribute;
 import com.qkcare.service.GenericService;
 import com.qkcare.util.Constants;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -78,6 +79,22 @@ public class GenericEntityController extends BaseController {
 		return entities;
 	}
 
+	@RequestMapping(value = "/allByCriteriaAndOrderBy", method = RequestMethod.POST)
+	public List<BaseEntity> getAllByCriteriaAndOrderBy(@PathVariable("entity") String entity,
+			@RequestBody SearchAttribute searchAttribute) throws ClassNotFoundException {
+
+		List<Quartet<String, String, String, String>> paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
+		for (String parameter : searchAttribute.getParameters()) {
+			String[] paramSplit = parameter.split("\\|");
+			paramTupleList.add(Quartet.with(paramSplit[0], paramSplit[1], paramSplit[2], paramSplit[3]));
+		}
+
+		String queryStr = "SELECT e FROM " + this.convertEntity(entity) + " e WHERE 1 = 1";
+		List<BaseEntity> entities = genericService.getByCriteria(queryStr, paramTupleList, searchAttribute.getOrderBy());
+
+		return entities;
+	}
+	
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public BaseEntity save(@PathVariable("entity") String entity, @RequestBody GenericDto dto)
 			throws JsonParseException, JsonMappingException, IOException, ClassNotFoundException, NoSuchMethodException,
@@ -187,5 +204,4 @@ public class GenericEntityController extends BaseController {
 
 		return obj;
 	}
-
 }
