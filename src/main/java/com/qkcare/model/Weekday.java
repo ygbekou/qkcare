@@ -15,6 +15,16 @@ public class Weekday extends BaseEntity {
 	
 	@Column(name ="NAME")
 	private String name;
+	private String language;
+
+	
+	public String getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
+	}
 
 	public Weekday(){}
 	public Weekday(String name) {
