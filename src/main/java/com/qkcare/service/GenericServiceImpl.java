@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.qkcare.dao.GenericDao;
 import com.qkcare.model.BaseEntity;
 import com.qkcare.model.Company;
+import com.qkcare.model.User;
 import com.qkcare.util.Constants;
 
 @Service(value = "genericService")

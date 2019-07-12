@@ -138,10 +138,10 @@ public class GenericEntityController extends BaseController {
 			this.genericService.delete(this.getClass(entity), ids);
 			return new GenericResponse("SUCCESS");
 		} catch(Exception e) {
-			if(e.getMessage().contains("foreign key")||e.getMessage().contains("ConstraintViolationException")) {
-				return new GenericResponse("FAILURE");
+			if(e.getMessage().contains("foreign key") || e.getMessage().contains("ConstraintViolationException")) {
+				return new GenericResponse("FOREIGN_KEY_FAILURE", e.getMessage());
 			}else {
-				return new GenericResponse(e.getMessage());
+				return new GenericResponse("GENERIC_FAILURE", e.getMessage());
 			}
 		}
 	}

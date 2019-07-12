@@ -16,11 +16,9 @@ import com.qkcare.model.DoctorOrder;
 import com.qkcare.model.Investigation;
 import com.qkcare.model.LabTest;
 import com.qkcare.model.Product;
+import com.qkcare.model.User;
 import com.qkcare.model.enums.DoctorOrderTypeEnum;
 import com.qkcare.model.stocks.PatientSale;
-import com.qkcare.model.stocks.PatientSaleProduct;
-import com.qkcare.model.stocks.PurchaseOrder;
-import com.qkcare.model.stocks.ReceiveOrderProduct;
 
 @Service(value="doctorOrderService")
 public class DoctorOrderServiceImpl  implements DoctorOrderService {
@@ -41,6 +39,7 @@ public class DoctorOrderServiceImpl  implements DoctorOrderService {
 	
 	@Transactional
 	public BaseEntity save(DoctorOrder doctorOrder, boolean notChildInclude) {
+		boolean isUpdate = doctorOrder.getId() != null;
 		DoctorOrder docOrder = (DoctorOrder)this.genericService.save(doctorOrder);
 		
 		if (!notChildInclude) {
@@ -54,6 +53,7 @@ public class DoctorOrderServiceImpl  implements DoctorOrderService {
 				this.purchasingService.save(new PatientSale(doctorOrder));
 			}
 		}
+		
 		return docOrder;
 		
 	}
@@ -76,6 +76,13 @@ public class DoctorOrderServiceImpl  implements DoctorOrderService {
 		}
 		
 		doctorOrder.setProducts(doctorOrderProducts);
+		
+		User modifiedBy = (User) this.genericService.find(User.class, doctorOrder.getModifiedBy());
+		if (modifiedBy != null) {
+
+			doctorOrder.setModifiedByName(modifiedBy.getLastName() + " " + modifiedBy.getFirstName());
+		}
+		
 		
 		return doctorOrder;
 	}

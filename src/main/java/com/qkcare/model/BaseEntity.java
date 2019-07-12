@@ -24,6 +24,8 @@ public class BaseEntity {
 	private List<String> errors;
 	@Transient
 	public String customValidator = "";
+	@Transient
+	private String modifiedByName;
 	
 	public Long getId() {
 		return null;
@@ -69,7 +71,16 @@ public class BaseEntity {
 	public void setCustomValidator(String customValidator) {
 		this.customValidator = customValidator;
 	}
-
+	
+	public void setModifiedByName(String modifiedByName) {
+		this.modifiedByName = modifiedByName;
+	}
+	
+	public String getModifiedByName() {
+		return this.modifiedByName;
+	}
+	
+	
 	@Override
 	public String toString() {
 		return "BaseEntity [createDate=" + createDate + ", modDate=" + modDate
