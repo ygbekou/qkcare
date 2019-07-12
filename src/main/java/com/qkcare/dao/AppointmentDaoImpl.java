@@ -65,7 +65,8 @@ public class AppointmentDaoImpl implements AppointmentDao {
 			for (Object[] obj : list) {
 				ScheduleEvent event = new ScheduleEvent();
 				event.setId(new Long(obj[0].toString()));
-				event.setTitle((String) obj[1] + " " + (String) obj[2] + " " + (String) obj[3]);
+				event.setTitle((String) (obj[1] == null ? "" : obj[1]) + " " + (String) (obj[2] == null ? "" : obj[2])
+						+ " " + (String) (obj[3] == null ? "" : obj[3]));
 				event.setStart(obj[4].toString().split(" ")[0] + "T" + obj[5].toString());
 				event.setEnd(obj[4].toString().split(" ")[0] + "T" + obj[6].toString());
 				event.setClassName("availability");
@@ -95,12 +96,11 @@ public class AppointmentDaoImpl implements AppointmentDao {
 			StringBuilder sqlBuilder = new StringBuilder("SELECT AP.APPOINTMENT_ID, U.FIRST_NAME, U.MIDDLE_NAME, "
 					+ "U.LAST_NAME, AP.APPOINTMENT_DATE, AP.BEGIN_TIME, AP.END_TIME, AP.STATUS, U.HOME_PHONE, "
 					+ "CONCAT_WS (' ',EMP.DESIGNATION,U2.FIRST_NAME, U2.MIDDLE_NAME, U2.LAST_NAME) DOCNAME, "
-					+ "P.PATIENT_ID, EMP.EMPLOYEE_ID "
+					+ "P.PATIENT_ID, EMP.EMPLOYEE_ID ,U2.FIRST_NAME DRFNAME, U2.LAST_NAME DRLASTNAME, EMP.DESIGNATION "
 					+ "FROM APPOINTMENT AP " + "JOIN PATIENT P ON AP.PATIENT_ID = P.PATIENT_ID "
 					+ "JOIN USERS U ON P.USER_ID = U.USER_ID "
 					+ "JOIN EMPLOYEE EMP ON (EMP.EMPLOYEE_ID = AP.DOCTOR_ID) "
-					+ "JOIN USERS U2 ON (U2.USER_ID = EMP.USER_ID) "
-					+ "WHERE 1 = 1 AND AP.STATUS IN (0,1) "
+					+ "JOIN USERS U2 ON (U2.USER_ID = EMP.USER_ID) " + "WHERE 1 = 1 AND AP.STATUS IN (0,1) "
 					+ "AND DATE_FORMAT(SYSDATE(), '%Y-%m-01') = DATE_FORMAT(AP.APPOINTMENT_DATE, '%Y-%m-01') "
 					+ "ORDER BY AP.APPOINTMENT_DATE, AP.BEGIN_TIME  " + "LIMIT " + searchCriteria.getTopN());
 
@@ -123,6 +123,9 @@ public class AppointmentDaoImpl implements AppointmentDao {
 				event.setDocName((String) obj[9]);
 				event.setPatientId(new Long(obj[10].toString()));
 				event.setEmployeeId(new Long(obj[11].toString()));
+				event.setDocFirstName((String) obj[12]);
+				event.setDocLastName((String) obj[13]);
+				event.setDesignation((String) obj[14]);
 				events.add(event);
 			}
 
