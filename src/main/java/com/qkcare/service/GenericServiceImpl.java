@@ -119,6 +119,10 @@ public class GenericServiceImpl implements GenericService {
 	public Integer deleteByCriteria(String queryStr, List<Quartet<String, String, String, String>> parameters) {
 		return this.genericDao.deleteByCriteria(queryStr, parameters);
 	}
+	
+	public Integer deleteNativeByCriteria(String queryStr, List<Quartet<String, String, String, String>> parameters) {
+		return this.genericDao.deleteNativeByCriteria(queryStr, parameters);
+	}
 
 	public Session getConnection() {
 		return this.genericDao.getConnection();

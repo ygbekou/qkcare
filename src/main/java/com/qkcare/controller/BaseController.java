@@ -25,9 +25,26 @@ public class BaseController {
 	}
 	
 	protected String convertEntity(String entity) {
-		return entity.replaceAll("_", ".");
+		String convertedEntity =  entity.replaceAll("_", ".");
+		
+		if (convertedEntity.contains("Product.Category")) {
+			convertedEntity = "Category c, Product ";
+		}
+		
+		return convertedEntity;
 	}
 
+	protected String getExtraWhereClause(String entity) {
+		String extraWhereClause = "";
+		
+		if (entity.contains("Category c, Product")) {
+			extraWhereClause = " AND c = e.category ";
+		}
+		
+		return extraWhereClause;
+	}
+
+	
 	protected BaseEntity genericDtoToEntiityClassObject(GenericDto dto, String entity) 
 			throws InstantiationException, IllegalAccessException, ClassNotFoundException, 
 			IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {

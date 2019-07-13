@@ -88,8 +88,8 @@ public class GenericEntityController extends BaseController {
 			String[] paramSplit = parameter.split("\\|");
 			paramTupleList.add(Quartet.with(paramSplit[0], paramSplit[1], paramSplit[2], paramSplit[3]));
 		}
-
-		String queryStr = "SELECT e FROM " + this.convertEntity(entity) + " e WHERE 1 = 1";
+		String convertedEntity = this.convertEntity(entity);
+		String queryStr = "SELECT e FROM " + convertedEntity + " e WHERE 1 = 1 " + getExtraWhereClause(convertedEntity);
 		List<BaseEntity> entities = genericService.getByCriteria(queryStr, paramTupleList, searchAttribute.getOrderBy());
 
 		return entities;

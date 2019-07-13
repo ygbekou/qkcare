@@ -26,6 +26,7 @@ public interface GenericService {
 	public List<Object[]> getNativeByCriteria(String queryStr, List<Quartet<String, String, String, String>> parameters, 
 			String orderBy, String groupBy);
 	public Integer deleteByCriteria(String queryStr, List<Quartet<String, String, String, String>> parameters);
+	public Integer deleteNativeByCriteria(String queryStr, List<Quartet<String, String, String, String>> parameters);
 	public Session getConnection();
 	public Company getCompany(String language);
 	public BaseEntity saveWithFiles(BaseEntity entity, List<MultipartFile> files, 

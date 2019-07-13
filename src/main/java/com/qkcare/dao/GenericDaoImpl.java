@@ -63,14 +63,14 @@ public class GenericDaoImpl<E, K> implements GenericDao<E, K> {
 
 	public List<E> getByCriteria(String queryStr, List<Quartet<String, String, String, String>> parameters,
 			String orderBy) {
-		Query query = this.buildQuery(queryStr, parameters, orderBy, null, false);
+		Query query = this.buildQuery(queryStr, parameters, orderBy, null, false, true);
 		List<E> ListOfEmailDomains = query.getResultList();
 		return ListOfEmailDomains;
 	}
 
 	public List<E> getByCriteria(String queryStr, List<Quartet<String, String, String, String>> parameters,
 			String orderBy, int maxResult) {
-		Query query = this.buildQuery(queryStr, parameters, orderBy, null, false);
+		Query query = this.buildQuery(queryStr, parameters, orderBy, null, false, true);
 		query.setMaxResults(maxResult);
 		List<E> ListOfEmailDomains = query.getResultList();
 		return ListOfEmailDomains;
@@ -88,24 +88,33 @@ public class GenericDaoImpl<E, K> implements GenericDao<E, K> {
 
 	public List<Object[]> getNativeByCriteria(String queryStr, List<Quartet<String, String, String, String>> parameters,
 			String orderBy, String groupBy) {
-		Query query = this.buildQuery(queryStr, parameters, orderBy, groupBy, true);
+		Query query = this.buildQuery(queryStr, parameters, orderBy, groupBy, true, true);
 		List<Object[]> list = query.getResultList();
 		return list;
 	}
 
 	public Integer deleteByCriteria(String queryStr, List<Quartet<String, String, String, String>> parameters) {
-		Query query = this.buildQuery(queryStr, parameters, null, null, false);
+		Query query = this.buildQuery(queryStr, parameters, null, null, false, true);
 		Integer nbDel = query.executeUpdate();
 		return nbDel;
 	}
+	
+	public Integer deleteNativeByCriteria(String queryStr, List<Quartet<String, String, String, String>> parameters) {
+		Query query = this.buildQuery(queryStr, parameters, null, null, true, false);
+		Integer nbDel = query.executeUpdate();
+		return nbDel;
+	}
+	
 
 	private Query buildQuery(String queryStr, List<Quartet<String, String, String, String>> parameters, String orderBy,
-			String groupBy, boolean nativeQuery) {
+			String groupBy, boolean nativeQuery, boolean addParameters) {
 		StringBuilder queryBuilder = new StringBuilder(queryStr);
 
 		// Build the query
-		for (Quartet<String, String, String, String> parameter : parameters) {
-			queryBuilder.append(" AND " + parameter.getValue0() + " :" + parameter.getValue1());
+		if (addParameters) {
+			for (Quartet<String, String, String, String> parameter : parameters) {
+				queryBuilder.append(" AND " + parameter.getValue0() + " :" + parameter.getValue1());
+			}
 		}
 
 		if (groupBy != null) {
