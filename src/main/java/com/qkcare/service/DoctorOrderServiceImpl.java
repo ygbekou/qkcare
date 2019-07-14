@@ -64,7 +64,7 @@ public class DoctorOrderServiceImpl  implements DoctorOrderService {
 				}
 				
 				for (LabTest labTest : doctorOrder.getLabTests()) {
-					this.investigationService.save(new Investigation(doctorOrder, labTest));
+					this.investigationService.save(new Investigation(docOrder, labTest));
 				}
 			}
 			
@@ -80,7 +80,7 @@ public class DoctorOrderServiceImpl  implements DoctorOrderService {
 					doctorOrder.getProducts().removeIf((Product p) -> !productIdPairs.getValue1().contains(p.getId()));
 					
 				}
-				this.purchasingService.save(new PatientSale(doctorOrder));
+				this.purchasingService.save(new PatientSale(docOrder));
 			}
 		}
 		
