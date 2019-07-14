@@ -1,6 +1,5 @@
 package com.qkcare.dao;
 
-import java.sql.Connection;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
@@ -13,10 +12,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Restrictions;
 import org.javatuples.Quartet;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 import org.springframework.stereotype.Repository;
 
 import com.qkcare.model.BaseEntity;

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.qkcare.domain.SearchCriteria;
 import com.qkcare.model.BaseEntity;
 import com.qkcare.model.Investigation;
 import com.qkcare.model.InvestigationTest;
@@ -15,5 +16,7 @@ public interface InvestigationService {
 	public BaseEntity save(Investigation investigation);
 	
 	public void saveInvestigationTests(List<InvestigationTest> investigationTests);
+	
+	public List<BaseEntity> getInvestigations(SearchCriteria searchCriteria);
 	
 }
