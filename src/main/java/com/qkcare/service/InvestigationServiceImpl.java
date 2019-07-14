@@ -1,12 +1,8 @@
 package com.qkcare.service;
 
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.ArrayList; 
 import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.persistence.Transient;
 import javax.transaction.Transactional;
 
 import org.javatuples.Quartet;
@@ -14,15 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.qkcare.model.BaseEntity;
-import com.qkcare.model.Bill;
-import com.qkcare.model.BillPayment;
-import com.qkcare.model.BillService;
-import com.qkcare.model.DoctorOrder;
 import com.qkcare.model.Investigation;
 import com.qkcare.model.InvestigationTest;
 import com.qkcare.model.LabTest;
-import com.qkcare.model.PackageService;
-import com.qkcare.model.Visit;
 
 @Service(value="investigationService")
 public class InvestigationServiceImpl  implements InvestigationService {
@@ -50,11 +40,6 @@ public class InvestigationServiceImpl  implements InvestigationService {
 				this.genericService.save(investigationTest);
 			}
 		} 
-//		else {
-//			for (InvestigationTest investigationTest : investigation.getInvestigationTests()) {
-//				this.genericService.save(investigationTest);
-//			}
-//		}
 		return toReturn;
 	}
 	

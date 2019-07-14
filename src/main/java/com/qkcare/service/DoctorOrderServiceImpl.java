@@ -15,7 +15,6 @@ import org.javatuples.Quartet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.qkcare.controller.AccountController;
 import com.qkcare.model.BaseEntity;
 import com.qkcare.model.DoctorOrder;
 import com.qkcare.model.Investigation;
@@ -49,27 +48,38 @@ public class DoctorOrderServiceImpl  implements DoctorOrderService {
 		boolean isUpdate = doctorOrder.getId() != null;
 		DoctorOrder docOrder = (DoctorOrder)this.genericService.save(doctorOrder);
 		
-		if (isUpdate) {
-			Pair<List<Long>, List<Long>> productIdPairs = this.getRemovedAndNewProductIds(doctorOrder);
-			
-			LOGGER.info(String.format("These Products were removed {0} ", productIdPairs.getValue0()));
-			LOGGER.info(String.format("These Products were added {0} ", productIdPairs.getValue1()));
-			
-			int deletedItemNumber = this.deleteRemovedProdcuts(doctorOrder);
-			
-			doctorOrder.getProducts().removeIf((Product p) -> !productIdPairs.getValue1().contains(p.getId()));
-			
-		}
-		
 		if (!notChildInclude) {
 			if (doctorOrder.getDoctorOrderTypeEnum() == DoctorOrderTypeEnum.LABORATORY) {
+				if (isUpdate) {
+					Pair<List<Long>, List<Long>> labTestIdPairs = this.getRemovedAndNewLabTestIds(doctorOrder);
+					
+					LOGGER.info(String.format("These LabTests were removed %s ", labTestIdPairs.getValue0()));
+					LOGGER.info(String.format("These LabTests were added %s ", labTestIdPairs.getValue1()));
+					
+					int deletedInvestigationNumber = this.deleteRemovedLabTests(doctorOrder);
+					int deletedLabTestNumber = this.deleteRemovedInvestigationLabTests(doctorOrder);
+					
+					doctorOrder.getLabTests().removeIf((LabTest lb) -> !labTestIdPairs.getValue1().contains(lb.getId()));
+					
+				}
+				
 				for (LabTest labTest : doctorOrder.getLabTests()) {
 					this.investigationService.save(new Investigation(doctorOrder, labTest));
 				}
 			}
 			
 			if (doctorOrder.getDoctorOrderTypeEnum() == DoctorOrderTypeEnum.PHARMACY) {
-				
+				if (isUpdate) {
+					Pair<List<Long>, List<Long>> productIdPairs = this.getRemovedAndNewProductIds(doctorOrder);
+					
+					LOGGER.info(String.format("These Products were removed %s ", productIdPairs.getValue0()));
+					LOGGER.info(String.format("These Products were added %s ", productIdPairs.getValue1()));
+					
+					int deletedItemNumber = this.deleteRemovedProdcuts(doctorOrder);
+					
+					doctorOrder.getProducts().removeIf((Product p) -> !productIdPairs.getValue1().contains(p.getId()));
+					
+				}
 				this.purchasingService.save(new PatientSale(doctorOrder));
 			}
 		}
@@ -97,9 +107,24 @@ public class DoctorOrderServiceImpl  implements DoctorOrderService {
 		
 		doctorOrder.setProducts(doctorOrderProducts);
 		
+		// Get the doctor order labTests 
+		paramTupleList.clear();
+		paramTupleList.add(Quartet.with("I.DOCTOR_ORDER_ID = ", ":doctorOrderId", id + "", "Long"));
+		queryStr =  "SELECT L.LAB_TEST_ID, L.NAME \r\n" + 
+				"FROM LAB_TEST L\r\n" + 
+				"JOIN INVESTIGATION I ON L.LAB_TEST_ID = I.LAB_TEST_ID WHERE 1 = 1 ";
+		list = genericService.getNativeByCriteria(queryStr, paramTupleList, " ", " ");
+		List<LabTest> doctorOrderLabTests = new ArrayList<LabTest>();
+		
+		for (Object[] objects : list) {
+			doctorOrderLabTests.add(new LabTest(new Long(objects[0].toString()), objects[1].toString()));
+		}
+		
+		doctorOrder.setLabTests(doctorOrderLabTests);
+		
+		
 		User modifiedBy = (User) this.genericService.find(User.class, doctorOrder.getModifiedBy());
 		if (modifiedBy != null) {
-
 			doctorOrder.setModifiedByName(modifiedBy.getLastName() + " " + modifiedBy.getFirstName());
 		}
 		
@@ -125,14 +150,63 @@ public class DoctorOrderServiceImpl  implements DoctorOrderService {
 					"		) ";
 		Integer totalDeleted = genericService.deleteNativeByCriteria(queryStr, paramTupleList);
 		
+		LOGGER.info(String.format("Number of products deleted %d ", totalDeleted));
+		
+		return totalDeleted;
+	}
+	
+	
+	private int deleteRemovedInvestigationLabTests(DoctorOrder doctorOrder) {
+		List<LabTest> selectedLabTests = doctorOrder.getLabTests();
+		List<Long> selectedLabTestIds = selectedLabTests.stream()
+                .map(LabTest::getId).collect(Collectors.toList());
+		
+		List<Quartet<String, String, String, String>> paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
+		paramTupleList.add(Quartet.with("I.DOCTOR_ORDER_ID = ", "doctorOrderId", doctorOrder.getId() + "", "Long"));
+		paramTupleList.add(Quartet.with("IT.LAB_TEST_ID NOT IN ", "selectedLabTestIds", selectedLabTestIds.toString().substring(1, selectedLabTestIds.toString().length() - 1) + "", "List"));
+		String queryStr =  "DELETE FROM INVESTIGATION_TEST WHERE INVESTIGATION_TEST_ID IN (\r\n" + 
+					"			SELECT IT_ID FROM (\r\n" + 
+					"				SELECT IT.INVESTIGATION_TEST_ID AS IT_ID FROM INVESTIGATION_TEST IT, INVESTIGATION I\r\n" + 
+					"				WHERE IT.INVESTIGATION_ID = I.INVESTIGATION_ID \r\n" + 
+					"				AND I.DOCTOR_ORDER_ID = :doctorOrderId \r\n" + 
+					"				AND I.LAB_TEST_ID NOT IN (:selectedLabTestIds)\r\n" + 
+					"			) AS IT2\r\n" + 
+					"		) ";
+		Integer totalDeleted = genericService.deleteNativeByCriteria(queryStr, paramTupleList);
+		
+		LOGGER.info(String.format("Number of investigation tests deleted %d ", totalDeleted));
+		
+		return totalDeleted;
+	}
+	
+	private int deleteRemovedLabTests(DoctorOrder doctorOrder) {
+		List<LabTest> selectedLabTests = doctorOrder.getLabTests();
+		List<Long> selectedLabTestIds = selectedLabTests.stream()
+                .map(LabTest::getId).collect(Collectors.toList());
+		
+		List<Quartet<String, String, String, String>> paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
+		paramTupleList.add(Quartet.with("I.DOCTOR_ORDER_ID = ", "doctorOrderId", doctorOrder.getId() + "", "Long"));
+		paramTupleList.add(Quartet.with("IT.LAB_TEST_ID NOT IN ", "selectedLabTestIds", selectedLabTestIds.toString().substring(1, selectedLabTestIds.toString().length() - 1) + "", "List"));
+		String queryStr =  "DELETE FROM INVESTIGATION WHERE INVESTIGATION_ID IN (\r\n" + 
+					"			SELECT I_ID FROM (\r\n" + 
+					"				SELECT I.INVESTIGATION_ID AS I_ID FROM INVESTIGATION I\r\n" + 
+					"				WHERE I.DOCTOR_ORDER_ID = :doctorOrderId \r\n" + 
+					"				AND I.LAB_TEST_ID NOT IN (:selectedLabTestIds)\r\n" + 
+					"			) AS I2\r\n" + 
+					"		) ";
+		Integer totalDeleted = genericService.deleteNativeByCriteria(queryStr, paramTupleList);
+		
+		LOGGER.info(String.format("Number of investigation deleted %d ", totalDeleted));
+		
+		
+		
 		return totalDeleted;
 	}
 	
 	
 	private Pair<List<Long>, List<Long>> getRemovedAndNewProductIds(DoctorOrder doctorOrder) {
 		List<Product> selectedProducts = doctorOrder.getProducts();
-		List<Long> selectedProductIds = selectedProducts.stream()
-                .map(Product::getId).collect(Collectors.toList());
+		List<Long> selectedProductIds = selectedProducts.stream().map(Product::getId).collect(Collectors.toList());
 		
 		List<Quartet<String, String, String, String>> paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
 		paramTupleList.add(Quartet.with("PS.DOCTOR_ORDER_ID = ", ":doctorOrderId", doctorOrder.getId() + "", "Long"));
@@ -151,5 +225,28 @@ public class DoctorOrderServiceImpl  implements DoctorOrderService {
 		return Pair.with(new ArrayList<Long>(CollectionUtils.subtract(existingProductIds, selectedProductIds)), 
 				new ArrayList<Long>(CollectionUtils.subtract(selectedProductIds, existingProductIds)));
 	}
+	
+	private Pair<List<Long>, List<Long>> getRemovedAndNewLabTestIds(DoctorOrder doctorOrder) {
+		List<LabTest> selectedLabTests = doctorOrder.getLabTests();
+		List<Long> selectedLabTestIds = selectedLabTests.stream().map(LabTest::getId).collect(Collectors.toList());
+		
+		List<Quartet<String, String, String, String>> paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
+		paramTupleList.add(Quartet.with("I.DOCTOR_ORDER_ID = ", ":doctorOrderId", doctorOrder.getId() + "", "Long"));
+		String queryStr =  "SELECT I.LAB_TEST_ID, I.INVESTIGATION_ID \r\n" + 
+				"FROM INVESTIGATION I\r\n" + 
+				"WHERE 1 = 1 \r\n";
+		
+		List<Object[]> list = genericService.getNativeByCriteria(queryStr, paramTupleList, " ", " ");
+		List<Long> existingLabTestIds = new ArrayList<Long>();
+		
+		for (Object[] objects : list) {
+			existingLabTestIds.add(new Long(objects[0].toString()));
+		}
+		
+		
+		return Pair.with(new ArrayList<Long>(CollectionUtils.subtract(existingLabTestIds, selectedLabTestIds)), 
+				new ArrayList<Long>(CollectionUtils.subtract(selectedLabTestIds, existingLabTestIds)));
+	}
+
 
 }

@@ -64,6 +64,7 @@ public class Investigation extends BaseEntity {
 		this.setName(labTest.getName());
 		this.setLabTest(labTest);
 		this.setInvestigationDatetime(doctorOrder.getDoctorOrderDatetime());
+		this.setDoctorOrder(doctorOrder);
 	}
 	
 	public Long getId() {

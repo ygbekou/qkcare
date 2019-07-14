@@ -1,7 +1,5 @@
 package com.qkcare.model;
 
-import java.util.ArrayList;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,7 +8,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.qkcare.model.stocks.PatientSaleProduct;
 
 @Entity
 @Table(name = "LAB_TEST")
@@ -43,6 +40,15 @@ public class LabTest extends BaseEntity {
 	
 	public LabTest() {
 		
+	}
+	
+	public LabTest(Long id) {
+		this.id = id;
+	}
+
+	public LabTest(Long id, String name) {
+		this.id = id;
+		this.name = name;
 	}
 	
 	public Long getId() {

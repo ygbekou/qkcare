@@ -42,7 +42,7 @@ public class DoctorOrder extends BaseEntity {
 	private String description;
 	@ManyToOne
 	@JoinColumn(name = "DOCTOR_ORDER_KIND_ID")
-	private DoctorOrderPriority doctorOrderKind;
+	private DoctorOrderKind doctorOrderKind;
 	@ManyToOne
 	@JoinColumn(name = "DOCTOR_ID")
 	private Employee doctor;
@@ -107,10 +107,10 @@ public class DoctorOrder extends BaseEntity {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public DoctorOrderPriority getDoctorOrderKind() {
+	public DoctorOrderKind getDoctorOrderKind() {
 		return doctorOrderKind;
 	}
-	public void setDoctorOrderKind(DoctorOrderPriority doctorOrderKind) {
+	public void setDoctorOrderKind(DoctorOrderKind doctorOrderKind) {
 		this.doctorOrderKind = doctorOrderKind;
 	}
 	public Employee getDoctor() {
