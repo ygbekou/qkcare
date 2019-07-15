@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.qkcare.domain.GenericDto;
+import com.qkcare.domain.GenericResponse;
 import com.qkcare.model.BaseEntity;
 import com.qkcare.model.User;
 import com.qkcare.service.GenericService;
@@ -35,99 +36,102 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
 @RestController
-@RequestMapping(value="/service/user/{entity}")
+@RequestMapping(value = "/service/user/{entity}")
 @CrossOrigin
 public class UserController extends BaseController {
-	
-		private static final Logger LOGGER = Logger.getLogger(UserController.class);
-	
-		@Autowired 
-		@Qualifier("userService")
-		UserService userService;
-		
-				
-		@RequestMapping(value="/save",method = RequestMethod.POST)
-		public BaseEntity save(@PathVariable("entity") String entity, 
-				@RequestPart("file") MultipartFile file, @RequestPart GenericDto dto) throws JsonParseException, 
-		JsonMappingException, IOException, ClassNotFoundException {
-			BaseEntity obj = null;
-			try {
-				obj = (BaseEntity) this.genericDtoToEntiityClassObject(dto, entity);
-				userService.save(obj, file);
-			} catch(Exception e) {
-				e.printStackTrace();
-				obj.setErrors(Arrays.asList(e.getMessage()));
-			}
-			
-			return obj;
+
+	private static final Logger LOGGER = Logger.getLogger(UserController.class);
+
+	@Autowired
+	@Qualifier("userService")
+	UserService userService;
+
+	@RequestMapping(value = "/save", method = RequestMethod.POST)
+	public BaseEntity save(@PathVariable("entity") String entity, @RequestPart("file") MultipartFile file,
+			@RequestPart GenericDto dto)
+			throws JsonParseException, JsonMappingException, IOException, ClassNotFoundException {
+		BaseEntity obj = null;
+		try {
+			obj = (BaseEntity) this.genericDtoToEntiityClassObject(dto, entity);
+			userService.save(obj, file);
+		} catch (Exception e) {
+			e.printStackTrace();
+			obj.setErrors(Arrays.asList(e.getMessage()));
 		}
-		
-		@RequestMapping(value="/saveWithoutPicture",method = RequestMethod.POST)
-		public BaseEntity saveWithoutPicture(@PathVariable("entity") String entity,
-				@RequestBody GenericDto dto) throws Exception {
-			
-			BaseEntity obj = null;
-			try {
-				obj = (BaseEntity) this.genericDtoToEntiityClassObject(dto, entity);
-				if (obj.getErrors() == null || obj.getErrors().size() == 0)
-					userService.save(obj, null);
-			} catch(Exception e) {
-				e.printStackTrace();
-				obj.setErrors(Arrays.asList(e.getMessage()));
-			}
-			
-			return obj;
+
+		return obj;
+	}
+
+	@RequestMapping(value = "/saveWithoutPicture", method = RequestMethod.POST)
+	public BaseEntity saveWithoutPicture(@PathVariable("entity") String entity, @RequestBody GenericDto dto)
+			throws Exception {
+
+		BaseEntity obj = null;
+		try {
+			obj = (BaseEntity) this.genericDtoToEntiityClassObject(dto, entity);
+			if (obj.getErrors() == null || obj.getErrors().size() == 0)
+				userService.save(obj, null);
+		} catch (Exception e) {
+			e.printStackTrace();
+			obj.setErrors(Arrays.asList(e.getMessage()));
 		}
-		
-		
-		@RequestMapping(value = "/login", method = RequestMethod.POST, headers = "Accept=application/json")
-		public @ResponseBody User login(@RequestBody User user) {
-			LOGGER.info("User Login :" + user);
-			if (user.getEmail() != null && !user.getEmail().contains("@")) {
-				user.setUserName(user.getEmail());
-			}
-			user = userService.getUser(user.getEmail(), user.getUserName(), user.getPassword());
 
-			if (user != null) {
-				return user;
-			}
-			return new User();
+		return obj;
+	}
 
+	@RequestMapping(value = "/login", method = RequestMethod.POST, headers = "Accept=application/json")
+	public @ResponseBody User login(@RequestBody User user) {
+		LOGGER.info("User Login :" + user);
+		if (user.getEmail() != null && !user.getEmail().contains("@")) {
+			user.setUserName(user.getEmail());
 		}
-		
-		@RequestMapping(value = "/sendPassword", method = RequestMethod.POST)
-		public @ResponseBody String sendPassword(@PathVariable("entity") String entity, @RequestBody User user) {
+		user = userService.getUser(user.getEmail(), user.getUserName(), user.getPassword());
 
-			if (user == null || (user.getEmail() == null && user.getUserName() == null)) {
-				return "Failure";
-			}
+		if (user != null) {
+			return user;
+		}
+		return new User();
 
-			User storedUser = this.userService.getUser(user.getEmail(), user.getUserName(), null);
+	}
 
-			if (storedUser == null) {
-				return "Failure";
-			}
+	@RequestMapping(value = "/sendPassword", method = RequestMethod.POST)
+	public GenericResponse sendPassword(@PathVariable("entity") String entity, @RequestBody User user) {
+		GenericResponse gr = new GenericResponse();
+		if (user == null || (user.getEmail() == null && user.getUserName() == null)) {
+			gr.setResult("Failure");
+			return gr;
+		}
 
-			try {
+		User storedUser = this.userService.getUser(user.getEmail(), user.getUserName(), null);
 
+		if (storedUser == null) {
+			gr.setResult("Failure");
+			return gr;
+		}
+
+		try {
+
+			if (storedUser.getEmail() != null) {
 				String mail = "<blockquote><h2><b>Bonjour "
 						+ (storedUser.getSex() != null && storedUser.getSex().equals("M") ? "Madame" : "Monsieur")
 						+ "</b></h2><h2>Votre Mot de passe est:" + storedUser.getPassword()
 						+ "  </h2><h2>Veuillez le garder secret en supprimant cet e-mail.</h2><h2>Encore une fois, merci de votre interet en notre organisation.</h2><h2><b>Le Directeur.</b></h2></blockquote>";
-				SimpleMail.sendMail("Votre Mot de passe sur le site de ",
-						mail, "ericgbekou@gmail.com", "ericgbekou@hotmail.com",
-						"smtp.gmail.com", "softenzainc@gmail.com",
-						"softenza123", false);
-
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return "Failure";
+				SimpleMail.sendMail("Votre Mot de passe", mail, "softenzainc@gmail.com",
+						storedUser.getEmail(), "smtp.gmail.com", "softenzainc@gmail.com", "softenza123", false);
+			} else {
+				gr.setResult("Failure");
+				return gr;
 			}
 
-			return "Success";
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			gr.setResult("Failure");
+			return gr;
 		}
+		gr.setResult("Success");
+		return gr; 
+	}
 
 }
