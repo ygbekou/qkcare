@@ -4,6 +4,7 @@ package com.qkcare.service;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -121,7 +122,7 @@ public class BillingServiceImpl  implements BillingService {
 	
 	public BaseEntity findBillInitial(String itemLabel, String itemNumber) {
 		Bill bill = new Bill();
-		Timestamp serviceDate = null;
+		Date serviceDate = null;
 		Employee doctor = null;
 		
 		List<Quartet<String, String, String, String>> paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
