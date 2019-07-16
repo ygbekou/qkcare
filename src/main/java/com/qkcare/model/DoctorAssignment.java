@@ -1,6 +1,5 @@
 package com.qkcare.model;
-
-import java.sql.Timestamp;
+ 
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -27,14 +26,14 @@ public class DoctorAssignment extends BaseEntity {
 	@JoinColumn(name = "DOCTOR_ID")
 	private Employee doctor;
 	@Column(name = "START_DATE")
-	private Timestamp startDate;
+	private Date startDate;
 	@Column(name = "END_DATE")
-	private Timestamp endDate;
+	private Date endDate;
 	
 	@Transient
 	private Employee transferDoctor;
 	@Transient
-	private Timestamp transferDate;
+	private Date transferDate;
 	
 	public Long getId() {
 		return id;
@@ -54,16 +53,16 @@ public class DoctorAssignment extends BaseEntity {
 	public void setDoctor(Employee doctor) {
 		this.doctor = doctor;
 	}
-	public Timestamp getStartDate() {
+	public Date getStartDate() {
 		return startDate;
 	}
-	public void setStartDate(Timestamp startDate) {
+	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
 	}
-	public Timestamp getEndDate() {
+	public Date getEndDate() {
 		return endDate;
 	}
-	public void setEndDate(Timestamp endDate) {
+	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
 	}
 	public Employee getTransferDoctor() {
@@ -72,10 +71,10 @@ public class DoctorAssignment extends BaseEntity {
 	public void setTransferDoctor(Employee transferDoctor) {
 		this.transferDoctor = transferDoctor;
 	}
-	public Timestamp getTransferDate() {
+	public Date getTransferDate() {
 		return transferDate;
 	}
-	public void setTransferDate(Timestamp transferDate) {
+	public void setTransferDate(Date transferDate) {
 		this.transferDate = transferDate;
 	}
 	
