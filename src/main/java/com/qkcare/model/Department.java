@@ -51,4 +51,8 @@ public class Department extends BaseEntity {
 		this.status = status;
 	}
 	
+	// Transient
+	public String getStatusDesc() {
+		return status == 0 ? "Active" : "Inactive";
+	}
 }
