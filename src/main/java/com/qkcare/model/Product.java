@@ -112,4 +112,7 @@ public class Product extends BaseEntity {
 	public String getManufacturerName() {
 		return this.manufacturer != null ? this.manufacturer.getName() : "";
 	}
+	public String getStatusDesc() {
+		return status == 0 ? "Active" : "Inactive";
+	}
 }

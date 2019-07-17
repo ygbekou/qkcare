@@ -43,4 +43,9 @@ public class LabTestMethod extends BaseEntity {
 		this.id = id;
 	}
 	
+	
+	
+	public String getStatusDesc() {
+		return status == 0 ? "Active" : "Inactive";
+	}
 }
