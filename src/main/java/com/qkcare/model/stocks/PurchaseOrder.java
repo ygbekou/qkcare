@@ -138,6 +138,20 @@ public class PurchaseOrder extends BaseEntity {
 	}
 	
 	
+	
+	public void decreaseAmount(PurchaseOrderProduct pop) {
+		this.setSubTotal(this.getSubTotal() - pop.getTotalAmount());
+		this.setGrandTotal(this.getGrandTotal() - pop.getTotalAmount());
+		
+		if (this.getPurchaseOrderProducts().isEmpty()) {
+			this.setTaxes(0d);
+			this.setDiscount(0d);
+			this.setGrandTotal(0d);
+			this.setDue(0d);
+		}
+	}
+	
+	
 	// Transients
 	public String getSupplierName() {
 		return this.getSupplier() != null ? this.getSupplier().getName() : "";
@@ -147,6 +161,9 @@ public class PurchaseOrder extends BaseEntity {
 	}
 	public String getReceiverName() {
 		return this.getShipTo() != null ? this.getShipTo().getName() : "";
+	}
+	public String getStatusDesc() {
+		return status == 0 ? "Active" : "Inactive";
 	}
 	
 }

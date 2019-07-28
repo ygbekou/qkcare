@@ -27,9 +27,9 @@ public class ReceiveOrderProduct extends BaseEntity {
 	@JoinColumn(name = "PRODUCT_ID")
 	private Product product;
 	@Column(name = "QUANTITY")
-	private int quantity;
+	private Integer quantity;
 	private String notes;
-	private int status;
+	private Integer status;
 	
 	@Transient
 	private int originalQuantity;
@@ -42,6 +42,7 @@ public class ReceiveOrderProduct extends BaseEntity {
 		this.product = product;
 		this.originalQuantity = originalQuantity;
 		this.quantity = quantity;
+		this.status = 0;
 	}
 	
 	public Long getId() {

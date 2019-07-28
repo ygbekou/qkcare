@@ -3,6 +3,9 @@ package com.qkcare.controller;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +23,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qkcare.domain.GenericDto;
 import com.qkcare.model.BaseEntity;
-import com.qkcare.model.Bill;
-import com.qkcare.model.BillService;
-import com.qkcare.model.PackageService;
 import com.qkcare.model.stocks.PatientSale;
 import com.qkcare.model.stocks.PatientSaleProduct;
 import com.qkcare.model.stocks.PurchaseOrder;
@@ -31,10 +31,8 @@ import com.qkcare.model.stocks.ReceiveOrder;
 import com.qkcare.model.stocks.ReceiveOrderProduct;
 import com.qkcare.model.stocks.SaleReturn;
 import com.qkcare.model.stocks.SaleReturnProduct;
-import com.qkcare.service.BillingService;
 import com.qkcare.service.GenericService;
 import com.qkcare.service.PurchasingService;
-import com.qkcare.util.Constants;
 
 
 @RestController
@@ -57,7 +55,8 @@ public class PurchasingController extends BaseController {
 		JsonMappingException, IOException, ClassNotFoundException {
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-			BaseEntity obj = (BaseEntity) mapper.readValue(dto.getJson().replaceAll("'", "\"").replaceAll("/", "\\/"),
+			BaseEntity obj = (BaseEntity) mapper.readValue(dto.getJson()
+					.replaceAll("'", "\"").replaceAll("/", "\\/"),
 					this.getClass("com.qkcare.model.stocks.PurchaseOrder"));
 			purchasingService.save((PurchaseOrder)obj);
 			
@@ -70,7 +69,8 @@ public class PurchasingController extends BaseController {
 		
 		@RequestMapping(value="purchaseOrder/{id}",method = RequestMethod.GET)
 		public BaseEntity getPurchaseOrder(@PathVariable("id") Long id) throws ClassNotFoundException {
-			BaseEntity result = purchasingService.findPurchaseOrder(this.getClass("com.qkcare.model.stocks.PurchaseOrder"), id);
+			BaseEntity result = purchasingService.findPurchaseOrder(
+					this.getClass("com.qkcare.model.stocks.PurchaseOrder"), id);
 			
 			return result != null ? result : new PurchaseOrder();
 		}
@@ -80,7 +80,8 @@ public class PurchasingController extends BaseController {
 		JsonMappingException, IOException, ClassNotFoundException {
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-			BaseEntity obj = (BaseEntity) mapper.readValue(dto.getJson().replaceAll("'", "\"").replaceAll("/", "\\/"),
+			BaseEntity obj = (BaseEntity) mapper.readValue(dto.getJson()
+					.replaceAll("'", "\"").replaceAll("/", "\\/"),
 					this.getClass("com.qkcare.model.stocks.ReceiveOrder"));
 			purchasingService.save((ReceiveOrder)obj);
 			
@@ -92,15 +93,18 @@ public class PurchasingController extends BaseController {
 		}
 		
 		@RequestMapping(value="purchaseOrder/newReceiveOrder/{id}",method = RequestMethod.GET)
-		public BaseEntity getInitialReceive(@PathVariable("id") Long id) throws ClassNotFoundException, NumberFormatException, ParseException {
-			BaseEntity result = purchasingService.findInitialReceiveOrder(this.getClass("com.qkcare.model.stocks.PurchaseOrder"), id);
+		public List<ReceiveOrder> getInitialReceive(@PathVariable("id") Long id) 
+				throws ClassNotFoundException, NumberFormatException, ParseException {
+			List<ReceiveOrder> results = purchasingService.findInitialReceiveOrder(
+					this.getClass("com.qkcare.model.stocks.PurchaseOrder"), id);
 			
-			return result != null ? result : new PurchaseOrder();
+			return results != null ? results : Collections.EMPTY_LIST;
 		}
 		
 		@RequestMapping(value="receiveOrder/{id}",method = RequestMethod.GET)
 		public BaseEntity getReceiveOrder(@PathVariable("id") Long id) throws ClassNotFoundException {
-			BaseEntity result = purchasingService.findReceiveOrder(this.getClass("com.qkcare.model.stocks.ReceiveOrder"), id);
+			BaseEntity result = purchasingService.findReceiveOrder(
+					this.getClass("com.qkcare.model.stocks.ReceiveOrder"), id);
 			
 			return result != null ? result : new ReceiveOrder();
 		}
@@ -110,7 +114,8 @@ public class PurchasingController extends BaseController {
 		JsonMappingException, IOException, ClassNotFoundException {
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-			BaseEntity obj = (BaseEntity) mapper.readValue(dto.getJson().replaceAll("'", "\"").replaceAll("/", "\\/"),
+			BaseEntity obj = (BaseEntity) mapper.readValue(dto.getJson()
+					.replaceAll("'", "\"").replaceAll("/", "\\/"),
 					this.getClass("com.qkcare.model.stocks.PatientSale"));
 			purchasingService.save((PatientSale)obj);
 			
@@ -123,7 +128,8 @@ public class PurchasingController extends BaseController {
 		
 		@RequestMapping(value="patientSale/{id}",method = RequestMethod.GET)
 		public BaseEntity getPatientSale(@PathVariable("id") Long id) throws ClassNotFoundException {
-			BaseEntity result = purchasingService.findPatientSale(this.getClass("com.qkcare.model.stocks.PatientSale"), id);
+			BaseEntity result = purchasingService.findPatientSale(
+					this.getClass("com.qkcare.model.stocks.PatientSale"), id);
 			
 			return result != null ? result : new PatientSale();
 		}
@@ -133,7 +139,8 @@ public class PurchasingController extends BaseController {
 		JsonMappingException, IOException, ClassNotFoundException {
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-			BaseEntity obj = (BaseEntity) mapper.readValue(dto.getJson().replaceAll("'", "\"").replaceAll("/", "\\/"),
+			BaseEntity obj = (BaseEntity) mapper.readValue(dto.getJson()
+					.replaceAll("'", "\"").replaceAll("/", "\\/"),
 					this.getClass("com.qkcare.model.stocks.SaleReturn"));
 			purchasingService.save((SaleReturn)obj);
 			
@@ -145,15 +152,18 @@ public class PurchasingController extends BaseController {
 		}
 		
 		@RequestMapping(value="patientSale/newSaleReturn/{id}",method = RequestMethod.GET)
-		public BaseEntity getInitialReturn(@PathVariable("id") Long id) throws ClassNotFoundException, NumberFormatException, ParseException {
-			BaseEntity result = purchasingService.findInitialSaleReturn(this.getClass("com.qkcare.model.stocks.PatientSale"), id);
+		public BaseEntity getInitialReturn(@PathVariable("id") Long id) 
+				throws ClassNotFoundException, NumberFormatException, ParseException {
+			BaseEntity result = purchasingService.findInitialSaleReturn(
+					this.getClass("com.qkcare.model.stocks.PatientSale"), id);
 			
 			return result != null ? result : new PatientSale();
 		}
 		
 		@RequestMapping(value="saleReturn/{id}",method = RequestMethod.GET)
 		public BaseEntity getSaleReturn(@PathVariable("id") Long id) throws ClassNotFoundException {
-			BaseEntity result = purchasingService.findSaleReturn(this.getClass("com.qkcare.model.stocks.SaleReturn"), id);
+			BaseEntity result = purchasingService.findSaleReturn(
+					this.getClass("com.qkcare.model.stocks.SaleReturn"), id);
 			
 			return result != null ? result : new SaleReturn();
 		}

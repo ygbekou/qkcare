@@ -99,4 +99,11 @@ public class PurchaseOrderProduct extends BaseEntity {
 		this.discountAmount = discountAmount;
 	}
 	
+	public boolean equals(Object a) { 
+		if (!(a instanceof PurchaseOrderProduct)) {
+			return false;
+		}
+		
+		return this.getId() == ((PurchaseOrderProduct)a).getId();
+	}
 }

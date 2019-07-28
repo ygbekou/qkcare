@@ -9,6 +9,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.qkcare.domain.GenericVO;
 import com.qkcare.model.stocks.ReceiveOrder;
 
 @Entity
@@ -103,6 +104,22 @@ public class Product extends BaseEntity {
 		this.status = status;
 	}
 	
+	@Override
+	public boolean equals(Object o) {
+		if (o == null) return false;
+		
+		if (!(o instanceof Product)) return false;
+		
+		return this.getId().equals(((Product)o).getId());
+	}
+	
+	@Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + getId().intValue();  
+        return result;
+    }
 	
 	// TRansient fields for UI
 	

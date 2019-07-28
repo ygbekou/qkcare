@@ -8,7 +8,10 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.transaction.Transactional;
 
@@ -40,12 +43,30 @@ public class PurchasingServiceImpl  implements PurchasingService {
 	@Transactional
 	public BaseEntity save(PurchaseOrder purchaseOrder) {
 		
+		if (purchaseOrder.getDiscount() == null) {
+			purchaseOrder.setDiscount(0d);
+		}
+		
 		BaseEntity toReturn = this.genericService.save(purchaseOrder);
 		
+		List<PurchaseOrderProduct> removedPops = new ArrayList<>();
+		
 		for (PurchaseOrderProduct pop : purchaseOrder.getPurchaseOrderProducts()) {
-			pop.setPurchaseOrder((PurchaseOrder)toReturn);
-			this.genericService.save(pop);
+			if (pop.getStatus() == 9) {
+				this.genericService.delete(PurchaseOrderProduct.class, Arrays.asList(new Long[]{pop.getId()}));
+				removedPops.add(pop);
+				purchaseOrder.decreaseAmount(pop);
+			} else {
+				if (pop.getId() != null) {
+					pop.setPurchaseOrder((PurchaseOrder)toReturn);
+					this.genericService.save(pop);
+				}
+			}
 		}
+		
+		purchaseOrder.getPurchaseOrderProducts().removeAll(removedPops);
+		
+		toReturn = this.genericService.save(purchaseOrder);
 		
 		return toReturn;
 	}
@@ -91,13 +112,15 @@ public class PurchasingServiceImpl  implements PurchasingService {
 		return toReturn;
 	}
 	
-	public BaseEntity findInitialReceiveOrder(Class cl, Long purchaseOrderId) throws NumberFormatException, ParseException {
+	public List<ReceiveOrder> findInitialReceiveOrder(Class cl, Long purchaseOrderId) throws NumberFormatException, ParseException {
 		String queryString = "SELECT PO.PURCHASE_ORDER_ID, PO.PURCHASE_ORDER_DATE, PO.SUPPLIER_ID, SP.NAME AS SP_NAME, POP.PRODUCT_ID, "
-							+ "P.NAME AS P_NAME, POP.QUANTITY - IFNULL(SUM(ROP.QUANTITY), 0) AS QUANTITY "
+							+ "P.NAME AS P_NAME, POP.QUANTITY, ROP.QUANTITY AS R_QUANTITY, RO.RECEIVE_ORDER_ID, "
+							+ "ROP.RECEIVE_ORDER_PRODUCT_ID "
 							+ "FROM PURCHASE_ORDER PO "
 							+ "JOIN PURCHASE_ORDER_PRODUCT POP ON PO.PURCHASE_ORDER_ID = POP.PURCHASE_ORDER_ID "
 							+ "LEFT OUTER JOIN RECEIVE_ORDER RO ON PO.PURCHASE_ORDER_ID = RO.PURCHASE_ORDER_ID "
 							+ "LEFT OUTER JOIN RECEIVE_ORDER_PRODUCT ROP ON RO.RECEIVE_ORDER_ID = ROP.RECEIVE_ORDER_ID "
+									+ "AND ROP.PRODUCT_ID = POP.PRODUCT_ID "
 							+ "JOIN SUPPLIER SP ON PO.SUPPLIER_ID = SP.SUPPLIER_ID "
 							+ "JOIN PRODUCT P ON POP.PRODUCT_ID = P.PRODUCT_ID "
 							+ "WHERE 1 = 1 "
@@ -105,23 +128,49 @@ public class PurchasingServiceImpl  implements PurchasingService {
 		List<Quartet<String, String, String, String>> paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
 		paramTupleList.add(Quartet.with("PO.PURCHASE_ORDER_ID = ", "purchaseOrderId", purchaseOrderId + "", "Long"));
 		List<Object[]> list = this.genericService.getNativeByCriteria(queryString, paramTupleList, 
-				" ORDER BY P.NAME ", " GROUP BY PO.PURCHASE_ORDER_ID, POP.PRODUCT_ID ");
+				" ORDER BY P.NAME ", " ");
 		
-		ReceiveOrder receiveOrder = new ReceiveOrder();
+		List<ReceiveOrder> receiveOrders = new ArrayList<ReceiveOrder>();
 		List<ReceiveOrderProduct> receiveOrderProducts = new ArrayList<ReceiveOrderProduct>();
 		
 		DateFormat format = new SimpleDateFormat("yyyyMMdd");
-
-		for (Object[] objects : list) {
-			receiveOrder.setPurchaseOrder(new PurchaseOrder(new Long(objects[0].toString()), format.parse(objects[1].toString()), 
-					new Long(objects[2].toString()), String.valueOf(objects[3])));
-			receiveOrderProducts.add(new ReceiveOrderProduct(null, null, 
-					new Product(new Long(objects[4].toString()), String.valueOf(objects[5])), 
-					Integer.valueOf(objects[6].toString()), Integer.valueOf(objects[6].toString()) ));
-		}
-		receiveOrder.setReceiveOrderProducts(receiveOrderProducts);
 		
-		return receiveOrder;
+		Map<Product, Integer> productQtyMap =  new HashMap<>();
+		ReceiveOrder receiveOrder = null;
+		
+		for (Object[] objects : list) {
+			Product product = new Product(new Long(objects[4].toString()), String.valueOf(objects[5]));
+			Integer qtyOrdered = Integer.valueOf(objects[6].toString());
+			Integer qtyReceived = objects[7] != null ? Integer.valueOf(objects[7].toString()) : 0;
+			
+			if (qtyReceived > 0) {
+				receiveOrder = new ReceiveOrder();
+				receiveOrder.setId(objects[7] != null ? new Long(objects[7].toString()) : null);
+				receiveOrder.setPurchaseOrder(new PurchaseOrder(new Long(objects[0].toString()), format.parse(objects[1].toString()), 
+						new Long(objects[2].toString()), String.valueOf(objects[3])));
+				receiveOrderProducts.add(new ReceiveOrderProduct(objects[8] != null ? new Long(objects[8].toString()) : null, null, 
+						product, productQtyMap.getOrDefault(product, qtyOrdered), qtyReceived));
+				receiveOrder.setReceiveOrderProducts(receiveOrderProducts);
+				receiveOrders.add(receiveOrder);
+			}
+			
+			productQtyMap.put(product, productQtyMap.getOrDefault(product, qtyOrdered) -  qtyReceived);
+		}
+		
+		for (Map.Entry<Product, Integer> productQtyEntry : productQtyMap.entrySet()) {
+			if (productQtyEntry.getValue() > 0) {
+				receiveOrder = new ReceiveOrder();
+				receiveOrder.setPurchaseOrder(new PurchaseOrder(purchaseOrderId, null, null, null));
+				receiveOrderProducts.add(new ReceiveOrderProduct(null, null, productQtyEntry.getKey(), productQtyEntry.getValue(), 0));
+				
+				receiveOrder.setReceiveOrderProducts(receiveOrderProducts);
+				
+				receiveOrders.add(receiveOrder);
+			}
+	    }
+		
+		
+		return receiveOrders;
 		
 	}
 	

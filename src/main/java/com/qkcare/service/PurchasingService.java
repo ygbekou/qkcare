@@ -1,6 +1,7 @@
 package com.qkcare.service;
 
 import java.text.ParseException;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
@@ -20,7 +21,7 @@ public interface PurchasingService {
 	
 	public BaseEntity save(ReceiveOrder receiveOrder);
 	
-	public BaseEntity findInitialReceiveOrder(Class cl, Long key) throws NumberFormatException, ParseException;
+	public List<ReceiveOrder> findInitialReceiveOrder(Class cl, Long key) throws NumberFormatException, ParseException;
 	
 	public BaseEntity findReceiveOrder(Class cl, Long key);
 	
