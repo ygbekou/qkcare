@@ -54,4 +54,17 @@ public class Room extends BaseEntity {
 	public void setStatus(int status) {
 		this.status = status;
 	}
+	
+	// Transient
+	public String getFloorName() {
+		return this.getFloor().getName();
+	}
+	
+	public String getBuildingName() {
+		return this.getFloor().getBuilding().getName();
+	}
+	
+	public String getStatusDesc() {
+		return status == 0 ? "Active" : "Inactive";
+	}
 }

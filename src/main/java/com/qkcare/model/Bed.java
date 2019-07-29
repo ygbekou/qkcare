@@ -65,6 +65,7 @@ public class Bed extends BaseEntity {
 		this.status = status;
 	}
 	
+
 	// Overriding equals() to compare two Complex objects
     @Override
     public boolean equals(Object o) {
@@ -86,4 +87,26 @@ public class Bed extends BaseEntity {
         // Compare the data members and return accordingly 
         return Long.compare(id, e.id) == 0;
     }
+    
+    
+    // Transient
+    public String getRoomName() {
+ 		return this.getRoom().getName();
+ 	}
+ 	
+    public String getFloorName() {
+ 		return this.getRoom().getFloor().getName();
+ 	}
+ 	
+ 	public String getBuildingName() {
+ 		return this.getRoom().getFloor().getBuilding().getName();
+ 	}
+ 	
+ 	public String getBedCategoryName() {
+ 		return this.getCategory().getName();
+ 	}
+ 	
+ 	public String getStatusDesc() {
+ 		return status == 0 ? "Active" : "Inactive";
+ 	}
 }

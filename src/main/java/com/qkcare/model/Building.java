@@ -45,4 +45,9 @@ public class Building extends BaseEntity {
 		this.id = id;
 	}
 	
+	// Transient
+	public String getStatusDesc() {
+		return status == 0 ? "Active" : "Inactive";
+	}
+	
 }

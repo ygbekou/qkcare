@@ -100,12 +100,15 @@ public class PurchasingServiceImpl  implements PurchasingService {
 		
 		for (ReceiveOrderProduct rop : receiveOrder.getReceiveOrderProducts()) {
 			rop.setReceiveOrder((ReceiveOrder)toReturn);
-			this.genericService.save(rop);
 			
-			if (receiveOrder.getStatus() == 2) {
-				Product product = (Product) this.genericService.find(Product.class, rop.getProduct().getId());
-				product.setQuantityInStock(product.getQuantityInStock() + rop.getQuantity());
-				this.genericService.save(product);
+			if (rop.getId() == null) {
+				this.genericService.save(rop);
+				
+				if (receiveOrder.getStatus() == 2) {
+					Product product = (Product) this.genericService.find(Product.class, rop.getProduct().getId());
+					product.setQuantityInStock(product.getQuantityInStock() + rop.getQuantity());
+					this.genericService.save(product);
+				}
 			}
 		}
 		

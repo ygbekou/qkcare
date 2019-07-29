@@ -54,4 +54,13 @@ public class Floor extends BaseEntity {
 	public void setStatus(int status) {
 		this.status = status;
 	}
+	
+	// Transient
+	public String getBuildingName() {
+		return this.getBuilding().getName();
+	}
+	
+	public String getStatusDesc() {
+		return status == 0 ? "Active" : "Inactive";
+	}
 }
