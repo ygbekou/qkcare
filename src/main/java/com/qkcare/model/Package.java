@@ -63,5 +63,10 @@ public class Package extends BaseEntity {
 	}
 	
 	
+	// Transient
+	public String getStatusDesc() {
+		return this.getStatus() == 0 ? "Actif" : "Inactif";
+	}
+	
 	
 }
