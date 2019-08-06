@@ -10,6 +10,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.qkcare.model.enums.DoctorOrderTypeEnum;
+import com.qkcare.model.stocks.PatientSaleProduct;
+
 @Entity
 @Table(name = "BILL_SERVICE")
 public class BillService extends BaseEntity {
@@ -21,9 +24,23 @@ public class BillService extends BaseEntity {
 	@ManyToOne
 	@JoinColumn(name = "BILL_ID")
 	private Bill bill;
+	@Column(name = "DOCTOR_ORDER_TYPE_ID")
+	private DoctorOrderTypeEnum doctorOrderTypeEnum;
 	@ManyToOne
 	@JoinColumn(name = "SERVICE_ID")
 	private Service service;
+	@ManyToOne
+	@JoinColumn(name = "PACKAGE_ID")
+	private Package pckage;
+	@ManyToOne
+	@JoinColumn(name = "PRODUCT_ID")
+	private Product product;
+	@ManyToOne
+	@JoinColumn(name = "LAB_TEST_ID")
+	private LabTest labTest;
+	@ManyToOne
+	@JoinColumn(name = "BED_ID")
+	private Bed bed;
 	@ManyToOne
 	@JoinColumn(name = "DOCTOR_ID")
 	private Employee doctor;
@@ -46,6 +63,86 @@ public class BillService extends BaseEntity {
 	@Column(name = "PATIENT_AMOUNT")
 	private Double patientAmount;
 	
+	public BillService() {}
+	
+	public BillService(PatientService patientService) {
+		this.setServiceDate(patientService.getServiceDate());
+		this.setDoctorOrderType(new DoctorOrderType(Long.valueOf(DoctorOrderTypeEnum.MEDICAL.getType()), 
+				DoctorOrderTypeEnum.MEDICAL.getDescription()));
+		this.setService(patientService.getService());
+		this.setQuantity(1);
+		this.setUnitAmount(patientService.getService().getRate());
+		this.setTotalAmount(patientService.getService().getRate());
+		this.setDiscountAmount(0d);
+		this.setDiscountPercentage(0d);
+		this.setNetAmount(patientService.getService().getRate());
+		this.setDoctor(patientService.getDoctor());
+		this.setDescription(patientService.getService().getDescription());
+	} 
+	
+	public BillService(PatientPackage patientPackage) {
+		this.setServiceDate(patientPackage.getPackageDate());
+		this.setDoctorOrderType(new DoctorOrderType(Long.valueOf(DoctorOrderTypeEnum.MEDICAL.getType()), 
+				DoctorOrderTypeEnum.MEDICAL.getDescription()));
+		this.setPckage(patientPackage.getPckage());
+		this.setQuantity(1);
+		this.setUnitAmount(patientPackage.getPckage().getRate());
+		this.setTotalAmount(patientPackage.getPckage().getRate());
+		this.setDiscountAmount(patientPackage.getPckage().getDiscount());
+		this.setDiscountPercentage((this.getDiscountAmount() * 100) / this.getTotalAmount());
+		this.setNetAmount(patientPackage.getPckage().getRate());
+		this.setDoctor(patientPackage.getDoctor());
+		this.setDescription(patientPackage.getPckage().getDescription());
+	} 
+	
+	public BillService(PatientSaleProduct patientSaleProduct) {
+		this.setServiceDate(patientSaleProduct.getPatientSale().getSaleDatetime());
+		this.setDoctorOrderType(new DoctorOrderType(Long.valueOf(DoctorOrderTypeEnum.PHARMACY.getType()), 
+				DoctorOrderTypeEnum.PHARMACY.getDescription()));
+		this.setProduct(patientSaleProduct.getProduct());
+		this.setQuantity(patientSaleProduct.getQuantity());
+		this.setUnitAmount(patientSaleProduct.getUnitPrice());
+		this.setTotalAmount(this.getUnitAmount() * this.getQuantity());
+		this.setDiscountAmount(patientSaleProduct.getDiscountAmount());
+		this.setDiscountPercentage(patientSaleProduct.getDiscountPercentage());
+		this.setNetAmount(this.getTotalAmount() - this.getDiscountAmount());
+		this.setDoctor(patientSaleProduct.getPatientSale().getDoctorOrder() != null 
+				? patientSaleProduct.getPatientSale().getDoctorOrder().getDoctor() :bill.getDoctor());
+		this.setDescription(patientSaleProduct.getProduct().getDescription());
+	} 
+	
+	public BillService(Investigation investigation) {
+		this.setServiceDate(investigation.getInvestigationDatetime());
+		this.setDoctorOrderType(new DoctorOrderType(Long.valueOf(DoctorOrderTypeEnum.LABORATORY.getType()), 
+				DoctorOrderTypeEnum.LABORATORY.getDescription()));
+		this.setLabTest(investigation.getLabTest());
+		this.setQuantity(1);
+		this.setUnitAmount(investigation.getLabTest().getPrice());
+		this.setTotalAmount(this.getUnitAmount() * this.getQuantity());
+		this.setDiscountAmount(0d);
+		this.setDiscountPercentage(0d);
+		this.setNetAmount(this.getTotalAmount() - this.getDiscountAmount());
+		this.setDoctor(investigation.getDoctorOrder() != null 
+				? investigation.getDoctorOrder().getDoctor() :bill.getDoctor());
+		this.setDescription(investigation.getLabTest().getDescription());
+	} 
+	
+	public BillService(BedAssignment bedAssignment) {
+		this.setServiceDate(bedAssignment.getStartDate());
+		this.setDoctorOrderType(new DoctorOrderType(Long.valueOf(DoctorOrderTypeEnum.BED.getType()), 
+				DoctorOrderTypeEnum.BED.getDescription()));
+		this.setBed(bedAssignment.getBed());
+		Date endDate  = bedAssignment.getEndDate() == null ? new Date() : bedAssignment.getEndDate();
+		this.setQuantity(Long.valueOf(Math.round((endDate.getTime() - bedAssignment.getStartDate().getTime()) / (double) 86400000)).intValue());
+		this.setUnitAmount(bedAssignment.getBed().getRate());
+		this.setTotalAmount(this.getUnitAmount() * this.getQuantity());
+		this.setDiscountAmount(0d);
+		this.setDiscountPercentage(0d);
+		this.setNetAmount(this.getTotalAmount() - this.getDiscountAmount());
+		this.setDoctor(null);
+		this.setDescription(bedAssignment.getBed().getDescription());
+	} 
+	
 	
 	public Long getId() {
 		return id;
@@ -59,11 +156,43 @@ public class BillService extends BaseEntity {
 	public void setBill(Bill bill) {
 		this.bill = bill;
 	}
+	public DoctorOrderTypeEnum getDoctorOrderTypeEnum() {
+		return doctorOrderTypeEnum;
+	}
+	public void setDoctorOrderTypeEnum(DoctorOrderTypeEnum doctorOrderTypeEnum) {
+		this.doctorOrderTypeEnum = doctorOrderTypeEnum;
+	}
 	public Service getService() {
 		return service;
 	}
+
 	public void setService(Service service) {
 		this.service = service;
+	}
+
+	public Package getPckage() {
+		return pckage;
+	}
+	public void setPckage(Package pckage) {
+		this.pckage = pckage;
+	}
+	public Product getProduct() {
+		return product;
+	}
+	public void setProduct(Product product) {
+		this.product = product;
+	}
+	public LabTest getLabTest() {
+		return labTest;
+	}
+	public void setLabTest(LabTest labTest) {
+		this.labTest = labTest;
+	}
+	public Bed getBed() {
+		return bed;
+	}
+	public void setBed(Bed bed) {
+		this.bed = bed;
 	}
 	public Employee getDoctor() {
 		return doctor;
@@ -131,8 +260,20 @@ public class BillService extends BaseEntity {
 	public void setPatientAmount(Double patientAmount) {
 		this.patientAmount = patientAmount;
 	}
-	
 	public void setDefaultService(DoctorOrder doctorOrder) {
 		this.setDoctor(doctorOrder.getDoctor());
+	}
+	
+	
+	// Transient
+	public DoctorOrderType getDoctorOrderType() {
+		return new DoctorOrderType(Long.valueOf(doctorOrderTypeEnum.getType()), doctorOrderTypeEnum.getDescription());
+	}
+	public void setDoctorOrderType(DoctorOrderType doctorOrderType) {
+		this.setDoctorOrderTypeEnum(DoctorOrderTypeEnum.valueOf(doctorOrderType.getName()));
+	}
+	
+	public String getDoctorOrderTypeName() {
+		return this.getDoctorOrderType().getName();
 	}
 }

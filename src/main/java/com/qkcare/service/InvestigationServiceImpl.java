@@ -14,16 +14,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.javatuples.Quartet;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import com.qkcare.domain.SearchCriteria;
 import com.qkcare.model.BaseEntity;
+import com.qkcare.model.DoctorOrderType;
 import com.qkcare.model.Investigation;
 import com.qkcare.model.InvestigationTest;
 import com.qkcare.model.LabTest;
+import com.qkcare.model.Service;
 import com.qkcare.util.DateUtil;
 
-@Service(value="investigationService")
+@org.springframework.stereotype.Service(value="investigationService")
 public class InvestigationServiceImpl  implements InvestigationService {
 	
 	private static Logger logger = Logger.getLogger(InvestigationServiceImpl.class);
@@ -155,4 +156,23 @@ public class InvestigationServiceImpl  implements InvestigationService {
 		
 	}
 	
+	
+	@Transactional
+	public LabTest saveLabTest(LabTest labTest) {
+		
+		this.genericService.save(labTest);
+		
+		List<Quartet<String, String, String, String>> paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
+		paramTupleList.add(Quartet.with("e.labTest.id = ", "labTestId", labTest.getId() + "", "Long"));
+		String queryStr =  "SELECT e FROM Service e WHERE 1 = 1 ";
+		List<BaseEntity> services = genericService.getByCriteria(queryStr, paramTupleList, null);
+		
+		if (services.isEmpty()) {
+			DoctorOrderType serviceType = (DoctorOrderType) this.genericService.find(DoctorOrderType.class, 2L);
+			Service service = new Service(labTest, serviceType);
+			this.genericService.save(service);
+		}
+		
+		return labTest;
+	}
 }

@@ -36,6 +36,10 @@ public class LabTest extends BaseEntity {
 	private Double criticalLow;
 	@Column(name = "CRITICAL_HIGH", nullable = true)
 	private Double criticalHigh;
+	@Column(name = "PRICE", nullable = false)
+	private Double price;
+	@Column(name = "PAYER_PRICE", nullable = false)
+	private Double payerPrice;
 	private int status;
 	
 	public LabTest() {
@@ -110,6 +114,18 @@ public class LabTest extends BaseEntity {
 	}
 	public void setCriticalHigh(Double criticalHigh) {
 		this.criticalHigh = criticalHigh;
+	}
+	public Double getPrice() {
+		return price;
+	}
+	public void setPrice(Double price) {
+		this.price = price;
+	}
+	public Double getPayerPrice() {
+		return payerPrice;
+	}
+	public void setPayerPrice(Double payerPrice) {
+		this.payerPrice = payerPrice;
 	}
 	public int getStatus() {
 		return status;

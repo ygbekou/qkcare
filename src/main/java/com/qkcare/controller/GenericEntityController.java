@@ -90,11 +90,12 @@ public class GenericEntityController extends BaseController {
 		}
 		String convertedEntity = this.convertEntity(entity);
 		String queryStr = "SELECT e FROM " + convertedEntity + " e WHERE 1 = 1 " + getExtraWhereClause(convertedEntity);
-		List<BaseEntity> entities = genericService.getByCriteria(queryStr, paramTupleList, searchAttribute.getOrderBy());
+		List<BaseEntity> entities = genericService.getByCriteria(queryStr, paramTupleList,
+				searchAttribute.getOrderBy());
 
 		return entities;
 	}
-	
+
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public BaseEntity save(@PathVariable("entity") String entity, @RequestBody GenericDto dto)
 			throws JsonParseException, JsonMappingException, IOException, ClassNotFoundException, NoSuchMethodException,
@@ -128,24 +129,23 @@ public class GenericEntityController extends BaseController {
 		return obj;
 	}
 
-	@RequestMapping(value="/delete/{id}",method = RequestMethod.GET, produces = "application/json")
-	public GenericResponse delete(@PathVariable("entity") String entity, 
-			@PathVariable("id") Long id) throws JsonParseException, 
-			JsonMappingException, IOException, ClassNotFoundException {
+	@RequestMapping(value = "/delete/{id}", method = RequestMethod.GET, produces = "application/json")
+	public GenericResponse delete(@PathVariable("entity") String entity, @PathVariable("id") Long id)
+			throws JsonParseException, JsonMappingException, IOException, ClassNotFoundException {
 		try {
 			List<Long> ids = new ArrayList<>();
 			ids.add(id);
 			this.genericService.delete(this.getClass(entity), ids);
 			return new GenericResponse("SUCCESS");
-		} catch(Exception e) {
-			if(e.getMessage().contains("foreign key") || e.getMessage().contains("ConstraintViolationException")) {
+		} catch (Exception e) {
+			if (e.getMessage().contains("foreign key") || e.getMessage().contains("ConstraintViolationException")) {
 				return new GenericResponse("FOREIGN_KEY_FAILURE", e.getMessage());
-			}else {
+			} else {
 				return new GenericResponse("GENERIC_FAILURE", e.getMessage());
 			}
 		}
 	}
-	
+
 	@RequestMapping(value = "/delete", method = RequestMethod.POST)
 	public String delete(@PathVariable("entity") String entity, @RequestBody List<Long> ids)
 			throws JsonParseException, JsonMappingException, IOException, ClassNotFoundException {

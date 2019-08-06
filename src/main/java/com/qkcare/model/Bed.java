@@ -24,6 +24,7 @@ public class Bed extends BaseEntity {
 	private Category category;
 	@Column(name = "BED_NUMBER")
 	private String bedNumber;
+	private Double rate;
 	private String description;
 	private int status;
 	
@@ -51,6 +52,12 @@ public class Bed extends BaseEntity {
 	}
 	public void setBedNumber(String bedNumber) {
 		this.bedNumber = bedNumber;
+	}
+	public Double getRate() {
+		return rate;
+	}
+	public void setRate(Double rate) {
+		this.rate = rate;
 	}
 	public String getDescription() {
 		return description;

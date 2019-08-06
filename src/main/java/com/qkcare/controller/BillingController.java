@@ -108,7 +108,7 @@ public class BillingController extends BaseController {
 				@PathVariable("itemNumber") String itemNumber) {
 			BaseEntity result = billingService.findBill(null, null, itemLabel, Long.valueOf(itemNumber));
 			if (result == null) {
-				result = billingService.findBillInitial(itemLabel, itemNumber);
+				result = billingService.findBillInitial(itemLabel.toLowerCase(), new Long(itemNumber));
 			}
 			
 			return result;

@@ -22,6 +22,7 @@ import com.qkcare.domain.GenericDto;
 import com.qkcare.domain.SearchCriteria;
 import com.qkcare.model.BaseEntity;
 import com.qkcare.model.InvestigationTest;
+import com.qkcare.model.LabTest;
 import com.qkcare.service.GenericService;
 import com.qkcare.service.InvestigationService;
 
@@ -69,6 +70,22 @@ public class InvestigationController extends BaseController {
 		public List<BaseEntity> searchInvestigations(@RequestBody SearchCriteria searchCriteria) throws ClassNotFoundException {
 			List<BaseEntity> investigations = this.investigationService.getInvestigations(searchCriteria);
 			return investigations;
+		}
+
+		
+		@RequestMapping(value="/investigationTest/labTest/save",method = RequestMethod.POST)
+		public LabTest saveLabTest(@RequestBody GenericDto dto) throws JsonParseException, 
+					JsonMappingException, IOException, ClassNotFoundException {
+			LabTest obj = null;
+			try {
+				obj = (LabTest) this.genericDtoToEntiityClassObject(dto, "LabTest");
+				obj = investigationService.saveLabTest((com.qkcare.model.LabTest)obj);
+			} catch(Exception e) {
+				e.printStackTrace();
+				obj.setErrors(Arrays.asList(e.getMessage()));
+			}
+			
+			return obj;
 		}
 
 		

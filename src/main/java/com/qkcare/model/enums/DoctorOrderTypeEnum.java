@@ -11,7 +11,9 @@ import net.sf.ehcache.Element;
 
 public enum DoctorOrderTypeEnum {
 	PHARMACY(1),
-    LABORATORY(2);
+    LABORATORY(2),
+	MEDICAL(3),
+	BED(4);
 	
 	private static Map<Integer, String> typeMap = new HashMap<>();
     private Integer type;

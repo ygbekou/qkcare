@@ -18,7 +18,7 @@ public interface BillingService {
 	
 	public BaseEntity findBill(Class cl, Long key, String itemLabel, Long itemId);
 	
-	public BaseEntity findBillInitial(String itemLabel, String itemNumber);
+	public BaseEntity findBillInitial(String itemLabel, Long itemNumber);
 	
 	public BaseEntity findPackage(Class cl, Long key);
 }

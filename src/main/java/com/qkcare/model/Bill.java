@@ -189,4 +189,14 @@ public class Bill extends BaseEntity {
 		}
 		return "";
 	}
+	
+	public Employee getDoctor() {
+		if (this.visit != null) {
+			return this.getVisit().getDoctor();
+		}
+		if (this.admission != null) {
+			return this.getAdmission().getDoctorAssignment() != null ? this.getAdmission().getDoctorAssignment().getDoctor() : new Employee();
+		}
+		return new Employee();
+	}
 }

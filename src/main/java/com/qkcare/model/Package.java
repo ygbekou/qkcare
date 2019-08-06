@@ -19,6 +19,7 @@ public class Package extends BaseEntity {
 	private Long id;
 	private String name;
 	private String description;
+	private Double rate;
 	private Double discount;
 	private int status;
 	
@@ -42,6 +43,12 @@ public class Package extends BaseEntity {
 	}
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	public Double getRate() {
+		return rate;
+	}
+	public void setRate(Double rate) {
+		this.rate = rate;
 	}
 	public Double getDiscount() {
 		return discount;

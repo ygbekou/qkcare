@@ -19,12 +19,28 @@ public class Service extends BaseEntity {
 	@ManyToOne
 	@JoinColumn(name = "DOCTOR_ORDER_TYPE_ID")
 	private DoctorOrderType serviceType;
+	@ManyToOne
+	@JoinColumn(name = "LAB_TEST_ID")
+	private LabTest labTest;
+	@ManyToOne
+	@JoinColumn(name = "MEDICINE_ID")
+	private Product medicine;
 	private String name;
 	private String description;
 	private int quantity;
 	private Double rate;
 	private int status;
 	
+	public Service() {}
+	
+	public Service(LabTest labTest, DoctorOrderType serviceType) {
+		this.name = labTest.getName();
+		this.description = labTest.getDescription();
+		this.labTest = labTest;
+		this.quantity = 1;
+		this.serviceType = serviceType;
+		this.rate = labTest.getPrice();
+	}
 	
 	public Long getId() {
 		return id;
@@ -37,6 +53,18 @@ public class Service extends BaseEntity {
 	}
 	public void setServiceType(DoctorOrderType serviceType) {
 		this.serviceType = serviceType;
+	}
+	public LabTest getLabTest() {
+		return labTest;
+	}
+	public void setLabTest(LabTest labTest) {
+		this.labTest = labTest;
+	}
+	public Product getMedicine() {
+		return medicine;
+	}
+	public void setMedicine(Product medicine) {
+		this.medicine = medicine;
 	}
 	public String getName() {
 		return name;
@@ -67,6 +95,11 @@ public class Service extends BaseEntity {
 	}
 	public void setStatus(int status) {
 		this.status = status;
+	}
+	
+	// Transient attributes
+	public String getStatusDesc() {
+		return status == 0 ? "Active" : "Inactive";
 	}
 	
 }
