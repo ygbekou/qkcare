@@ -16,6 +16,10 @@ public class DoctorOrderTypeConverter implements AttributeConverter<DoctorOrderT
                 return 1L;
             case LABORATORY:
                 return 2L;
+            case MEDICAL:
+                return 3L;
+            case BED:
+                return 4L;
             default:
                 throw new IllegalArgumentException("Unknown" + enumValue);
         }
@@ -28,6 +32,10 @@ public class DoctorOrderTypeConverter implements AttributeConverter<DoctorOrderT
                 return DoctorOrderTypeEnum.PHARMACY;
             case 2:
                 return DoctorOrderTypeEnum.LABORATORY;
+            case 3:
+                return DoctorOrderTypeEnum.MEDICAL;
+            case 4:
+                return DoctorOrderTypeEnum.BED;
             default:
                 throw new IllegalArgumentException("Unknown" + dbData);
         }

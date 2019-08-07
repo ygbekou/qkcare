@@ -66,7 +66,7 @@ public class BillingController extends BaseController {
 			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 			BaseEntity obj = (BaseEntity) mapper.readValue(dto.getJson().replaceAll("'", "\"").replaceAll("/", "\\/"),
 					Class.forName(Constants.PACKAGE_NAME + "Bill"));
-			billingService.save((Bill)obj);
+			obj = billingService.save((Bill)obj);
 			
 			if (((Bill)obj).getBillServices()!= null) {
 				for (BillService bs : ((Bill)obj).getBillServices()) {

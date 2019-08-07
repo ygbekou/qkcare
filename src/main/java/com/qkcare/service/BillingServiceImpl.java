@@ -103,6 +103,7 @@ public class BillingServiceImpl  implements BillingService {
 			return bill;
 		}
 		
+		//this.setVisitOrAdmission(bill, itemLabel, itemId);
 		paramTupleList.clear();
 		paramTupleList.add(Quartet.with("e.bill.id = ", "billId", bill.getId() + "", "Long"));
 		String queryStr =  "SELECT e FROM BillService e WHERE 1 = 1";
@@ -137,30 +138,7 @@ public class BillingServiceImpl  implements BillingService {
 	}
 	
 	
-	public BaseEntity findBillByItem(String itemLabel, Long itemId) {
-		List<Quartet<String, String, String, String>> paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
-		paramTupleList.add(Quartet.with("e." + itemLabel + ".id = ", "admissionId", itemId + "", "Long"));
-		String queryStr =  "SELECT e FROM Bill e WHERE 1 = 1";
-		List<BaseEntity> bills = genericService.getByCriteria(queryStr, paramTupleList, null);
-		
-		return bills.isEmpty() ? null : bills.get(0);
-	}
-	
-	private Employee getDoctorByItem(Bill bill) {
-		if (bill.getVisit() != null) {
-			return bill.getVisit().getDoctor();
-		} else if (bill.getAdmission() != null) {
-			return bill.getAdmission().getDoctorAssignment().getDoctor();
-		}
-		return null;
-	}
-	
-	public BaseEntity findBillInitial(String itemLabel, Long itemId) {
-		
-		Bill bill = new Bill();
-		bill.setBillDate(new Date());
-		bill.setDueDate(DateUtil.addDays(new Date(), 30));
-		
+	private BaseEntity setVisitOrAdmission(Bill bill, String itemLabel, Long itemId) {
 		BaseEntity item = null;
 		if ("visit".equalsIgnoreCase(itemLabel.toLowerCase())) {
 			item = this.visitService.findVisit(Visit.class, itemId);
@@ -169,6 +147,17 @@ public class BillingServiceImpl  implements BillingService {
 			item = this.admissionService.findAdmission(Admission.class, itemId);
 			bill.setAdmission((Admission)item);
 		}
+		
+		return item;
+	}
+	
+	public BaseEntity findBillInitial(String itemLabel, Long itemId) {
+		
+		Bill bill = new Bill();
+		bill.setBillDate(new Date());
+		bill.setDueDate(DateUtil.addDays(new Date(), 30));
+		
+		BaseEntity item = this.setVisitOrAdmission(bill, itemLabel, itemId);
 		
 		// Return if the no admission or visit found
 		if (item == null) return bill;		
@@ -204,7 +193,7 @@ public class BillingServiceImpl  implements BillingService {
 				
 		for (BaseEntity entity : patientSaleProducts) {
 			PatientSaleProduct psp = (PatientSaleProduct)entity;
-			bill.addBillService(new BillService(psp));
+			bill.addBillService(new BillService(psp, bill.getDoctor()));
 		}
 	
 		
@@ -216,7 +205,7 @@ public class BillingServiceImpl  implements BillingService {
 		
 		for (BaseEntity entity : investigations) {
 			Investigation invest = (Investigation)entity;
-			bill.addBillService(new BillService(invest));
+			bill.addBillService(new BillService(invest, bill.getDoctor()));
 		}
 	
 		
@@ -228,7 +217,7 @@ public class BillingServiceImpl  implements BillingService {
 			
 			for (BaseEntity entity : bedAssignments) {
 				BedAssignment ba = (BedAssignment)entity;
-				bill.addBillService(new BillService(ba));
+				bill.addBillService(new BillService(ba, bill.getDoctor()));
 			}
 		}
 		

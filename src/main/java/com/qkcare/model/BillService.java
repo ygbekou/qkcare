@@ -78,6 +78,8 @@ public class BillService extends BaseEntity {
 		this.setNetAmount(patientService.getService().getRate());
 		this.setDoctor(patientService.getDoctor());
 		this.setDescription(patientService.getService().getDescription());
+		this.setPayerAmount(0d);
+		this.setPatientAmount(this.getNetAmount());
 	} 
 	
 	public BillService(PatientPackage patientPackage) {
@@ -93,9 +95,11 @@ public class BillService extends BaseEntity {
 		this.setNetAmount(patientPackage.getPckage().getRate());
 		this.setDoctor(patientPackage.getDoctor());
 		this.setDescription(patientPackage.getPckage().getDescription());
+		this.setPayerAmount(0d);
+		this.setPatientAmount(this.getNetAmount());
 	} 
 	
-	public BillService(PatientSaleProduct patientSaleProduct) {
+	public BillService(PatientSaleProduct patientSaleProduct, Employee doctor) {
 		this.setServiceDate(patientSaleProduct.getPatientSale().getSaleDatetime());
 		this.setDoctorOrderType(new DoctorOrderType(Long.valueOf(DoctorOrderTypeEnum.PHARMACY.getType()), 
 				DoctorOrderTypeEnum.PHARMACY.getDescription()));
@@ -107,11 +111,13 @@ public class BillService extends BaseEntity {
 		this.setDiscountPercentage(patientSaleProduct.getDiscountPercentage());
 		this.setNetAmount(this.getTotalAmount() - this.getDiscountAmount());
 		this.setDoctor(patientSaleProduct.getPatientSale().getDoctorOrder() != null 
-				? patientSaleProduct.getPatientSale().getDoctorOrder().getDoctor() :bill.getDoctor());
+				? patientSaleProduct.getPatientSale().getDoctorOrder().getDoctor() : doctor);
 		this.setDescription(patientSaleProduct.getProduct().getDescription());
+		this.setPayerAmount(0d);
+		this.setPatientAmount(this.getNetAmount());
 	} 
 	
-	public BillService(Investigation investigation) {
+	public BillService(Investigation investigation, Employee doctor) {
 		this.setServiceDate(investigation.getInvestigationDatetime());
 		this.setDoctorOrderType(new DoctorOrderType(Long.valueOf(DoctorOrderTypeEnum.LABORATORY.getType()), 
 				DoctorOrderTypeEnum.LABORATORY.getDescription()));
@@ -122,25 +128,30 @@ public class BillService extends BaseEntity {
 		this.setDiscountAmount(0d);
 		this.setDiscountPercentage(0d);
 		this.setNetAmount(this.getTotalAmount() - this.getDiscountAmount());
-		this.setDoctor(investigation.getDoctorOrder() != null 
-				? investigation.getDoctorOrder().getDoctor() :bill.getDoctor());
+		this.setDoctor(investigation.getDoctorOrder() != null && investigation.getDoctorOrder().getDoctor() != null
+				? investigation.getDoctorOrder().getDoctor() : doctor);
 		this.setDescription(investigation.getLabTest().getDescription());
+		this.setPayerAmount(0d);
+		this.setPatientAmount(this.getNetAmount());
 	} 
 	
-	public BillService(BedAssignment bedAssignment) {
+	public BillService(BedAssignment bedAssignment, Employee doctor) {
 		this.setServiceDate(bedAssignment.getStartDate());
 		this.setDoctorOrderType(new DoctorOrderType(Long.valueOf(DoctorOrderTypeEnum.BED.getType()), 
 				DoctorOrderTypeEnum.BED.getDescription()));
 		this.setBed(bedAssignment.getBed());
 		Date endDate  = bedAssignment.getEndDate() == null ? new Date() : bedAssignment.getEndDate();
-		this.setQuantity(Long.valueOf(Math.round((endDate.getTime() - bedAssignment.getStartDate().getTime()) / (double) 86400000)).intValue());
+		int days = Long.valueOf(Math.round((endDate.getTime() - bedAssignment.getStartDate().getTime()) / (double) 86400000)).intValue();
+		this.setQuantity(days > 0 ? days : 1);
 		this.setUnitAmount(bedAssignment.getBed().getRate());
 		this.setTotalAmount(this.getUnitAmount() * this.getQuantity());
 		this.setDiscountAmount(0d);
 		this.setDiscountPercentage(0d);
 		this.setNetAmount(this.getTotalAmount() - this.getDiscountAmount());
-		this.setDoctor(null);
+		this.setDoctor(doctor);
 		this.setDescription(bedAssignment.getBed().getDescription());
+		this.setPayerAmount(0d);
+		this.setPatientAmount(this.getNetAmount());
 	} 
 	
 	
@@ -234,13 +245,13 @@ public class BillService extends BaseEntity {
 		return discountPercentage;
 	}
 	public void setDiscountPercentage(Double discountPercentage) {
-		this.discountPercentage = discountPercentage;
+		this.discountPercentage = discountPercentage != null ? discountPercentage :  0;
 	}
 	public Double getDiscountAmount() {
 		return discountAmount;
 	}
 	public void setDiscountAmount(Double discountAmount) {
-		this.discountAmount = discountAmount;
+		this.discountAmount = discountAmount != null ? discountAmount : 0;
 	}
 	public Double getNetAmount() {
 		return netAmount;
@@ -252,7 +263,7 @@ public class BillService extends BaseEntity {
 		return payerAmount;
 	}
 	public void setPayerAmount(Double payerAmount) {
-		this.payerAmount = payerAmount;
+		this.payerAmount = payerAmount != null ? payerAmount : 0d;
 	}
 	public Double getPatientAmount() {
 		return patientAmount;
