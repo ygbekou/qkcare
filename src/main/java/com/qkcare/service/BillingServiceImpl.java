@@ -17,7 +17,6 @@ import com.qkcare.model.BedAssignment;
 import com.qkcare.model.Bill;
 import com.qkcare.model.BillPayment;
 import com.qkcare.model.BillService;
-import com.qkcare.model.Employee;
 import com.qkcare.model.Investigation;
 import com.qkcare.model.PackageService;
 import com.qkcare.model.PatientPackage;
@@ -199,7 +198,7 @@ public class BillingServiceImpl  implements BillingService {
 		
 		paramTupleList.clear();
 		paramTupleList.add(Quartet.with("e." + itemLabel + ".id = ", "itemId", itemId + "", "Long"));
-		paramTupleList.add(Quartet.with("e.status = ", "status", "0", "Integer"));
+		paramTupleList.add(Quartet.with("e.status = ", "status", "4", "Integer"));
 		queryStr =  "SELECT e FROM Investigation e WHERE 1 = 1";
 		List<BaseEntity> investigations = genericService.getByCriteria(queryStr, paramTupleList, null);
 		
