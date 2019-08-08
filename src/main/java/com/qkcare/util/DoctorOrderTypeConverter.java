@@ -12,13 +12,13 @@ public class DoctorOrderTypeConverter implements AttributeConverter<DoctorOrderT
 	@Override
 	public Long convertToDatabaseColumn(DoctorOrderTypeEnum enumValue) {
         switch (enumValue) {
-            case PHARMACY:
+            case Pharmacie:
                 return 1L;
-            case LABORATORY:
+            case Laboratoire:
                 return 2L;
-            case MEDICAL:
+            case Medical:
                 return 3L;
-            case BED:
+            case Lit:
                 return 4L;
             default:
                 throw new IllegalArgumentException("Unknown" + enumValue);
@@ -29,13 +29,13 @@ public class DoctorOrderTypeConverter implements AttributeConverter<DoctorOrderT
 	public DoctorOrderTypeEnum convertToEntityAttribute(Long dbData) {
         switch (dbData.intValue()) {
             case 1:
-                return DoctorOrderTypeEnum.PHARMACY;
+                return DoctorOrderTypeEnum.Pharmacie;
             case 2:
-                return DoctorOrderTypeEnum.LABORATORY;
+                return DoctorOrderTypeEnum.Laboratoire;
             case 3:
-                return DoctorOrderTypeEnum.MEDICAL;
+                return DoctorOrderTypeEnum.Medical;
             case 4:
-                return DoctorOrderTypeEnum.BED;
+                return DoctorOrderTypeEnum.Lit;
             default:
                 throw new IllegalArgumentException("Unknown" + dbData);
         }

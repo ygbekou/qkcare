@@ -144,7 +144,8 @@ public class VisitController extends BaseController {
 		
 		@RequestMapping(value = "/list/byMonth", method = RequestMethod.GET, headers = "Accept=application/json")
 		public Map<Integer, List<Visit>> getVisitsByMonth() {
-			return this.visitService.getVisitsByMonth();
+			Map<Integer, List<Visit>> visites= this.visitService.getVisitsByMonth();
+			return visites;
 		}
 		
 		@RequestMapping(value = "/getWaitList/{topN}", method = RequestMethod.GET, headers = "Accept=application/json")

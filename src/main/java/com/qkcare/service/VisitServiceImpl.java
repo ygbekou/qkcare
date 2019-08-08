@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.qkcare.domain.GenericVO;
-import com.qkcare.model.Admission;
 import com.qkcare.model.Allergy;
 import com.qkcare.model.BaseEntity;
 import com.qkcare.model.MedicalHistory;

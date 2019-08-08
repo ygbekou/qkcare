@@ -10,10 +10,10 @@ import com.qkcare.util.CacheUtil;
 import net.sf.ehcache.Element;
 
 public enum DoctorOrderTypeEnum {
-	PHARMACY(1),
-    LABORATORY(2),
-	MEDICAL(3),
-	BED(4);
+	Pharmacie(1),
+	Laboratoire(2),
+	Medical(3),
+	Lit(4);
 	
 	private static Map<Integer, String> typeMap = new HashMap<>();
     private Integer type;

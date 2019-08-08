@@ -49,7 +49,7 @@ public class DoctorOrderServiceImpl  implements DoctorOrderService {
 		DoctorOrder docOrder = (DoctorOrder)this.genericService.save(doctorOrder);
 		
 		if (!notChildInclude) {
-			if (doctorOrder.getDoctorOrderTypeEnum() == DoctorOrderTypeEnum.LABORATORY) {
+			if (doctorOrder.getDoctorOrderTypeEnum() == DoctorOrderTypeEnum.Laboratoire) {
 				if (isUpdate) {
 					Pair<List<Long>, List<Long>> labTestIdPairs = this.getRemovedAndNewLabTestIds(doctorOrder);
 					
@@ -68,7 +68,7 @@ public class DoctorOrderServiceImpl  implements DoctorOrderService {
 				}
 			}
 			
-			if (doctorOrder.getDoctorOrderTypeEnum() == DoctorOrderTypeEnum.PHARMACY) {
+			if (doctorOrder.getDoctorOrderTypeEnum() == DoctorOrderTypeEnum.Pharmacie) {
 				if (isUpdate) {
 					Pair<List<Long>, List<Long>> productIdPairs = this.getRemovedAndNewProductIds(doctorOrder);
 					

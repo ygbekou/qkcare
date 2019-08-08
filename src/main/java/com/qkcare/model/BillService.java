@@ -67,8 +67,8 @@ public class BillService extends BaseEntity {
 	
 	public BillService(PatientService patientService) {
 		this.setServiceDate(patientService.getServiceDate());
-		this.setDoctorOrderType(new DoctorOrderType(Long.valueOf(DoctorOrderTypeEnum.MEDICAL.getType()), 
-				DoctorOrderTypeEnum.MEDICAL.getDescription()));
+		this.setDoctorOrderType(new DoctorOrderType(Long.valueOf(DoctorOrderTypeEnum.Medical.getType()), 
+				DoctorOrderTypeEnum.Medical.getDescription()));
 		this.setService(patientService.getService());
 		this.setQuantity(1);
 		this.setUnitAmount(patientService.getService().getRate());
@@ -84,8 +84,8 @@ public class BillService extends BaseEntity {
 	
 	public BillService(PatientPackage patientPackage) {
 		this.setServiceDate(patientPackage.getPackageDate());
-		this.setDoctorOrderType(new DoctorOrderType(Long.valueOf(DoctorOrderTypeEnum.MEDICAL.getType()), 
-				DoctorOrderTypeEnum.MEDICAL.getDescription()));
+		this.setDoctorOrderType(new DoctorOrderType(Long.valueOf(DoctorOrderTypeEnum.Medical.getType()), 
+				DoctorOrderTypeEnum.Medical.getDescription()));
 		this.setPckage(patientPackage.getPckage());
 		this.setQuantity(1);
 		this.setUnitAmount(patientPackage.getPckage().getRate());
@@ -101,8 +101,8 @@ public class BillService extends BaseEntity {
 	
 	public BillService(PatientSaleProduct patientSaleProduct, Employee doctor) {
 		this.setServiceDate(patientSaleProduct.getPatientSale().getSaleDatetime());
-		this.setDoctorOrderType(new DoctorOrderType(Long.valueOf(DoctorOrderTypeEnum.PHARMACY.getType()), 
-				DoctorOrderTypeEnum.PHARMACY.getDescription()));
+		this.setDoctorOrderType(new DoctorOrderType(Long.valueOf(DoctorOrderTypeEnum.Pharmacie.getType()), 
+				DoctorOrderTypeEnum.Pharmacie.getDescription()));
 		this.setProduct(patientSaleProduct.getProduct());
 		this.setQuantity(patientSaleProduct.getQuantity());
 		this.setUnitAmount(patientSaleProduct.getUnitPrice());
@@ -119,8 +119,8 @@ public class BillService extends BaseEntity {
 	
 	public BillService(Investigation investigation, Employee doctor) {
 		this.setServiceDate(investigation.getInvestigationDatetime());
-		this.setDoctorOrderType(new DoctorOrderType(Long.valueOf(DoctorOrderTypeEnum.LABORATORY.getType()), 
-				DoctorOrderTypeEnum.LABORATORY.getDescription()));
+		this.setDoctorOrderType(new DoctorOrderType(Long.valueOf(DoctorOrderTypeEnum.Laboratoire.getType()), 
+				DoctorOrderTypeEnum.Laboratoire.getDescription()));
 		this.setLabTest(investigation.getLabTest());
 		this.setQuantity(1);
 		this.setUnitAmount(investigation.getLabTest().getPrice());
@@ -137,8 +137,8 @@ public class BillService extends BaseEntity {
 	
 	public BillService(BedAssignment bedAssignment, Employee doctor) {
 		this.setServiceDate(bedAssignment.getStartDate());
-		this.setDoctorOrderType(new DoctorOrderType(Long.valueOf(DoctorOrderTypeEnum.BED.getType()), 
-				DoctorOrderTypeEnum.BED.getDescription()));
+		this.setDoctorOrderType(new DoctorOrderType(Long.valueOf(DoctorOrderTypeEnum.Lit.getType()), 
+				DoctorOrderTypeEnum.Lit.getDescription()));
 		this.setBed(bedAssignment.getBed());
 		Date endDate  = bedAssignment.getEndDate() == null ? new Date() : bedAssignment.getEndDate();
 		int days = Long.valueOf(Math.round((endDate.getTime() - bedAssignment.getStartDate().getTime()) / (double) 86400000)).intValue();
