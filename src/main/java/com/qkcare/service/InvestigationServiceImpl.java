@@ -48,12 +48,18 @@ public class InvestigationServiceImpl  implements InvestigationService {
 			String queryStr =  "SELECT e FROM LabTest e WHERE 1 = 1 ";
 			List<BaseEntity> labTests = genericService.getByCriteria(queryStr, paramTupleList, null);
 			
+			if (labTests.isEmpty()) {
+				labTests.add(investigation.getLabTest());
+			}
+
 			for (BaseEntity lt : labTests) {
 				InvestigationTest investigationTest = new InvestigationTest();
 				investigationTest.setLabTest((LabTest)lt);
 				investigationTest.setInvestigation((Investigation)toReturn);
 				this.genericService.save(investigationTest);
 			}
+			
+			
 		} 
 		return toReturn;
 	}
