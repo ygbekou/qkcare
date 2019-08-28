@@ -1,6 +1,7 @@
 package com.qkcare.model.stocks;
 
 import java.sql.Timestamp;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -87,4 +88,16 @@ public class PatientSaleProduct extends BaseEntity {
 		this.totalAmount = totalAmount;
 	}
 	
+	// Transient data
+	public Date getSaleDatetime() {
+		return this.getPatientSale().getSaleDatetime();
+	}
+	
+	public String getProductName() {
+		return this.getProduct().getName();
+	}
+	
+	public String getNotes() {
+		return this.getPatientSale().getNotes();
+	}
 }

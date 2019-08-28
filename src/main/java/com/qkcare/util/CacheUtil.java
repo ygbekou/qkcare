@@ -34,6 +34,7 @@ public class CacheUtil implements InitializingBean {
 	public static String DOCTOR_ORDER_STATUS = "doctorOrderStatus";
 	public static String DOCTOR_ORDER_TYPE = "doctorOrderType";
 	public static String PRESCRIPTION_TYPE = "prescriptionType";
+	public static String EXAM_STATUS = "examStatus";
 	
 	
 	@Autowired 
@@ -145,6 +146,9 @@ public class CacheUtil implements InitializingBean {
 		
 		this.addCacheToManager(PRESCRIPTION_TYPE, "SELECT PRESCRIPTION_TYPE_ID, NAME "
 				+ "FROM PRESCRIPTION_TYPE ", this::getReferences);
+		
+		this.addCacheToManager(EXAM_STATUS, "SELECT EXAM_STATUS_ID, NAME "
+				+ "FROM EXAM_STATUS ", this::getReferences);
 		
 	}	
 	
