@@ -41,6 +41,10 @@ public class BaseController {
 			extraWhereClause = " AND c = e.category ";
 		}
 		
+		if (entity.contains("PatientSale ps, PatientSaleProduct")) {
+			extraWhereClause = " AND ps = e.patientSale ";
+		}
+		
 		return extraWhereClause;
 	}
 
