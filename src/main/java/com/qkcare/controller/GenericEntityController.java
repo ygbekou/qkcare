@@ -161,7 +161,7 @@ public class GenericEntityController extends BaseController {
 	}
 
 	@RequestMapping(value = "/saveWithFile", method = RequestMethod.POST)
-	public BaseEntity saveWithFile(@PathVariable("entity") String entity, @RequestPart("file") MultipartFile file,
+	public BaseEntity saveWithFile(@PathVariable("entity") String entity, @RequestPart("file") MultipartFile[] files,
 			@RequestPart("dto") GenericDto dto) throws JsonParseException, JsonMappingException, IOException,
 			ClassNotFoundException, NoSuchMethodException, SecurityException, BeansException, IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException {
@@ -182,12 +182,51 @@ public class GenericEntityController extends BaseController {
 		}
 
 		if (results.getValue0()) {
-			this.genericService.saveWithFiles(obj, Arrays.asList(file), true, Arrays.asList("fileLocation"));
+			this.genericService.saveWithFiles(obj, Arrays.asList(files), true, Arrays.asList("fileLocation"));
 		} else {
 			obj.setErrors(results.getValue1());
 		}
 		return obj;
 	}
+	
+	@RequestMapping(value = "/saveFiles", method = RequestMethod.POST)
+	public BaseEntity saveFiles(@PathVariable("entity") String entity, @RequestPart("file") MultipartFile[] files,
+			@RequestPart("dto") GenericDto dto) throws JsonParseException, JsonMappingException, IOException,
+			ClassNotFoundException, NoSuchMethodException, SecurityException, BeansException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException {
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		mapper.configure(Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
+		BaseEntity obj = (BaseEntity) mapper.readValue(
+				dto.getJson().replaceAll("'", "\"").replaceAll("/", "\\/").replaceAll("&#039;", "'"),
+				this.getClass(entity));
+		
+
+		this.genericService.saveWithFiles(obj, Arrays.asList(files), false, Arrays.asList("fileLocation"), 
+				obj.getId().toString(), true);
+		return obj;
+	}
+	
+	
+	@RequestMapping(value = "/readFiles/{id}", method = RequestMethod.GET)
+	public List<String> saveFiles(@PathVariable("entity") String entity, @PathVariable("id") String id) {
+		
+		return this.genericService.readFiles(entity, id);
+		
+	}
+	
+	@RequestMapping(value = "/deleteFile/{id}", method = RequestMethod.POST)
+	public GenericResponse deleteFile(@PathVariable("entity") String entity, @PathVariable("id") String id, 
+			@RequestBody GenericDto dto) {
+		try {
+			String fileName  = dto.getJson().replaceAll("'", "").replaceAll("\"", "").replaceAll("&#039;", "'");
+			this.genericService.deleteFiles(entity, id, Arrays.asList(fileName));
+		} catch(Exception ex) {
+			return new GenericResponse("FILE_NOT_DELETED", ex.getMessage());
+		}
+		return new GenericResponse("SUCCESS");
+	}
+	
 
 	@RequestMapping(value = "/saveCompany", method = RequestMethod.POST)
 	public BaseEntity saveCompany(@PathVariable("entity") String entity, @RequestPart("file[]") MultipartFile[] files,

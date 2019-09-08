@@ -1,5 +1,6 @@
 package com.qkcare.service;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -31,6 +32,10 @@ public interface GenericService {
 	public Company getCompany(String language);
 	public BaseEntity saveWithFiles(BaseEntity entity, List<MultipartFile> files, 
 			boolean useId, List<String> attributeNames);
+	public BaseEntity saveWithFiles(BaseEntity entity, List<MultipartFile> files, boolean useId,
+			List<String> attributeNames, String folderName, boolean saveFilesOnly);
 	public List<BaseEntity> getByCriteria(Class<? extends BaseEntity> c, String parentName, Long parentId);
+	public List<String> readFiles(String entityName, String id);
+	public void deleteFiles(String entityName, String id, List<String> fileNames) throws IOException;
 
 }
