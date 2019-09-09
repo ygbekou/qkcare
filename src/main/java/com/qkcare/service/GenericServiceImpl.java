@@ -124,7 +124,7 @@ public class GenericServiceImpl implements GenericService {
 	public Integer deleteByCriteria(String queryStr, List<Quartet<String, String, String, String>> parameters) {
 		return this.genericDao.deleteByCriteria(queryStr, parameters);
 	}
-	
+
 	public Integer deleteNativeByCriteria(String queryStr, List<Quartet<String, String, String, String>> parameters) {
 		return this.genericDao.deleteNativeByCriteria(queryStr, parameters);
 	}
@@ -167,28 +167,29 @@ public class GenericServiceImpl implements GenericService {
 
 		return null;
 	}
-	
+
 	public List<String> readFiles(String entityName, String id) {
 		List<String> result = new ArrayList<>();
-		try (Stream<Path> walk = Files.walk(Paths.get(Constants.IMAGE_FOLDER + entityName.toLowerCase() + File.separator + id + File.separator))) {
+		try (Stream<Path> walk = Files.walk(
+				Paths.get(Constants.IMAGE_FOLDER + entityName.toLowerCase() + File.separator + id + File.separator))) {
 
-			result = walk.filter(Files::isRegularFile)
-					.map(x -> x.getFileName().toString()).collect(Collectors.toList());
+			result = walk.filter(Files::isRegularFile).map(x -> x.getFileName().toString())
+					.collect(Collectors.toList());
 
 			result.forEach(System.out::println);
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		return result;
 
 	}
-	
+
 	public void deleteFiles(String entityName, String id, List<String> fileNames) throws IOException {
-		for (String fileName: fileNames) {
-			Path fileToDeletePath = Paths.get(Constants.IMAGE_FOLDER + entityName.toLowerCase() 
-									+ File.separator + id + File.separator + fileName);
+		for (String fileName : fileNames) {
+			Path fileToDeletePath = Paths.get(Constants.IMAGE_FOLDER + entityName.toLowerCase() + File.separator + id
+					+ File.separator + fileName);
 			Files.delete(fileToDeletePath);
 		}
 	}
@@ -208,36 +209,34 @@ public class GenericServiceImpl implements GenericService {
 
 	}
 
-	
-	
 	@Transactional
 	public BaseEntity saveWithFiles(BaseEntity entity, List<MultipartFile> files, boolean useId,
 			List<String> attributeNames) {
-		
+
 		return this.saveWithFiles(entity, files, useId, attributeNames, null, false);
 	}
-	
-	
+
 	@Transactional
 	public BaseEntity saveWithFiles(BaseEntity entity, List<MultipartFile> files, boolean useId,
 			List<String> attributeNames, String folderName, boolean saveFilesOnly) {
-		
+
 		if (!saveFilesOnly) {
 			this.save(entity);
 		}
-		
+
 		try {
 			int i = 0;
 			for (MultipartFile file : files) {
 				String originalFileExtension = file.getOriginalFilename()
 						.substring(file.getOriginalFilename().lastIndexOf("."));
 
-				String fileName = saveFile(file, entity.getClass().getSimpleName() + (folderName != null ? File.separator + folderName : ""),
+				String fileName = saveFile(file,
+						entity.getClass().getSimpleName() + (folderName != null ? File.separator + folderName : ""),
 						useId ? entity.getId() + originalFileExtension : file.getOriginalFilename());
 
 				if (!saveFilesOnly) {
 					String fieldName = useId ? attributeNames.get(i) : file.getOriginalFilename().split("\\.")[0];
-	
+
 					Field field = entity.getClass().getDeclaredField(fieldName);
 					field.setAccessible(true);
 					field.set(entity, fileName);
