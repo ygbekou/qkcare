@@ -226,7 +226,7 @@ public class Visit extends BaseEntity {
 	}
 
 	public String getDoctorName() {
-		return this.getDoctor().getName();
+		return this.getDoctor()==null?"":this.getDoctor().getName();
 	}
 
 	public String getAppointmentTime() {

@@ -2,7 +2,9 @@ package com.qkcare.service;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.sql.Timestamp;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -17,7 +19,9 @@ import org.springframework.web.multipart.MultipartFile;
 import com.qkcare.dao.UserDao;
 import com.qkcare.model.BaseEntity;
 import com.qkcare.model.Company;
+import com.qkcare.model.Patient;
 import com.qkcare.model.User;
+import com.qkcare.model.Visit;
 import com.qkcare.util.Constants;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -68,21 +72,43 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 			}
 			user = (User) userField.get(entity);
+			Patient p = (Patient) entity;
+			if (p.getVisitReason() != null && p.getVisitReason().trim().equals("")) {// this is from Kiosk
+				List<User> users = userDao.getExistingUser(user.getFirstName(), user.getLastName(), user.getSex(),
+						user.getBirthDate());
+				if (users != null && users.size() > 1) {
+					User exUser = users.get(0);
 
-			List<User> users = userDao.findMembers(user.getFirstName(), user.getLastName(), user.getUserName(),
-					user.getEmail());
-			if (users != null && users.size() > 0) {
-				if (users.get(0).getId().intValue() != (user.getId()==null?0:user.getId().intValue()) || users.size() > 1) {
-					if (users.size() == 1) {
-						throw new Exception(
-								"Echec: Un utilisateur similaire existe deja: Nom: " + users.get(0).getFirstName() + " "
-										+ users.get(0).getLastName() + ", Recherchez-le pour eviter les doublons.");
-					} else {
-						for (User u : users) {
-							if (u.getId().intValue() != (user.getId()==null?0:user.getId().intValue()) ) {
-								throw new Exception("Echec: Un utilisateur similaire existe deja: Nom: "
-										+ users.get(0).getFirstName() + " " + users.get(0).getLastName()
-										+ ", Recherchez-le pour eviter les doublons.");
+					List<BaseEntity> patients = genericService.getByCriteria(Patient.class, "user", exUser.getId());
+					if (patients != null || patients.size() > 0) {
+						Patient pp = (Patient) patients.get(0);
+						Visit v = new Visit();
+						v.setPatient(pp);
+						v.setChiefOfComplain(p.getVisitReason());
+						v.setVisitDatetime(new Timestamp(new Date().getTime()));
+						genericService.save(v);
+						return entity;
+					}
+				}
+			}
+
+			if (p.getVisitReason() == null || p.getVisitReason().trim().equals("")) {
+				List<User> users = userDao.findMembers(user.getFirstName(), user.getLastName(), user.getUserName(),
+						user.getEmail());
+				if (users != null && users.size() > 0) {
+					if (users.get(0).getId().intValue() != (user.getId() == null ? 0 : user.getId().intValue())
+							|| users.size() > 1) {
+						if (users.size() == 1) {
+							throw new Exception("Echec: Un utilisateur similaire existe deja: Nom: "
+									+ users.get(0).getFirstName() + " " + users.get(0).getLastName()
+									+ ", Recherchez-le pour eviter les doublons.");
+						} else {
+							for (User u : users) {
+								if (u.getId().intValue() != (user.getId() == null ? 0 : user.getId().intValue())) {
+									throw new Exception("Echec: Un utilisateur similaire existe deja: Nom: "
+											+ users.get(0).getFirstName() + " " + users.get(0).getLastName()
+											+ ", Recherchez-le pour eviter les doublons.");
+								}
 							}
 						}
 					}
@@ -141,7 +167,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			throw e;
 		}
 
-		return genericService.save(entity);
+		genericService.save(entity);
+
+		Visit v = new Visit();
+		v.setPatient((Patient) entity);
+		v.setChiefOfComplain(((Patient) entity).getVisitReason());
+		v.setVisitDatetime(new Timestamp(new Date().getTime()));
+		genericService.save(v);
+
+		return entity;
+
 	}
 
 	@Transactional
