@@ -1,6 +1,7 @@
 package com.qkcare.model.imaging;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.qkcare.model.Admission;
 import com.qkcare.model.BaseEntity;
@@ -21,7 +23,7 @@ import com.qkcare.model.Visit;
 @Entity
 @Table(name = "RAD_INVESTIGATION")
 public class RadInvestigation extends BaseEntity {
-	
+
 	@Id
 	@Column(name = "INVESTIGATION_ID")
 	@GeneratedValue
@@ -41,9 +43,6 @@ public class RadInvestigation extends BaseEntity {
 	@ManyToOne
 	@JoinColumn(name = "assign_to")
 	private Employee assignTo;
-	@ManyToOne
-	@JoinColumn(name = "EXAM_ID")
-	private RadExam exam;
 	@Column(name = "INVESTIGATION_DATETIME")
 	private Timestamp investigationDatetime;
 	private String name;
@@ -53,60 +52,65 @@ public class RadInvestigation extends BaseEntity {
 	private ExamStatus examStatus;
 	@Column(name = "REJECTION_DATETIME")
 	private Timestamp rejectionDatetime;
-	@Column(name = "REJECTION_COMMENTS")
-	private String rejectionComments;
 	@Column(name = "COMPLETE_DATETIME")
 	private Timestamp completeDatetime;
-	@Column(name = "COMPLETE_COMMENTS")
-	private String completeComments;
-	
-	// Transient
-	
-	public RadInvestigation () {
-		
+
+	@Transient
+	private List<RadInvestigationExam> investigationExams;
+	@Transient
+	private List<RadInvestigationComment> investigationComments;
+
+	public RadInvestigation() {
+
 	}
-	
-	public RadInvestigation (DoctorOrder doctorOrder, RadExam exam) {
+
+	public RadInvestigation(DoctorOrder doctorOrder) {
 		this.setAdmission(doctorOrder.getAdmission());
 		this.setVisit(doctorOrder.getVisit());
-		this.setName(exam.getName());
-		this.setExam(exam);
 		this.setInvestigationDatetime(doctorOrder.getDoctorOrderDatetime());
 		this.setDoctorOrder(doctorOrder);
 	}
-	
+
 	public Long getId() {
 		return id;
 	}
+
 	public void setId(Long id) {
 		this.id = id;
 	}
+
 	public Admission getAdmission() {
 		return admission;
 	}
+
 	public void setAdmission(Admission admission) {
 		this.admission = admission;
 	}
-	
+
 	public Visit getVisit() {
 		return visit;
 	}
+
 	public void setVisit(Visit visit) {
 		this.visit = visit;
 	}
+
 	public DoctorOrder getDoctorOrder() {
 		return doctorOrder;
 	}
+
 	public void setDoctorOrder(DoctorOrder doctorOrder) {
 		this.doctorOrder = doctorOrder;
 	}
+
 	public User getReferringPhysician() {
 		return referringPhysician;
 	}
+
 	public void setReferringPhysician(User referringPhysician) {
 		this.referringPhysician = referringPhysician;
 	}
-	
+
 	public Employee getAssignTo() {
 		return assignTo;
 	}
@@ -115,64 +119,69 @@ public class RadInvestigation extends BaseEntity {
 		this.assignTo = assignTo;
 	}
 
-	public RadExam getExam() {
-		return exam;
-	}
-	public void setExam(RadExam exam) {
-		this.exam = exam;
-	}
 	public Timestamp getInvestigationDatetime() {
 		return investigationDatetime;
 	}
+
 	public void setInvestigationDatetime(Timestamp investigationDatetime) {
 		this.investigationDatetime = investigationDatetime;
 	}
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	public String getDescription() {
 		return description;
 	}
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
 	public ExamStatus getExamStatus() {
 		return examStatus;
 	}
+
 	public void setExamStatus(ExamStatus examStatus) {
 		this.examStatus = examStatus;
 	}
+
 	public Timestamp getCompleteDatetime() {
 		return completeDatetime;
 	}
+
 	public void setCompleteDatetime(Timestamp completeDatetime) {
 		this.completeDatetime = completeDatetime;
 	}
-	public String getCompleteComments() {
-		return completeComments;
-	}
-	public void setCompleteComments(String completeComments) {
-		this.completeComments = completeComments;
-	}
+
 	public Timestamp getRejectionDatetime() {
 		return rejectionDatetime;
 	}
+
 	public void setRejectionDatetime(Timestamp rejectionDatetime) {
 		this.rejectionDatetime = rejectionDatetime;
 	}
-	public String getRejectionComments() {
-		return rejectionComments;
-	}
-	public void setRejectionComments(String rejectionComments) {
-		this.rejectionComments = rejectionComments;
-	}
-	
-	
+
 	// Transient
-	public String getExamName() {
-		return this.getExam().getName();
+	public List<RadInvestigationExam> getInvestigationExams() {
+		return investigationExams;
 	}
+
+	public void setInvestigationExams(List<RadInvestigationExam> investigationExams) {
+		this.investigationExams = investigationExams;
+	}
+
+	public List<RadInvestigationComment> getInvestigationComments() {
+		return investigationComments;
+	}
+
+	public void setInvestigationComments(List<RadInvestigationComment> investigationComments) {
+		this.investigationComments = investigationComments;
+	}
+
 }

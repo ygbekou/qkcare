@@ -1,13 +1,19 @@
 package com.qkcare.service;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.transaction.Transactional;
 
@@ -118,7 +124,7 @@ public class GenericServiceImpl implements GenericService {
 	public Integer deleteByCriteria(String queryStr, List<Quartet<String, String, String, String>> parameters) {
 		return this.genericDao.deleteByCriteria(queryStr, parameters);
 	}
-	
+
 	public Integer deleteNativeByCriteria(String queryStr, List<Quartet<String, String, String, String>> parameters) {
 		return this.genericDao.deleteNativeByCriteria(queryStr, parameters);
 	}
@@ -149,7 +155,7 @@ public class GenericServiceImpl implements GenericService {
 				String newFilename = null;
 				newFilename = fileLabel;
 
-				File newFile = new File(storageDirectory + "/" + newFilename);
+				File newFile = new File(storageDirectory + newFilename);
 				file.transferTo(newFile);
 
 				return newFilename;
@@ -160,6 +166,32 @@ public class GenericServiceImpl implements GenericService {
 		}
 
 		return null;
+	}
+
+	public List<String> readFiles(String entityName, String id) {
+		List<String> result = new ArrayList<>();
+		try (Stream<Path> walk = Files.walk(
+				Paths.get(Constants.IMAGE_FOLDER + entityName.toLowerCase() + File.separator + id + File.separator))) {
+
+			result = walk.filter(Files::isRegularFile).map(x -> x.getFileName().toString())
+					.collect(Collectors.toList());
+
+			result.forEach(System.out::println);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return result;
+
+	}
+
+	public void deleteFiles(String entityName, String id, List<String> fileNames) throws IOException {
+		for (String fileName : fileNames) {
+			Path fileToDeletePath = Paths.get(Constants.IMAGE_FOLDER + entityName.toLowerCase() + File.separator + id
+					+ File.separator + fileName);
+			Files.delete(fileToDeletePath);
+		}
 	}
 
 	public Company getCompany(String language) {
@@ -180,7 +212,17 @@ public class GenericServiceImpl implements GenericService {
 	@Transactional
 	public BaseEntity saveWithFiles(BaseEntity entity, List<MultipartFile> files, boolean useId,
 			List<String> attributeNames) {
-		this.save(entity);
+
+		return this.saveWithFiles(entity, files, useId, attributeNames, null, false);
+	}
+
+	@Transactional
+	public BaseEntity saveWithFiles(BaseEntity entity, List<MultipartFile> files, boolean useId,
+			List<String> attributeNames, String folderName, boolean saveFilesOnly) {
+
+		if (!saveFilesOnly) {
+			this.save(entity);
+		}
 
 		try {
 			int i = 0;
@@ -188,15 +230,18 @@ public class GenericServiceImpl implements GenericService {
 				String originalFileExtension = file.getOriginalFilename()
 						.substring(file.getOriginalFilename().lastIndexOf("."));
 
-				String fileName = saveFile(file, entity.getClass().getSimpleName(),
+				String fileName = saveFile(file,
+						entity.getClass().getSimpleName() + (folderName != null ? File.separator + folderName : ""),
 						useId ? entity.getId() + originalFileExtension : file.getOriginalFilename());
 
-				String fieldName = useId ? attributeNames.get(i) : file.getOriginalFilename().split("\\.")[0];
+				if (!saveFilesOnly) {
+					String fieldName = useId ? attributeNames.get(i) : file.getOriginalFilename().split("\\.")[0];
 
-				Field field = entity.getClass().getDeclaredField(fieldName);
-				field.setAccessible(true);
-				field.set(entity, fileName);
-				this.save(entity);
+					Field field = entity.getClass().getDeclaredField(fieldName);
+					field.setAccessible(true);
+					field.set(entity, fileName);
+					this.save(entity);
+				}
 				i++;
 			}
 		} catch (Exception ex) {

@@ -3,6 +3,7 @@ package com.qkcare.service;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -12,11 +13,14 @@ import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.javatuples.Quartet;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.qkcare.domain.SearchCriteria;
 import com.qkcare.model.BaseEntity;
 import com.qkcare.model.imaging.RadInvestigation;
+import com.qkcare.model.imaging.RadInvestigationComment;
+import com.qkcare.model.imaging.RadInvestigationExam;
 import com.qkcare.util.DateUtil;
 
 @org.springframework.stereotype.Service(value="radInvestigationService")
@@ -32,10 +36,60 @@ public class RadInvestigationServiceImpl  implements RadInvestigationService {
 	
 	@Transactional
 	public BaseEntity save(RadInvestigation investigation) {
-		boolean isAddition = investigation.getId() == null;
-		
+			
 		BaseEntity toReturn = this.genericService.save(investigation);
+		
+		List<RadInvestigationExam> removedIEs = new ArrayList<>();
+		
+		for (RadInvestigationExam rie : investigation.getInvestigationExams()) {
+			if (rie.getStatus() == 9) {
+				this.genericService.delete(RadInvestigationExam.class, Arrays.asList(new Long[]{rie.getId()}));
+				removedIEs.add(rie);
+			} else {
+				rie.setInvestigation((RadInvestigation)toReturn);
+				this.genericService.save(rie);
+			}
+		}
+		
+		investigation.getInvestigationExams().removeAll(removedIEs);
+		
+		toReturn = this.genericService.save(investigation);
+		
 		return toReturn;
+	}
+	
+	
+	public BaseEntity findInvestigation(Class cl, Long key) {
+		RadInvestigation investigation = (RadInvestigation) this.genericService.find(cl, key);
+		
+		List<Quartet<String, String, String, String>> paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
+		paramTupleList.add(Quartet.with("e.investigation.id = ", "investigationId", key + "", "Long"));
+		String queryStr =  "SELECT e FROM RadInvestigationExam e WHERE 1 = 1 ";
+		List<BaseEntity> exams = genericService.getByCriteria(queryStr, paramTupleList, " ");
+		List<RadInvestigationExam> investigationExams = new ArrayList<RadInvestigationExam>();
+		
+		for (BaseEntity entity : exams) {
+			RadInvestigationExam investigationExam = (RadInvestigationExam)entity;
+			investigationExam.setInvestigation(null);
+			investigationExams.add(investigationExam);
+		}
+		
+		investigation.setInvestigationExams(investigationExams);
+		
+		queryStr =  "SELECT e FROM RadInvestigationComment e WHERE 1 = 1 ";
+		List<BaseEntity> comments = genericService.getByCriteria(queryStr, paramTupleList, " ");
+		List<RadInvestigationComment> investigationComments = new ArrayList<RadInvestigationComment>();
+		
+		for (BaseEntity entity : comments) {
+			RadInvestigationComment investigationComment = (RadInvestigationComment)entity;
+			investigationComment.setInvestigation(null);
+			investigationComments.add(investigationComment);
+		}
+		
+		investigation.setInvestigationComments(investigationComments);
+		
+		return investigation;
+		
 	}
 	
 	
