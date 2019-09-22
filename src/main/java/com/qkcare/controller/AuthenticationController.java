@@ -55,7 +55,7 @@ public class AuthenticationController {
 		final User user = userService.getUser(null, loginUser.getUserName(), null);
 		final String token = jwtTokenUtil.generateToken(user);
 		
-		List<MenuVO> menus = this.authorizationService.getUserResources(user.getId());
+		List<MenuVO> menus = this.authorizationService.getUserResources(user.getId(), loginUser.getLang());
 		
 		return ResponseEntity.ok(new AuthToken(token, loginUser.getUserName(), loginUser.getPassword(),
 				user.getFirstName(), user.getLastName(), user.getUserGroup().getName(), user.getPicture(),

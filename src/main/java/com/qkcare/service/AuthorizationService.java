@@ -21,5 +21,5 @@ public interface AuthorizationService {
 	
 	public BaseEntity getRoleById(Long id);
 	
-	public List<MenuVO> getUserResources(Long userId);
+	public List<MenuVO> getUserResources(Long userId, String lang);
 }

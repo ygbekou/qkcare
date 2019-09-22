@@ -4,6 +4,7 @@ public class LoginUser {
 
     private String userName;
     private String password;
+    private String lang;
 
  
     public String getUserName() {
@@ -18,4 +19,11 @@ public class LoginUser {
     public void setPassword(String password) {
         this.password = password;
     }
+	public String getLang() {
+		return lang;
+	}
+	public void setLang(String lang) {
+		this.lang = lang;
+	}
+    
 }

@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.javatuples.Pair;
 import org.javatuples.Quartet;
@@ -121,11 +122,16 @@ public class AuthorizationServiceImpl  implements AuthorizationService {
 	}
 	
 	
-	public List<MenuVO> getUserResources(Long userId) {
+	public List<MenuVO> getUserResources(Long userId, String lang) {
+		String language = lang;
+		if (StringUtils.isBlank(lang)) {
+			language = "en";
+		}
 	
 		// Get the user resources 
 		List<Quartet<String, String, String, String>> paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
 		paramTupleList.add(Quartet.with("U.USER_ID = ", "userId", userId + "", "Long"));
+		paramTupleList.add(Quartet.with("M1.LANGUAGE = ", "lang", language + "", "String"));
 		String queryStr =  "SELECT R.NAME AS ROLE_NAME, RE.NAME AS RESOURCE_NAME, RE.URL_PATH, " +
 				"M1.MENU_ITEM_ID AS MENU_ID, M1.LABEL AS MENU_LABEL, M1.ICON AS MENU_ICON, " +
 				"M2.MENU_ITEM_ID AS PARENT_ID, M2.LABEL AS PARENT_LABEL, M2.ICON AS PARENT_ICON, M1.LEVEL, "
@@ -136,35 +142,42 @@ public class AuthorizationServiceImpl  implements AuthorizationService {
 				"JOIN USERS U ON UR.USER_ID = U.USER_ID\r\n" + 
 				"JOIN RESOURCE RE ON RR.RESOURCE_ID = RE.RESOURCE_ID\r\n" + 
 				"JOIN MENU_ITEM M1 ON RE.RESOURCE_ID = M1.RESOURCE_ID\r\n" + 
-				"LEFT OUTER JOIN MENU_ITEM M2 ON M1.PARENT_ID = M2.MENU_ITEM_ID\r\n"
+				"LEFT OUTER JOIN MENU_ITEM M2 ON M1.PARENT_ID = M2.MENU_ITEM_ID AND M2.LANGUAGE = '"  + language + "'\r\n"
 				+ "WHERE 1 = 1 ";
 		List<Object[]> list = genericService.getNativeByCriteria(queryStr, paramTupleList, " ORDER BY M1.LEVEL, M1.MI_ORDER ", "  ");
-		List<MenuVO> menus = new ArrayList<MenuVO>();
 		
 		Map<String, MenuVO> menuMap = new HashMap<>();
 		
 		for (Object[] objects : list) {
+			String roleName = getStrValue(objects[0]);
+			String resourceName = getStrValue(objects[1]);
+			String urlPath = getStrValue(objects[2]);
+			Long menuId = getLongValue(objects[3]);
+			String label = getStrValue(objects[4]);
+			String icon = getStrValue(objects[5]);
+			Long parentMenuId = getLongValue(objects[6]);
 			String parentLabel = getNullStrValue(objects[7]);
+			String parentIcon = getStrValue(objects[8]);
+			Long level = getLongValue(objects[9]);
+			Integer order = getIntegerValue(objects[10]);
+			Integer parentOrder = getIntegerValue(objects[11]);
 			if ( parentLabel != null) {
 				
 				MenuVO parentMenu = menuMap.get(parentLabel);
 				
 				if (menuMap.get(parentLabel) == null) {
-					parentMenu = new MenuVO(getLongValue(objects[6]), parentLabel, null, getStrValue(objects[8]), getIntegerValue(objects[11]));
+					parentMenu = new MenuVO(parentMenuId, parentLabel, null, parentIcon, parentOrder);
 					menuMap.put(parentLabel, parentMenu);
 				}
 				
-				parentMenu.addItem(new MenuVO(getLongValue(objects[3]), getStrValue(objects[4]), 
-					Arrays.asList(getStrValue(objects[2])), getStrValue(objects[5]), getIntegerValue(objects[10])));
+				parentMenu.addItem(new MenuVO(menuId, label, Arrays.asList(urlPath), icon, order));
 			} else {
-				menuMap.put(getStrValue(objects[4]), new MenuVO(getLongValue(objects[3]), getStrValue(objects[4]), 
-						Arrays.asList(getStrValue(objects[2])), getStrValue(objects[5]), getIntegerValue(objects[10])));
+				menuMap.put(label, new MenuVO(menuId, label, Arrays.asList(urlPath), icon, order));
 			}
-			//menus.add(new MenuVO(getLongValue(objects[3]), getStrValue(objects[4]), 
-			//		getStrValue(objects[2]), getStrValue(objects[5])));
+			
 		}
 		
-		List results = new ArrayList(menuMap.values());
+		List<MenuVO> results = new ArrayList<MenuVO>(menuMap.values());
 		results.sort(Comparator.comparingLong(MenuVO::getmIOrder));
 		
 		return results;

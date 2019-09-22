@@ -26,6 +26,8 @@ public class BaseEntity {
 	public String customValidator = "";
 	@Transient
 	private String modifiedByName;
+	@Transient
+	private String lang;
 	
 	public Long getId() {
 		return null;
@@ -80,7 +82,14 @@ public class BaseEntity {
 		return this.modifiedByName;
 	}
 	
-	
+	public String getLang() {
+		return lang;
+	}
+
+	public void setLang(String lang) {
+		this.lang = lang;
+	}
+
 	@Override
 	public String toString() {
 		return "BaseEntity [createDate=" + createDate + ", modDate=" + modDate
