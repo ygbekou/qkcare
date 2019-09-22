@@ -9,6 +9,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.qkcare.model.BaseEntity;
+import com.qkcare.model.DoctorOrder;
+import com.qkcare.model.LabTest;
 import com.qkcare.model.User;
 
 @Entity
@@ -25,7 +27,16 @@ public class UserRole extends BaseEntity {
 	@ManyToOne
 	@JoinColumn(name = "ROLE_ID")
 	private Role role;
+	private int status;
 
+	
+	public UserRole () {
+	}
+	
+	public UserRole (User user, Role role) {
+		this.setUser(user);
+		this.setRole(role);
+	}
 	
 	public Long getId() {
 		return id;
@@ -45,5 +56,16 @@ public class UserRole extends BaseEntity {
 	public void setRole(Role role) {
 		this.role = role;
 	}
+	public int getStatus() {
+		return status;
+	}
+	public void setStatus(int status) {
+		this.status = status;
+	}
 	
+	
+	// Transient
+	public String getStatusDesc() {
+		return status == 0 ? "Active" : "Inactive";
+	}
 }

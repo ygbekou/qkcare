@@ -5,8 +5,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.qkcare.model.BaseEntity;
@@ -19,26 +17,25 @@ public class Resource extends BaseEntity {
 	@Column(name = "RESOURCE_ID")
 	@GeneratedValue
 	private Long id;
-	@ManyToOne
-	@JoinColumn(name = "PARENT_ID")
-	private Resource parent;
 	private String name;
 	@Column(name = "URL_PATH")
 	private String urlPath;
 	private String description;
 	private int status;
 	
+	public Resource() {}
+	
+	public Resource(Long id, String name, String urlPath) {
+		this.id = id;
+		this.name = name;
+		this.urlPath = urlPath;
+	}
+	
 	public Long getId() {
 		return id;
 	}
 	public void setId(Long id) {
 		this.id = id;
-	}
-	public Resource getParent() {
-		return parent;
-	}
-	public void setParent(Resource parent) {
-		this.parent = parent;
 	}
 	public String getName() {
 		return name;
@@ -63,11 +60,6 @@ public class Resource extends BaseEntity {
 	}
 	public void setStatus(int status) {
 		this.status = status;
-	}
-
-	
-	public String getParentName() {
-		return this.getParent() != null ? this.getParent().getName() : "";
 	}
 	
 	public String getStatusDesc() {

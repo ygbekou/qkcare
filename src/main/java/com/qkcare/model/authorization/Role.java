@@ -1,11 +1,14 @@
 package com.qkcare.model.authorization;
 
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.qkcare.model.BaseEntity;
 
@@ -20,6 +23,18 @@ public class Role extends BaseEntity {
 	private String name;
 	private String description;
 	private int status;
+	
+	// Transient
+	@Transient
+	List<Permission> permissions;
+	
+	public Role() {}
+	
+	public Role(Long id, String name, String description) {
+		this.id = id;
+		this.name = name;
+		this.description = description;
+	}
 	
 	public Long getId() {
 		return id;
@@ -46,4 +61,13 @@ public class Role extends BaseEntity {
 		this.status = status;
 	}
 
+	
+	// Transient
+	public List<Permission> getPermissions() {
+		return permissions;
+	}
+
+	public void setPermissions(List<Permission> permissions) {
+		this.permissions = permissions;
+	}
 }

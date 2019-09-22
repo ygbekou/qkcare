@@ -1,6 +1,7 @@
 package com.qkcare.model;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +10,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import com.qkcare.model.authorization.Role;
 
 @Entity
 @Table(name = "USERS")
@@ -49,6 +53,10 @@ public class User extends BaseEntity {
 	private int status;
 	@Column(name="FIRST_TIME_LOGIN")
 	private String firstTimeLogin;
+	
+	// Transient
+	@Transient
+	private List<Role> roles;
 	
 	public String getFirstTimeLogin() {
 		return firstTimeLogin;
@@ -215,6 +223,12 @@ public class User extends BaseEntity {
 	public String getName() {
 		return this.getFirstName() + (this.getMiddleName() != null ? (" " + this.getMiddleName() + " ") : " ")
 				+ this.getLastName();
+	}
+	public List<Role> getRoles() {
+		return roles;
+	}
+	public void setRoles(List<Role> roles) {
+		this.roles = roles;
 	}
 
 }

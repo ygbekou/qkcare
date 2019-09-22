@@ -3,10 +3,13 @@ package com.qkcare.controller;
 import com.qkcare.config.JwtTokenUtil;
 import com.qkcare.domain.AuthToken;
 import com.qkcare.domain.LoginUser;
+import com.qkcare.domain.MenuVO;
 import com.qkcare.model.User;
+import com.qkcare.service.AuthorizationService;
 import com.qkcare.service.UserService;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +38,9 @@ public class AuthenticationController {
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private AuthorizationService authorizationService;
 
 	@Autowired
 	BCryptPasswordEncoder encoder;
@@ -47,9 +53,13 @@ public class AuthenticationController {
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		final User user = userService.getUser(null, loginUser.getUserName(), null);
 		final String token = jwtTokenUtil.generateToken(user);
+		
+		List<MenuVO> menus = this.authorizationService.getUserResources(user.getId());
+		
 		return ResponseEntity.ok(new AuthToken(token, loginUser.getUserName(), loginUser.getPassword(),
 				user.getFirstName(), user.getLastName(), user.getUserGroup().getName(), user.getPicture(),
-				user.getFirstTimeLogin(), Arrays.asList(new Long[] { user.getUserGroup().getId() })));
+				user.getFirstTimeLogin(), Arrays.asList(new Long[] { user.getUserGroup().getId() }),
+				menus));
 
 	}
 
