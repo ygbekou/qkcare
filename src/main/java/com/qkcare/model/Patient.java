@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.qkcare.model.enums.BloodGroupEnum;
 
@@ -78,6 +79,18 @@ public class Patient extends BaseEntity {
 	private BloodGroupEnum bloodGroupEnum;
 
 	private int status;
+	
+	@Transient
+	private String visitReason;
+	
+	
+	public String getVisitReason() {
+		return visitReason;
+	}
+
+	public void setVisitReason(String visitReason) {
+		this.visitReason = visitReason;
+	}
 
 	public Patient() {
 	}

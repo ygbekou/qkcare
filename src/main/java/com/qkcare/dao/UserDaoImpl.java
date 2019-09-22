@@ -1,5 +1,6 @@
 package com.qkcare.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -46,6 +47,21 @@ public class UserDaoImpl implements UserDao {
 		query.setParameter(2, lastName.toUpperCase());
 		query.setParameter(3, login.toUpperCase());
 		query.setParameter(4, email.toUpperCase());
+		return query.getResultList();
+
+	}
+	
+	public List<User> getExistingUser(String firstName, String lastName,
+			String sex, Date birthDate) {
+		firstName = firstName == null ? "#" : firstName;
+		lastName = lastName == null ? "#" : lastName; 
+		Query query = entityManager.createQuery(
+				" FROM User U WHERE (UPPER(U.firstName) = ? AND UPPER(U.lastName) = ?"
+				+ " UPPER(U.sex)=? AND U.birthDate=?");
+		query.setParameter(1, firstName.toUpperCase());
+		query.setParameter(2, lastName.toUpperCase());
+		query.setParameter(3, sex.toUpperCase());
+		query.setParameter(4, birthDate);
 		return query.getResultList();
 
 	}
