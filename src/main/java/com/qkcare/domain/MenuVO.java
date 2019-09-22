@@ -11,16 +11,18 @@ public class MenuVO implements Serializable {
 	private String label;
 	private List<String> routerLink;
 	private String icon;
+	private Integer mIOrder;
 	
 	List<MenuVO> items;
 	
 	public MenuVO() {}
 	
-	public MenuVO(Long id, String label, List<String> routerLink, String icon) {
+	public MenuVO(Long id, String label, List<String> routerLink, String icon, Integer miOrder) {
 		this.id = id;
 		this.label = label;
 		this.routerLink = routerLink;
 		this.icon = icon;
+		this.mIOrder = miOrder;
 	}
 	
 	public void addItem(MenuVO menu) {
@@ -60,6 +62,14 @@ public class MenuVO implements Serializable {
 
 	public void setRouterLink(List<String> routerLink) {
 		this.routerLink = routerLink;
+	}
+
+	public Integer getmIOrder() {
+		return mIOrder;
+	}
+
+	public void setmIOrder(Integer mIOrder) {
+		this.mIOrder = mIOrder;
 	}
 
 	public List<MenuVO> getItems() {

@@ -4,6 +4,7 @@ package com.qkcare.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -127,7 +128,8 @@ public class AuthorizationServiceImpl  implements AuthorizationService {
 		paramTupleList.add(Quartet.with("U.USER_ID = ", "userId", userId + "", "Long"));
 		String queryStr =  "SELECT R.NAME AS ROLE_NAME, RE.NAME AS RESOURCE_NAME, RE.URL_PATH, " +
 				"M1.MENU_ITEM_ID AS MENU_ID, M1.LABEL AS MENU_LABEL, M1.ICON AS MENU_ICON, " +
-				"M2.MENU_ITEM_ID AS PARENT_ID, M2.LABEL AS PARENT_LABEL, M2.ICON AS PARENT_ICON, M1.LEVEL\r\n" + 
+				"M2.MENU_ITEM_ID AS PARENT_ID, M2.LABEL AS PARENT_LABEL, M2.ICON AS PARENT_ICON, M1.LEVEL, "
+				+ "M1.MI_ORDER AS MI_ORDER, M2.MI_ORDER AS PARENT_MI_ORDER\r\n" + 
 				"FROM PERMISSION RR\r\n" + 
 				"JOIN USER_ROLE UR ON RR.ROLE_ID = UR.ROLE_ID\r\n" + 
 				"JOIN ROLE R ON UR.ROLE_ID = R.ROLE_ID\r\n" + 
@@ -148,21 +150,24 @@ public class AuthorizationServiceImpl  implements AuthorizationService {
 				MenuVO parentMenu = menuMap.get(parentLabel);
 				
 				if (menuMap.get(parentLabel) == null) {
-					parentMenu = new MenuVO(getLongValue(objects[6]), parentLabel, null, null);
+					parentMenu = new MenuVO(getLongValue(objects[6]), parentLabel, null, getStrValue(objects[8]), getIntegerValue(objects[11]));
 					menuMap.put(parentLabel, parentMenu);
 				}
 				
 				parentMenu.addItem(new MenuVO(getLongValue(objects[3]), getStrValue(objects[4]), 
-					Arrays.asList(getStrValue(objects[2])), getStrValue(objects[5])));
+					Arrays.asList(getStrValue(objects[2])), getStrValue(objects[5]), getIntegerValue(objects[10])));
 			} else {
 				menuMap.put(getStrValue(objects[4]), new MenuVO(getLongValue(objects[3]), getStrValue(objects[4]), 
-						Arrays.asList(getStrValue(objects[2])), getStrValue(objects[5])));
+						Arrays.asList(getStrValue(objects[2])), getStrValue(objects[5]), getIntegerValue(objects[10])));
 			}
 			//menus.add(new MenuVO(getLongValue(objects[3]), getStrValue(objects[4]), 
 			//		getStrValue(objects[2]), getStrValue(objects[5])));
 		}
 		
-		return  new ArrayList(menuMap.values());
+		List results = new ArrayList(menuMap.values());
+		results.sort(Comparator.comparingLong(MenuVO::getmIOrder));
+		
+		return results;
 	}
 	
 	
@@ -177,6 +182,10 @@ public class AuthorizationServiceImpl  implements AuthorizationService {
 	
 	private Long getLongValue(Object obj) {
 		return obj == null ? null : new Long(obj.toString());
+	}
+	
+	private Integer getIntegerValue(Object obj) {
+		return obj == null ? null : new Integer(obj.toString());
 	}
 	
 	private int deleteRemovedRoles(User user) {
