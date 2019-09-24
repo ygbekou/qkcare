@@ -2,9 +2,11 @@ package com.qkcare.service;
 
 import java.util.List;
 
+import org.javatuples.Pair;
 import org.springframework.stereotype.Service;
 
 import com.qkcare.domain.MenuVO;
+import com.qkcare.domain.PermissionVO;
 import com.qkcare.model.BaseEntity;
 import com.qkcare.model.User;
 import com.qkcare.model.authorization.Role;
@@ -21,5 +23,5 @@ public interface AuthorizationService {
 	
 	public BaseEntity getRoleById(Long id);
 	
-	public List<MenuVO> getUserResources(Long userId, String lang);
+	public Pair<List<MenuVO>, List<PermissionVO>> getUserResources(Long userId, String lang);
 }

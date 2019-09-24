@@ -14,6 +14,7 @@ public class AuthToken {
     private String firstTimeLogin;
     private List authorities;
     private List<MenuVO> menus;
+    private List<PermissionVO> nonMenuPermissions;
 
     public AuthToken(){
 
@@ -22,7 +23,7 @@ public class AuthToken {
     public AuthToken(String token, String userName, String password, 
     		String firstName, String lastName, String roleName,
     		String picture, String firstTimeLogin, List authorities, 
-    		List<MenuVO> menus){
+    		List<MenuVO> menus, List<PermissionVO> nonMenuPermissions){
         this.token = token;
         this.userName = userName;
         this.password = password;
@@ -33,6 +34,7 @@ public class AuthToken {
         this.firstTimeLogin = firstTimeLogin;
         this.authorities = authorities;
         this.menus = menus;
+        this.nonMenuPermissions = nonMenuPermissions;
     }
     
     public String getToken() {
@@ -94,6 +96,12 @@ public class AuthToken {
 	}
 	public void setMenus(List<MenuVO> menus) {
 		this.menus = menus;
+	}
+	public List<PermissionVO> getNonMenuPermissions() {
+		return nonMenuPermissions;
+	}
+	public void setNonMenuPermissions(List<PermissionVO> nonMenuPermissions) {
+		this.nonMenuPermissions = nonMenuPermissions;
 	}
 	
 }

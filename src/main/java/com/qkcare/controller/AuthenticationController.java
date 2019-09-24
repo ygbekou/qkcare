@@ -4,6 +4,7 @@ import com.qkcare.config.JwtTokenUtil;
 import com.qkcare.domain.AuthToken;
 import com.qkcare.domain.LoginUser;
 import com.qkcare.domain.MenuVO;
+import com.qkcare.domain.PermissionVO;
 import com.qkcare.model.User;
 import com.qkcare.service.AuthorizationService;
 import com.qkcare.service.UserService;
@@ -12,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import org.javatuples.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -55,12 +57,12 @@ public class AuthenticationController {
 		final User user = userService.getUser(null, loginUser.getUserName(), null);
 		final String token = jwtTokenUtil.generateToken(user);
 		
-		List<MenuVO> menus = this.authorizationService.getUserResources(user.getId(), loginUser.getLang());
+		Pair<List<MenuVO>, List<PermissionVO>> resources = this.authorizationService.getUserResources(user.getId(), loginUser.getLang());
 		
 		return ResponseEntity.ok(new AuthToken(token, loginUser.getUserName(), loginUser.getPassword(),
 				user.getFirstName(), user.getLastName(), user.getUserGroup().getName(), user.getPicture(),
 				user.getFirstTimeLogin(), Arrays.asList(new Long[] { user.getUserGroup().getId() }),
-				menus));
+				resources.getValue0(), resources.getValue1()));
 
 	}
 

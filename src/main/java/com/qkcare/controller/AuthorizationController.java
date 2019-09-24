@@ -93,11 +93,11 @@ public class AuthorizationController extends BaseController {
 		}
 		
 		
-		@RequestMapping(value="user/menus/{userId}",method = RequestMethod.GET)
-		public List<MenuVO> getUserMenus(@PathVariable("userId") Long userId) throws ClassNotFoundException{
-			
-			return this.authorizationService.getUserResources(userId, null);
-		}
-		
+//		@RequestMapping(value="user/menus/{userId}",method = RequestMethod.GET)
+//		public List<MenuVO> getUserMenus(@PathVariable("userId") Long userId) throws ClassNotFoundException{
+//			
+//			return this.authorizationService.getUserResources(userId, null);
+//		}
+//		
 		
 }

@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.qkcare.domain.MenuVO;
+import com.qkcare.domain.PermissionVO;
 import com.qkcare.model.BaseEntity;
 import com.qkcare.model.User;
 import com.qkcare.model.authorization.Permission;
@@ -122,7 +123,7 @@ public class AuthorizationServiceImpl  implements AuthorizationService {
 	}
 	
 	
-	public List<MenuVO> getUserResources(Long userId, String lang) {
+	public Pair<List<MenuVO>, List<PermissionVO>> getUserResources(Long userId, String lang) {
 		String language = lang;
 		if (StringUtils.isBlank(lang)) {
 			language = "en";
@@ -131,29 +132,30 @@ public class AuthorizationServiceImpl  implements AuthorizationService {
 		// Get the user resources 
 		List<Quartet<String, String, String, String>> paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
 		paramTupleList.add(Quartet.with("U.USER_ID = ", "userId", userId + "", "Long"));
-		paramTupleList.add(Quartet.with("M1.LANGUAGE = ", "lang", language + "", "String"));
 		String queryStr =  "SELECT R.NAME AS ROLE_NAME, RE.NAME AS RESOURCE_NAME, RE.URL_PATH, " +
 				"M1.MENU_ITEM_ID AS MENU_ID, M1.LABEL AS MENU_LABEL, M1.ICON AS MENU_ICON, " +
 				"M2.MENU_ITEM_ID AS PARENT_ID, M2.LABEL AS PARENT_LABEL, M2.ICON AS PARENT_ICON, M1.LEVEL, "
-				+ "M1.MI_ORDER AS MI_ORDER, M2.MI_ORDER AS PARENT_MI_ORDER\r\n" + 
+				+ "M1.MI_ORDER AS MI_ORDER, M2.MI_ORDER AS PARENT_MI_ORDER, "
+				+ "RR.CAN_ADD, RR.CAN_EDIT, RR.CAN_VIEW, RR.CAN_DELETE\r\n" + 
 				"FROM PERMISSION RR\r\n" + 
 				"JOIN USER_ROLE UR ON RR.ROLE_ID = UR.ROLE_ID\r\n" + 
 				"JOIN ROLE R ON UR.ROLE_ID = R.ROLE_ID\r\n" + 
 				"JOIN USERS U ON UR.USER_ID = U.USER_ID\r\n" + 
 				"JOIN RESOURCE RE ON RR.RESOURCE_ID = RE.RESOURCE_ID\r\n" + 
-				"JOIN MENU_ITEM M1 ON RE.RESOURCE_ID = M1.RESOURCE_ID\r\n" + 
+				"LEFT OUTER JOIN MENU_ITEM M1 ON RE.RESOURCE_ID = M1.RESOURCE_ID AND M1.LANGUAGE = '"  + language + "'\r\n" + 
 				"LEFT OUTER JOIN MENU_ITEM M2 ON M1.PARENT_ID = M2.MENU_ITEM_ID AND M2.LANGUAGE = '"  + language + "'\r\n"
 				+ "WHERE 1 = 1 ";
 		List<Object[]> list = genericService.getNativeByCriteria(queryStr, paramTupleList, " ORDER BY M1.LEVEL, M1.MI_ORDER ", "  ");
 		
 		Map<String, MenuVO> menuMap = new HashMap<>();
+		List<PermissionVO> nonMenuPermissions = new ArrayList<>();
 		
 		for (Object[] objects : list) {
 			String roleName = getStrValue(objects[0]);
 			String resourceName = getStrValue(objects[1]);
 			String urlPath = getStrValue(objects[2]);
 			Long menuId = getLongValue(objects[3]);
-			String label = getStrValue(objects[4]);
+			String label = getNullStrValue(objects[4]);
 			String icon = getStrValue(objects[5]);
 			Long parentMenuId = getLongValue(objects[6]);
 			String parentLabel = getNullStrValue(objects[7]);
@@ -161,26 +163,36 @@ public class AuthorizationServiceImpl  implements AuthorizationService {
 			Long level = getLongValue(objects[9]);
 			Integer order = getIntegerValue(objects[10]);
 			Integer parentOrder = getIntegerValue(objects[11]);
-			if ( parentLabel != null) {
-				
-				MenuVO parentMenu = menuMap.get(parentLabel);
-				
-				if (menuMap.get(parentLabel) == null) {
-					parentMenu = new MenuVO(parentMenuId, parentLabel, null, parentIcon, parentOrder);
-					menuMap.put(parentLabel, parentMenu);
+			String canAdd = getStrValue(objects[12]);
+			String canEdit = getStrValue(objects[13]);
+			String canView = getStrValue(objects[14]);
+			String canDelete = getStrValue(objects[15]);
+			
+			if (label != null) {
+				if ( parentLabel != null) {
+					
+					MenuVO parentMenu = menuMap.get(parentLabel);
+					
+					if (menuMap.get(parentLabel) == null) {
+						parentMenu = new MenuVO(parentMenuId, parentLabel, null, parentIcon, parentOrder);
+						menuMap.put(parentLabel, parentMenu);
+					}
+					
+					parentMenu.addItem(new MenuVO(menuId, label, Arrays.asList(urlPath), icon, order));
+				} else {
+					menuMap.put(label, new MenuVO(menuId, label, Arrays.asList(urlPath), icon, order));
 				}
-				
-				parentMenu.addItem(new MenuVO(menuId, label, Arrays.asList(urlPath), icon, order));
 			} else {
-				menuMap.put(label, new MenuVO(menuId, label, Arrays.asList(urlPath), icon, order));
+				nonMenuPermissions.add(new PermissionVO(null, resourceName, canAdd, canEdit, canView, canDelete));
 			}
+			
 			
 		}
 		
 		List<MenuVO> results = new ArrayList<MenuVO>(menuMap.values());
 		results.sort(Comparator.comparingLong(MenuVO::getmIOrder));
 		
-		return results;
+		return Pair.with(results, nonMenuPermissions);
 	}
 	
 	
