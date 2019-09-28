@@ -182,9 +182,8 @@ public class AuthorizationServiceImpl  implements AuthorizationService {
 				} else {
 					menuMap.put(label, new MenuVO(menuId, label, Arrays.asList(urlPath), icon, order));
 				}
-			} else {
-				nonMenuPermissions.add(new PermissionVO(null, resourceName, canAdd, canEdit, canView, canDelete));
-			}
+			} 
+			nonMenuPermissions.add(new PermissionVO(null, resourceName, canAdd, canEdit, canView, canDelete));
 			
 			
 		}
