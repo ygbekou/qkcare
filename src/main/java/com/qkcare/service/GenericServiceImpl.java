@@ -254,4 +254,5 @@ public class GenericServiceImpl implements GenericService {
 	public List<BaseEntity> getByCriteria(Class<? extends BaseEntity> c, String parentName, Long parentId) {
 		return genericDao.getByCriteria(c, parentName, parentId);
 	}
+ 
 }

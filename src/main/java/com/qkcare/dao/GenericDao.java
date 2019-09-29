@@ -24,5 +24,5 @@ public interface GenericDao<E,K> {
 	public Integer deleteNativeByCriteria(String queryStr, List<Quartet<String, String, String, String>> parameters);
 	public Session getConnection();
 	public List<BaseEntity> getByCriteria(Class<? extends BaseEntity> c, String parentName, Long parentId) ;
-
+	 
 }

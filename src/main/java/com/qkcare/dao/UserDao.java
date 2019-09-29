@@ -10,5 +10,6 @@ public interface UserDao {
 	public List<User> findMembers(String firstName, String lastName, String login, String email);
 	public List<User> getExistingUser(String firstName, String lastName,
 			String sex, Date birthDate);
+	public User getTempUser(String userName, Date birthDate);
 
 }

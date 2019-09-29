@@ -52,7 +52,7 @@ public class User extends BaseEntity {
 	private String zipCode;
 	private int status;
 	@Column(name="FIRST_TIME_LOGIN")
-	private String firstTimeLogin;
+	private String firstTimeLogin="Y";
 	
 	// Transient
 	@Transient
