@@ -12,8 +12,10 @@ import javax.persistence.criteria.CriteriaQuery;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
 import org.javatuples.Quartet;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 import org.springframework.stereotype.Repository;
 
 import com.qkcare.model.BaseEntity;
@@ -21,7 +23,7 @@ import com.qkcare.util.DateUtil;
 
 @SuppressWarnings("unchecked")
 @Repository
-public class GenericDaoImpl<E, K> implements GenericDao<E, K> {
+public class GenericDaoImpl<E, K>  implements GenericDao<E, K> {
 	private static Logger logger = Logger.getLogger(GenericDaoImpl.class);
 
 	@Autowired
@@ -74,8 +76,7 @@ public class GenericDaoImpl<E, K> implements GenericDao<E, K> {
 	}
 
 	public List<BaseEntity> getByCriteria(Class<? extends BaseEntity> c, String parentName, Long parentId) {
-
-		DetachedCriteria crit = DetachedCriteria.forClass(c);
+ 
 		if (parentName != null && parentId != null) {
 			return entityManager.createQuery("FROM " + c.getName() + " c WHERE c." + parentName + ".id = :parentId")
 					.setParameter("parentId", parentId).getResultList();
@@ -171,6 +172,7 @@ public class GenericDaoImpl<E, K> implements GenericDao<E, K> {
 
 	}
 
+ 
 	public Session getConnection() {
 		return entityManager.unwrap(Session.class);
 	}

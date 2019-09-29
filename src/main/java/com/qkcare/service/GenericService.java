@@ -37,5 +37,4 @@ public interface GenericService {
 	public List<BaseEntity> getByCriteria(Class<? extends BaseEntity> c, String parentName, Long parentId);
 	public List<String> readFiles(String entityName, String id);
 	public void deleteFiles(String entityName, String id, List<String> fileNames) throws IOException;
-
-}
+ }

@@ -23,6 +23,7 @@ import com.qkcare.model.Patient;
 import com.qkcare.model.User;
 import com.qkcare.model.Visit;
 import com.qkcare.util.Constants;
+import com.qkcare.util.Utils;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,7 +34,7 @@ import static org.apache.commons.text.CharacterPredicates.DIGITS;
 import static org.apache.commons.text.CharacterPredicates.LETTERS;
 
 @Service(value = "userService")
-public class UserServiceImpl implements UserService, UserDetailsService {
+public class UserServiceImpl extends GenericServiceImpl implements UserService, UserDetailsService {
 
 	@Autowired
 	GenericService genericService;
@@ -52,6 +53,45 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	static {
 		stringGenerator = new RandomStringGenerator.Builder().withinRange('0', 'z').filteredBy(LETTERS, DIGITS).build();
+	}
+
+	public String generateUserName(String firstName, String lastName, Date birthDate) {
+		String mat = null;
+		if (lastName != null && firstName != null) {
+			if (lastName.length() >= 3) {
+				mat = lastName.substring(0, 3) + firstName.substring(0, 1);
+			} else if (firstName.length() >= 2) {
+				mat = lastName + firstName.substring(0, 2);
+			} else {
+				mat = lastName + firstName;
+			}
+			mat = mat + (birthDate.getDate() < 10 ? "0" + birthDate.getDate() : birthDate.getDate());
+			mat = mat + (birthDate.getMonth() + 1 < 10 ? "0" + (birthDate.getMonth() + 1) : (birthDate.getMonth() + 1));
+		}
+		boolean exists = true;
+		int i = 0;
+		while (exists && i <= 99) {
+			String matt = mat + (i < 10 ? "0" + i : i);
+			i++;
+			if (getUser(null, matt, null) == null) {
+				exists = false;
+				mat = matt;
+			}
+		}
+		if (exists) {
+
+			int ii = 0;
+			while (exists && ii <= 999999999) {
+				String matt = mat + Utils.getRandomString(2);
+				ii++;
+				if (getUser(null, matt, null) == null) {
+					exists = false;
+					mat = matt;
+				}
+			}
+		}
+
+		return mat == null ? null : mat.toUpperCase();
 	}
 
 	@Transactional
@@ -120,6 +160,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 				passwordField.setAccessible(true);
 				passwordField.set(user, "1234");
 			}
+
+			if (user.getUserName() == null) {
+				user.setUserName(generateUserName(user.getFirstName(), user.getLastName(), user.getBirthDate()));
+			}
 			user = (User) genericService.save(user);
 
 			if (user != null) {
@@ -169,12 +213,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 		genericService.save(entity);
 
-		Visit v = new Visit();
-		v.setPatient((Patient) entity);
-		v.setChiefOfComplain(((Patient) entity).getVisitReason());
-		v.setVisitDatetime(new Timestamp(new Date().getTime()));
-		genericService.save(v);
-
+		if (((Patient) entity).getVisitReason() != null) {
+			Visit v = new Visit();
+			v.setPatient((Patient) entity);
+			v.setChiefOfComplain(((Patient) entity).getVisitReason());
+			v.setVisitDatetime(new Timestamp(new Date().getTime()));
+			genericService.save(v);
+		}
 		return entity;
 
 	}
@@ -233,5 +278,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			return "Failure";
 		}
 		return "Success";
+	}
+
+	@Override
+	public User getTempUser(String userName, Date birthDate) {
+		// TODO Auto-generated method stub
+		return this.userDao.getTempUser(  userName,   birthDate);
 	}
 }
