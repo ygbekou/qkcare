@@ -10,10 +10,18 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.javatuples.Pair;
 import org.javatuples.Quartet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,10 +32,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.qkcare.config.JwtTokenUtil;
+import com.qkcare.domain.AuthToken;
 import com.qkcare.domain.GenericDto;
 import com.qkcare.domain.GenericResponse;
+import com.qkcare.domain.LoginUser;
+import com.qkcare.domain.MenuVO;
+import com.qkcare.domain.PermissionVO;
 import com.qkcare.model.BaseEntity;
 import com.qkcare.model.User;
+import com.qkcare.service.AuthorizationService;
 import com.qkcare.service.GenericService;
 import com.qkcare.service.UserService;
 import com.qkcare.util.Constants;
@@ -48,6 +62,14 @@ public class UserController extends BaseController {
 	@Autowired
 	@Qualifier("userService")
 	UserService userService;
+	@Autowired
+	BCryptPasswordEncoder encoder;
+	@Autowired
+	private AuthenticationManager authenticationManager;
+	@Autowired
+	private JwtTokenUtil jwtTokenUtil;
+	@Autowired
+	private AuthorizationService authorizationService;
 
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public BaseEntity save(@PathVariable("entity") String entity, @RequestPart("file") MultipartFile file,
@@ -138,7 +160,7 @@ public class UserController extends BaseController {
 	}
 
 	@RequestMapping(value = "/getTempUser", method = RequestMethod.POST, headers = "Accept=application/json")
-	public @ResponseBody User getTempUser(@RequestBody User user) {
+	public @ResponseBody User getTempUser(@PathVariable("entity") String entity, @RequestBody User user) {
 		LOGGER.info("User Login :" + user);
 
 		try {
@@ -156,14 +178,37 @@ public class UserController extends BaseController {
 	}
 
 	@RequestMapping(value = "/saveUserAndLogin", method = RequestMethod.POST, headers = "Accept=application/json")
-	public @ResponseBody User saveUserAndLogin(@RequestBody User user) {
+	public ResponseEntity<?> saveUserAndLogin(@PathVariable("entity") String entity, @RequestBody User user) {
 		LOGGER.info("User Login :" + user);
 		try {
-			return (User) userService.save(user);
+			LoginUser lu = new LoginUser();
+			lu.setPassword(user.getPassword());
+			lu.setUserName(user.getUserName());
+			user.setPassword(encoder.encode(user.getPassword()));
+			userService.save(user);
+			return this.register(lu);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new User();
+			return null;
 		}
+	}
+
+	@RequestMapping(value = "/generate-token", method = RequestMethod.POST)
+	public ResponseEntity<?> register(@RequestBody LoginUser loginUser) throws AuthenticationException {
+
+		final Authentication authentication = authenticationManager.authenticate(
+				new UsernamePasswordAuthenticationToken(loginUser.getUserName(), loginUser.getPassword()));
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+		final User user = userService.getUser(null, loginUser.getUserName(), null);
+		final String token = jwtTokenUtil.generateToken(user);
+
+		Pair<List<MenuVO>, List<PermissionVO>> resources = this.authorizationService.getUserResources(user.getId(),
+				loginUser.getLang());
+
+		return ResponseEntity.ok(new AuthToken(token, loginUser.getUserName(), loginUser.getPassword(),
+				user.getFirstName(), user.getLastName(), user.getUserGroup().getName(), user.getPicture(),
+				user.getFirstTimeLogin(), Arrays.asList(new Long[] { user.getUserGroup().getId() }),
+				resources.getValue0(), resources.getValue1()));
 
 	}
 
