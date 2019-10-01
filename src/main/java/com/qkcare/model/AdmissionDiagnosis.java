@@ -20,6 +20,9 @@ public class AdmissionDiagnosis extends BaseEntity {
 	@JoinColumn(name = "ADMISSION_ID")
 	private Admission admission;
 	@ManyToOne
+	@JoinColumn(name = "VISIT_ID")
+	private Visit visit;
+	@ManyToOne
 	@JoinColumn(name = "DIAGNOSIS_ID")
 	private Diagnosis diagnosis;
 	private String instructions;
@@ -36,6 +39,12 @@ public class AdmissionDiagnosis extends BaseEntity {
 	}
 	public void setAdmission(Admission admission) {
 		this.admission = admission;
+	}
+	public Visit getVisit() {
+		return visit;
+	}
+	public void setVisit(Visit visit) {
+		this.visit = visit;
 	}
 	public Diagnosis getDiagnosis() {
 		return diagnosis;

@@ -45,7 +45,7 @@ public class VisitServiceImpl  implements VisitService {
 		
 		VitalSign vitalSign = visit.getVitalSign();
 		
-		if (vitalSign.getVitalSignDatetime() == null) {
+		if ( vitalSign != null && vitalSign.getVitalSignDatetime() == null) {
 			vitalSign.setVitalSignDatetime(visit.getVisitDatetime());
 		}
 		vitalSign.setVisit(visit);

@@ -5,8 +5,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.qkcare.model.BaseEntity;
@@ -19,9 +17,6 @@ public class Resource extends BaseEntity {
 	@Column(name = "RESOURCE_ID")
 	@GeneratedValue
 	private Long id;
-	@ManyToOne
-	@JoinColumn(name = "PARENT_ID")
-	private Resource parent;
 	private String name;
 	@Column(name = "URL_PATH")
 	private String urlPath;
