@@ -41,6 +41,8 @@ import com.qkcare.domain.MenuVO;
 import com.qkcare.domain.PermissionVO;
 import com.qkcare.model.BaseEntity;
 import com.qkcare.model.User;
+import com.qkcare.model.authorization.Role;
+import com.qkcare.model.authorization.UserRole;
 import com.qkcare.service.AuthorizationService;
 import com.qkcare.service.GenericService;
 import com.qkcare.service.UserService;
@@ -186,6 +188,10 @@ public class UserController extends BaseController {
 			lu.setUserName(user.getUserName());
 			user.setPassword(encoder.encode(user.getPassword()));
 			userService.save(user);
+			UserRole ur= new UserRole();
+			ur.setUser(user);
+			ur.setRole((Role)userService.find(Role.class, 2L));
+			userService.save(ur);
 			return this.register(lu);
 		} catch (Exception e) {
 			e.printStackTrace();
