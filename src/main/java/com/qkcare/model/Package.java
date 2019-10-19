@@ -19,6 +19,8 @@ public class Package extends BaseEntity {
 	private Long id;
 	private String name;
 	private String description;
+	@Column(name="GRAND_TOTAL")
+	private Double grandTotal;
 	private Double rate;
 	private Double discount;
 	private int status;
@@ -43,6 +45,12 @@ public class Package extends BaseEntity {
 	}
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	public Double getGrandTotal() {
+		return grandTotal;
+	}
+	public void setGrandTotal(Double grandTotal) {
+		this.grandTotal = grandTotal;
 	}
 	public Double getRate() {
 		return rate;

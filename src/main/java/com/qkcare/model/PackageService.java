@@ -22,6 +22,7 @@ public class PackageService extends BaseEntity {
 	@ManyToOne
 	@JoinColumn(name = "SERVICE_ID")
 	private Service service;
+	private String description;
 	private int quantity;
 	private Double rate;
 	
@@ -42,6 +43,12 @@ public class PackageService extends BaseEntity {
 	}
 	public void setService(Service service) {
 		this.service = service;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
 	}
 	public Double getRate() {
 		return rate;
