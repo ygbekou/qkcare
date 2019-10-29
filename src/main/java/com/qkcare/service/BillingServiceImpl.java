@@ -2,11 +2,13 @@ package com.qkcare.service;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.javatuples.Pair;
 import org.javatuples.Quartet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -102,6 +104,15 @@ public class BillingServiceImpl  implements BillingService {
 			return bill;
 		}
 		
+		Bill initialBill = null;
+		if (bill.getAdmission() != null) {
+			initialBill = (Bill) this.findBillInitial("admission", bill.getAdmission().getId());
+		} else if (bill.getVisit() != null) {
+			initialBill = (Bill) this.findBillInitial("visit", bill.getVisit().getId());
+		}
+		
+		
+		
 		//this.setVisitOrAdmission(bill, itemLabel, itemId);
 		paramTupleList.clear();
 		paramTupleList.add(Quartet.with("e.bill.id = ", "billId", bill.getId() + "", "Long"));
@@ -111,10 +122,18 @@ public class BillingServiceImpl  implements BillingService {
 		
 		for (BaseEntity entity : services) {
 			BillService billService = (BillService)entity;
+			if (initialBill.getBillServices().contains(billService)) {
+				initialBill.getBillServices().remove(billService);
+			}
 			billService.setBill(null);
 			billServices.add(billService);
 		}
+		
 		bill.setBillServices(billServices);
+		
+		for (BillService bs : initialBill.getBillServices()) {
+			bill.addBillService(bs);
+		}
 		
 		
 		paramTupleList.clear();
@@ -268,5 +287,18 @@ public class BillingServiceImpl  implements BillingService {
 		}
 		
 		return toReturn;
+	}
+	
+	@Transactional
+	public Pair<String, Long> deleteBillService(Long id) {
+		BillService billService = (BillService) this.genericService.find(BillService.class, id);
+		Bill bill = billService.getBill();
+		bill.removeBillService(billService);
+		this.genericService.save(bill);
+		this.genericService.delete(BillService.class, Arrays.asList(new Long[]{id}));
+		String itemLabel = bill.getAdmission() != null ? "admission" : "visit";
+		Long itemId =  bill.getAdmission() != null ? bill.getAdmission().getId() : bill.getVisit().getId();
+		
+		return Pair.with(itemLabel, itemId);
 	}
 }

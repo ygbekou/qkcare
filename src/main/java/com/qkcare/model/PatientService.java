@@ -69,6 +69,8 @@ public class PatientService extends BaseEntity {
 		this.notes = notes;
 	}
 	
+	
+	
 	// Transient data
 	public Employee getDoctor() {
 		if (this.visit != null) {
@@ -78,6 +80,10 @@ public class PatientService extends BaseEntity {
 			return this.getAdmission().getDoctorAssignment().getDoctor();
 		}
 		return null;
+	}
+	
+	public String getServiceName() {
+		return this.getService().getName();
 	}
 
 }

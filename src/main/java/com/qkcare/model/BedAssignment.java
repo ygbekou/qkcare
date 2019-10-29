@@ -79,6 +79,11 @@ public class BedAssignment extends BaseEntity {
 	public void setTransferDate(Date transferDate) {
 		this.transferDate = transferDate;
 	}
+	
+	// Transient
+	public String getBedName() {
+		return this.getBed().getBedCategoryName() + " - " + this.getBed().getBedNumber();
+	}
 
 	
 }

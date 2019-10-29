@@ -80,4 +80,8 @@ public class PatientPackage extends BaseEntity {
 		}
 		return null;
 	}
+	
+	public String getPackageName() {
+		return this.getPckage().getName();
+	}
 }

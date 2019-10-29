@@ -1,5 +1,6 @@
 package com.qkcare.service;
 
+import org.javatuples.Pair;
 import org.springframework.stereotype.Service;
 
 import com.qkcare.model.BaseEntity;
@@ -21,4 +22,6 @@ public interface BillingService {
 	public BaseEntity findBillInitial(String itemLabel, Long itemNumber);
 	
 	public BaseEntity findPackage(Class cl, Long key);
+	
+	public Pair<String, Long> deleteBillService(Long id);
 }

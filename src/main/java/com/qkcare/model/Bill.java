@@ -167,6 +167,12 @@ public class Bill extends BaseEntity {
 		this.setDue(this.getDue() + billService.getNetAmount());
 	}
 	
+	public void removeBillService(BillService billService) {
+		this.setSubTotal(this.getSubTotal() - billService.getNetAmount());
+		this.setGrandTotal(this.getGrandTotal() - billService.getNetAmount());
+		this.setDue(this.getDue() - billService.getNetAmount());
+	}
+	
 	// Transient attributes
 	
 	public String getPatientMRN() {

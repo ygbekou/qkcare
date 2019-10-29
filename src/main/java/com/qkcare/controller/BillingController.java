@@ -4,6 +4,7 @@ package com.qkcare.controller;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
+import org.javatuples.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -118,6 +119,13 @@ public class BillingController extends BaseController {
 		public BaseEntity getPackage(@PathVariable("id") Long id) throws ClassNotFoundException {
 			BaseEntity result = billingService.findPackage(Class.forName(Constants.PACKAGE_NAME + "Package"), id);
 			
+			return result;
+		}
+		
+		@RequestMapping(value="billService/delete/{id}",method = RequestMethod.GET)
+		public BaseEntity deleteBillService(@PathVariable("id") Long id) throws ClassNotFoundException {
+			Pair<String, Long> item = this.billingService.deleteBillService(id);
+			BaseEntity result = billingService.findBill(null, null, item.getValue0(), item.getValue1());
 			return result;
 		}
 }

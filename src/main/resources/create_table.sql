@@ -1576,4 +1576,5 @@ CREATE TABLE VITAL_SIGN_CONFIG (
 
 
 
+
 commit;
