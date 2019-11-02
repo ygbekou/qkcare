@@ -9,24 +9,24 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "VISIT_MEDICALHISTORY")
-public class VisitMedicalHistory extends BaseEntity {
+@Table(name = "PATIENT_MEDICALHISTORY")
+public class PatientMedicalHistory extends BaseEntity {
 	
 	@Id
-	@Column(name = "VISIT_MEDICALHISTORY_ID")
+	@Column(name = "PATIENT_MEDICALHISTORY_ID")
 	@GeneratedValue
 	private Long id;
 	@ManyToOne
-	@JoinColumn(name = "VISIT_ID")
-	private Visit visit;
+	@JoinColumn(name = "PATIENT_ID")
+	private Patient patient;
 	@ManyToOne
 	@JoinColumn(name = "MEDICALHISTORY_ID")
 	private MedicalHistory medicalHistory;
 	
-	public VisitMedicalHistory() {}
+	public PatientMedicalHistory() {}
 	
-	public VisitMedicalHistory(Long visitId, Long medicalHistoryId) {
-		this.visit = new Visit(visitId);
+	public PatientMedicalHistory(Long patientId, Long medicalHistoryId) {
+		this.patient = new Patient(patientId);
 		this.medicalHistory = new MedicalHistory(medicalHistoryId);
 	}
 	
@@ -36,11 +36,11 @@ public class VisitMedicalHistory extends BaseEntity {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public Visit getVisit() {
-		return visit;
+	public Patient getPatient() {
+		return patient;
 	}
-	public void setVisit(Visit visit) {
-		this.visit = visit;
+	public void setPatient(Patient patient) {
+		this.patient = patient;
 	}
 	public MedicalHistory getMedicalHistory() {
 		return medicalHistory;

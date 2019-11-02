@@ -54,19 +54,7 @@ public class Visit extends BaseEntity {
 	List<Integer> isHealthCheckupSel;
 
 	@Transient
-	List<VisitVaccine> givenVaccines;
-
-	@Transient
-	private Set<Long> selectedAllergies;
-
-	@Transient
 	private Set<Long> selectedSymptoms;
-
-	@Transient
-	private Set<Long> selectedMedicalHistories;
-
-	@Transient
-	private Set<Long> selectedSocialHistories;
 
 	public Appointment getAppointment() {
 		return appointment;
@@ -165,44 +153,12 @@ public class Visit extends BaseEntity {
 		this.vitalSign = vitalSign;
 	}
 
-	public List<VisitVaccine> getGivenVaccines() {
-		return givenVaccines;
-	}
-
-	public void setGivenVaccines(List<VisitVaccine> givenVaccines) {
-		this.givenVaccines = givenVaccines;
-	}
-
-	public Set<Long> getSelectedAllergies() {
-		return selectedAllergies;
-	}
-
 	public Set<Long> getSelectedSymptoms() {
 		return selectedSymptoms;
 	}
 
 	public void setSelectedSymptoms(Set<Long> selectedSymptoms) {
 		this.selectedSymptoms = selectedSymptoms;
-	}
-
-	public void setSelectedAllergies(Set<Long> selectedAllergies) {
-		this.selectedAllergies = selectedAllergies;
-	}
-
-	public Set<Long> getSelectedMedicalHistories() {
-		return selectedMedicalHistories;
-	}
-
-	public void setSelectedMedicalHistories(Set<Long> selectedMedicalHistories) {
-		this.selectedMedicalHistories = selectedMedicalHistories;
-	}
-
-	public Set<Long> getSelectedSocialHistories() {
-		return selectedSocialHistories;
-	}
-
-	public void setSelectedSocialHistories(Set<Long> selectedSocialHistories) {
-		this.selectedSocialHistories = selectedSocialHistories;
 	}
 
 	public List<Integer> getIsHealthCheckupSel() {

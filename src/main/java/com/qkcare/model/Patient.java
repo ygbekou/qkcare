@@ -1,6 +1,8 @@
 package com.qkcare.model;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -83,6 +85,17 @@ public class Patient extends BaseEntity {
 	@Transient
 	private String visitReason;
 	
+	@Transient
+	List<PatientVaccine> givenVaccines;
+
+	@Transient
+	private Set<Long> selectedAllergies;
+
+	@Transient
+	private Set<Long> selectedMedicalHistories;
+
+	@Transient
+	private Set<Long> selectedSocialHistories;
 	
 	public String getVisitReason() {
 		return visitReason;
@@ -93,6 +106,10 @@ public class Patient extends BaseEntity {
 	}
 
 	public Patient() {
+	}
+	
+	public Patient(Long patientId) {
+		this.id = patientId;
 	}
 
 	public Long getId() {
@@ -303,6 +320,38 @@ public class Patient extends BaseEntity {
 		this.accountNumber = accountNumber;
 	}
 
+	public List<PatientVaccine> getGivenVaccines() {
+		return givenVaccines;
+	}
+
+	public void setGivenVaccines(List<PatientVaccine> givenVaccines) {
+		this.givenVaccines = givenVaccines;
+	}
+
+	public Set<Long> getSelectedAllergies() {
+		return selectedAllergies;
+	}
+
+	public void setSelectedAllergies(Set<Long> selectedAllergies) {
+		this.selectedAllergies = selectedAllergies;
+	}
+
+	public Set<Long> getSelectedMedicalHistories() {
+		return selectedMedicalHistories;
+	}
+
+	public void setSelectedMedicalHistories(Set<Long> selectedMedicalHistories) {
+		this.selectedMedicalHistories = selectedMedicalHistories;
+	}
+
+	public Set<Long> getSelectedSocialHistories() {
+		return selectedSocialHistories;
+	}
+
+	public void setSelectedSocialHistories(Set<Long> selectedSocialHistories) {
+		this.selectedSocialHistories = selectedSocialHistories;
+	}
+	
 	// Transient fields for UI
 
 	public Boolean getIsSelfResponsible() {
@@ -334,39 +383,40 @@ public class Patient extends BaseEntity {
 	}
 
 	public String getFirstName() {
-		return this.user.getFirstName();
+		return this.user != null ? this.user.getFirstName() : "";
 	}
 
 	public String getLastName() {
-		return this.user.getLastName();
+		return this.user != null ? this.user.getLastName() : "";
 	}
 
 	public String getMiddleName() {
-		return this.user.getMiddleName();
+		return this.user != null ? this.user.getMiddleName() : "";
 	}
 
 	public String getEmail() {
-		return this.user.getEmail();
+		return this.user != null ? this.user.getEmail() : "";
 	}
 
 	public String getHomePhone() {
-		return this.user.getHomePhone();
+		return this.user != null ? this.user.getHomePhone() : "";
 	}
 
 	public String getAddress() {
-		return this.user.getAddress();
+		String address = this.user != null ? this.user.getAddress() : "";
+		return address;
 	}
 
 	public String getSex() {
-		return this.user.getSex();
+		return this.user != null ? this.user.getSex() : "";
 	}
 
 	public Date getBirthDate() {
-		return this.user.getBirthDate();
+		return this.user != null ? this.user.getBirthDate() : null;
 	}
 
 	public String getName() {
-		return this.user.getFirstName() + " " + this.user.getLastName();
+		return this.user != null ? (this.user.getFirstName() + " " + this.user.getLastName()) : "";
 	}
 
 	// From str value to Enum

@@ -23,8 +23,8 @@ import com.qkcare.domain.GenericDto;
 import com.qkcare.domain.GenericResponse;
 import com.qkcare.model.BaseEntity;
 import com.qkcare.model.DoctorOrder;
+import com.qkcare.model.Patient;
 import com.qkcare.model.Visit;
-import com.qkcare.model.VisitVaccine;
 import com.qkcare.model.VitalSign;
 import com.qkcare.service.DoctorOrderService;
 import com.qkcare.service.GenericService;
@@ -63,11 +63,35 @@ public class VisitController extends BaseController {
 			VitalSign vs = ((Visit)obj).getVitalSign();
 			vs.setVisit(null);
 			
-			for (VisitVaccine vv : ((Visit)obj).getGivenVaccines()) {
-				vv.setVisit(null);
-			}
+//			for (VisitVaccine vv : ((Visit)obj).getGivenVaccines()) {
+//				vv.setVisit(null);
+//			}
 			
 			return obj;
+		}
+		
+		@RequestMapping(value="/allergies/save",method = RequestMethod.POST)
+		public BaseEntity saveAllergies(@RequestBody Patient patient) throws JsonParseException, 
+		JsonMappingException, IOException, ClassNotFoundException {
+			visitService.saveAllergies(patient);
+			
+			return patient;
+		}
+		
+		@RequestMapping(value="/medicalHistories/save",method = RequestMethod.POST)
+		public BaseEntity saveMedicalHistories(@RequestBody Patient patient) throws JsonParseException, 
+		JsonMappingException, IOException, ClassNotFoundException {
+			visitService.saveMedicalHistories(patient);
+			
+			return patient;
+		}
+		
+		@RequestMapping(value="/socialHistories/save",method = RequestMethod.POST)
+		public BaseEntity saveSocilaHistories(@RequestBody Patient patient) throws JsonParseException, 
+		JsonMappingException, IOException, ClassNotFoundException {
+			visitService.saveSocialHistories(patient);
+			
+			return patient;
 		}
 		
 		@RequestMapping(value="/visit/updateStatus", method = RequestMethod.POST)
@@ -179,6 +203,30 @@ public class VisitController extends BaseController {
 				gr.setResult(e.getMessage());
 			}
 			return gr;
+		}
+		
+		@RequestMapping(value="patient/allergies/{id}", method = RequestMethod.GET)
+		public BaseEntity getPatientAllergies(@PathVariable("id") Long id) throws ClassNotFoundException{
+			
+			BaseEntity result = visitService.getAllergies(new Patient(id));
+			
+			return result;
+		}
+		
+		@RequestMapping(value="patient/medicalHistories/{id}", method = RequestMethod.GET)
+		public BaseEntity getPatientMedicalHistories(@PathVariable("id") Long id) throws ClassNotFoundException{
+			
+			BaseEntity result = visitService.getMedicalHistories(new Patient(id));
+			
+			return result;
+		}
+		
+		@RequestMapping(value="patient/socialHistories/{id}", method = RequestMethod.GET)
+		public BaseEntity getPatientSocialHistories(@PathVariable("id") Long id) throws ClassNotFoundException{
+			
+			BaseEntity result = visitService.getSocialHistories(new Patient(id));
+			
+			return result;
 		}
 
 }

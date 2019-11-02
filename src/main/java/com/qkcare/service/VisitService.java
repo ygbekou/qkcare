@@ -7,8 +7,8 @@ import java.util.Set;
 import org.springframework.stereotype.Service;
 
 import com.qkcare.domain.GenericVO;
-import com.qkcare.model.Admission;
 import com.qkcare.model.BaseEntity;
+import com.qkcare.model.Patient;
 import com.qkcare.model.Visit;
 
 
@@ -32,5 +32,17 @@ public interface VisitService {
 	public Map<Integer, List<Visit>> getVisitsByMonth();
 
 	public List<Visit> getWaitList(int id);
+	
+	public BaseEntity saveAllergies(Patient patient);
+	
+	public BaseEntity saveMedicalHistories(Patient patient);
+	
+	public BaseEntity saveSocialHistories(Patient patient);
+	
+	public BaseEntity getAllergies(Patient patient);
+	
+	public BaseEntity getMedicalHistories(Patient patient);
+	
+	public BaseEntity getSocialHistories(Patient patient);
 	
 }

@@ -9,24 +9,24 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "VISIT_ALLERGY")
-public class VisitAllergy extends BaseEntity {
+@Table(name = "PATIENT_ALLERGY")
+public class PatientAllergy extends BaseEntity {
 	
 	@Id
-	@Column(name = "VISIT_ALLERGY_ID")
+	@Column(name = "PATIENT_ALLERGY_ID")
 	@GeneratedValue
 	private Long id;
 	@ManyToOne
-	@JoinColumn(name = "VISIT_ID")
-	private Visit visit;
+	@JoinColumn(name = "PATIENT_ID")
+	private Patient patient;
 	@ManyToOne
 	@JoinColumn(name = "ALLERGY_ID")
 	private Allergy allergy;
 	
-	public VisitAllergy() {}
+	public PatientAllergy() {}
 	
-	public VisitAllergy(Long visitId, Long allergyId) {
-		this.visit = new Visit(visitId);
+	public PatientAllergy(Long patientId, Long allergyId) {
+		this.patient = new Patient(patientId);
 		this.allergy = new Allergy(allergyId);
 	}
 	
@@ -36,11 +36,11 @@ public class VisitAllergy extends BaseEntity {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public Visit getVisit() {
-		return visit;
+	public Patient getPatient() {
+		return patient;
 	}
-	public void setVisit(Visit visit) {
-		this.visit = visit;
+	public void setPatient(Patient patient) {
+		this.patient = patient;
 	}
 	public Allergy getAllergy() {
 		return allergy;

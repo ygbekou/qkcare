@@ -11,26 +11,26 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "VISIT_VACCINE")
-public class VisitVaccine extends BaseEntity {
+@Table(name = "PATIENT_VACCINE")
+public class PatientVaccine extends BaseEntity {
 	
 	@Id
-	@Column(name = "VISIT_VACCINE_ID")
+	@Column(name = "PATIENT_VACCINE_ID")
 	@GeneratedValue
 	private Long id;
 	@ManyToOne
-	@JoinColumn(name = "VISIT_ID")
-	private Visit visit;
+	@JoinColumn(name = "PATIENT_ID")
+	private Patient patient;
 	@ManyToOne
 	@JoinColumn(name = "VACCINE_ID")
 	private Vaccine vaccine;
 	@Column(name = "GIVEN_DATE")
 	private Date givenDate;
 	
-	public VisitVaccine() {}
+	public PatientVaccine() {}
 	
-	public VisitVaccine(Long visitId, Long vaccineId) {
-		this.visit = new Visit(visitId);
+	public PatientVaccine(Long patientId, Long vaccineId) {
+		this.patient = new Patient(patientId);
 		this.vaccine = new Vaccine(vaccineId);
 	}
 	
@@ -40,11 +40,11 @@ public class VisitVaccine extends BaseEntity {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public Visit getVisit() {
-		return visit;
+	public Patient getPatient() {
+		return patient;
 	}
-	public void setVisit(Visit visit) {
-		this.visit = visit;
+	public void setPatient(Patient patient) {
+		this.patient = patient;
 	}
 	public Vaccine getVaccine() {
 		return vaccine;
@@ -59,5 +59,9 @@ public class VisitVaccine extends BaseEntity {
 		this.givenDate = givenDate;
 	}
 	
+	// Transients
+	public String getVaccineName() {
+		return this.getVaccine().getName();
+	}
 	
 }
