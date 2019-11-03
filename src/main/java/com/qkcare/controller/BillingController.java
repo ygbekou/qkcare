@@ -24,6 +24,8 @@ import com.qkcare.model.Bill;
 import com.qkcare.model.BillPayment;
 import com.qkcare.model.BillService;
 import com.qkcare.model.PackageService;
+import com.qkcare.model.PatientPackage;
+import com.qkcare.model.PatientService;
 import com.qkcare.service.BillingService;
 import com.qkcare.service.GenericService;
 import com.qkcare.util.Constants;
@@ -128,4 +130,33 @@ public class BillingController extends BaseController {
 			BaseEntity result = billingService.findBill(null, null, item.getValue0(), item.getValue1());
 			return result;
 		}
+		
+		@RequestMapping(value="/patientService/save",method = RequestMethod.POST)
+		public BaseEntity savePatientService(@RequestBody PatientService patientService) {
+			
+			PatientService ps = this.billingService.save(patientService);
+			
+			return ps;
+		}
+		
+		@RequestMapping(value="/patientService/delete",method = RequestMethod.POST)
+		public void deletePatientService(@RequestBody PatientService patientService) {
+			
+			this.billingService.delete(patientService);
+		}
+		
+		@RequestMapping(value="/patientPackage/save",method = RequestMethod.POST)
+		public BaseEntity savePatientPackage(@RequestBody PatientPackage patientPackage) {
+			
+			PatientPackage ps = this.billingService.save(patientPackage);
+			
+			return ps;
+		}
+		
+		@RequestMapping(value="/patientPackage/delete",method = RequestMethod.POST)
+		public void deletePatientPackage(@RequestBody PatientPackage patientPackage) {
+			
+			this.billingService.delete(patientPackage);
+		}
+		
 }

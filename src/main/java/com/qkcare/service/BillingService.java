@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import com.qkcare.model.BaseEntity;
 import com.qkcare.model.Bill;
 import com.qkcare.model.BillPayment;
+import com.qkcare.model.PatientPackage;
+import com.qkcare.model.PatientService;
 
 
 @Service(value="billingService")
@@ -24,4 +26,12 @@ public interface BillingService {
 	public BaseEntity findPackage(Class cl, Long key);
 	
 	public Pair<String, Long> deleteBillService(Long id);
+	
+	public PatientService save(PatientService patientService);
+	
+	public void delete(PatientService patientService);
+	
+	public PatientPackage save(PatientPackage patientPackage);
+	
+	public void delete(PatientPackage patientPackage);
 }

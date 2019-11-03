@@ -85,6 +85,107 @@ public class BillingServiceImpl  implements BillingService {
 		return toReturn;
 	}
 	
+	@Transactional
+	public PatientService save(PatientService patientService) {
+
+		this.genericService.save(patientService);
+		Pair<String, Long> itemLabelAndId = this.getItemLabelAndId(patientService.getVisit(), patientService.getAdmission());
+		
+		Bill bill = this.getItemBill(itemLabelAndId.getValue0(), itemLabelAndId.getValue1());
+		bill.setVisit(patientService.getVisit());
+		bill.setAdmission(patientService.getAdmission());
+		BillService billService = new BillService(patientService);
+		bill.addBillService(billService);
+		Bill billNew  = (Bill) this.genericService.save(bill);
+		billService.setBill(billNew);
+		this.genericService.save(billService);
+		
+		return patientService;
+	}
+	
+	@Transactional
+	public void delete(PatientService patientService) {
+		
+		// Remove Bill Service from Bill
+		removeBillServiceFromBill(patientService.getId(), "patientService");
+		
+		// Delete patientService
+		this.genericService.delete(PatientService.class, Arrays.asList(new Long[]{patientService.getId()}));
+	}
+	
+	@Transactional
+	public PatientPackage save(PatientPackage patientPackage) {
+
+		this.genericService.save(patientPackage);
+		Pair<String, Long> itemLabelAndId = this.getItemLabelAndId(patientPackage.getVisit(), patientPackage.getAdmission());
+		
+		Bill bill = this.getItemBill(itemLabelAndId.getValue0(), itemLabelAndId.getValue1());
+		bill.setVisit(patientPackage.getVisit());
+		bill.setAdmission(patientPackage.getAdmission());
+		BillService billService = new BillService(patientPackage);
+		bill.addBillService(billService);
+		Bill billNew  = (Bill) this.genericService.save(bill);
+		billService.setBill(billNew);
+		this.genericService.save(billService);
+		
+		return patientPackage;
+	}
+	
+	@Transactional
+	public void delete(PatientPackage patientPackage) {
+		
+		// Remove Bill Service from Bill
+		removeBillServiceFromBill(patientPackage.getId(), "patientPackage");
+		
+		// Delete patientPackage
+		this.genericService.delete(PatientPackage.class, Arrays.asList(new Long[]{patientPackage.getId()}));
+	}
+	
+	
+	private void removeBillServiceFromBill(Long originServiceId, String originService) {
+		
+		List<Quartet<String, String, String, String>> paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
+		paramTupleList.add(Quartet.with("e." + originService + ".id = ", "originServiceId", originServiceId + "", "Long"));
+		String queryStr =  "SELECT e FROM BillService e WHERE 1 = 1";
+		List<BaseEntity> billServices = genericService.getByCriteria(queryStr, paramTupleList, null);
+		BillService billService = null;
+		if (billServices.size() > 0) {
+			billService = (BillService) billServices.get(0);
+		}
+		
+		Bill bill = billService.getBill();
+		bill.removeBillService(billService);
+		this.genericService.save(bill);
+		
+		this.genericService.delete(BillService.class, Arrays.asList(new Long[]{billService.getId()}));
+	}
+	
+	Pair<String, Long> getItemLabelAndId(Visit visit, Admission admission) {
+		if (visit != null) {
+			return Pair.with("visit", visit.getId());
+		} else if (admission != null) {
+			return Pair.with("admission", admission.getId());
+		}
+		return Pair.with(null, null);
+	}
+	
+	public Bill getItemBill(String itemLabel, Long itemId) {
+		Bill bill = null;
+		
+		List<Quartet<String, String, String, String>> paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
+		paramTupleList.add(Quartet.with("e." + itemLabel.toLowerCase() + ".id = ", "itemId", itemId + "", "Long"));
+		String queryStr =  "SELECT e FROM Bill e WHERE 1 = 1"; 
+		List<BaseEntity> bills = genericService.getByCriteria(queryStr, paramTupleList, null);
+		if (bills.size() > 0) {
+			bill = (Bill) bills.get(0);
+		} else {
+			bill = new Bill();
+			bill.setBillDate(new Date());
+			bill.setDueDate(DateUtil.addDays(new Date(), 30));
+		}
+		
+		return bill;
+	}
 	
 	public BaseEntity findBill(Class cl, Long key, String itemLabel, Long itemId) {
 		Bill bill = null;
@@ -92,12 +193,7 @@ public class BillingServiceImpl  implements BillingService {
 		if (key != null) {
 			bill = (Bill) this.genericService.find(cl, key);
 		} else {
-			paramTupleList.add(Quartet.with("e." + itemLabel.toLowerCase() + ".id = ", "itemId", itemId + "", "Long"));
-			String queryStr =  "SELECT e FROM Bill e WHERE 1 = 1"; 
-			List<BaseEntity> bills = genericService.getByCriteria(queryStr, paramTupleList, null);
-			if (bills.size() > 0) {
-				bill = (Bill) bills.get(0);
-			}
+			bill = (Bill) getItemBill(itemLabel, itemId);
 		}
 		
 		if (bill == null) {
@@ -106,16 +202,6 @@ public class BillingServiceImpl  implements BillingService {
 		
 		List<BillService> billServices = new ArrayList<BillService>();
 		
-		Bill initialBill = null;
-		if (bill.getAdmission() != null) {
-			initialBill = (Bill) this.findBillInitial("admission", bill.getAdmission().getId());
-		} else if (bill.getVisit() != null) {
-			initialBill = (Bill) this.findBillInitial("visit", bill.getVisit().getId());
-		}
-		
-		
-		
-		//this.setVisitOrAdmission(bill, itemLabel, itemId);
 		paramTupleList.clear();
 		paramTupleList.add(Quartet.with("e.bill.id = ", "billId", bill.getId() + "", "Long"));
 		String queryStr =  "SELECT e FROM BillService e WHERE 1 = 1";
@@ -123,20 +209,12 @@ public class BillingServiceImpl  implements BillingService {
 		
 		for (BaseEntity entity : services) {
 			BillService billService = (BillService)entity;
-			if (initialBill.getBillServices().contains(billService)) {
-				initialBill.getBillServices().remove(billService);
-			}
 			billService.setBill(null);
 			billServices.add(billService);
 		}
 		
 		bill.setBillServices(billServices);
-		
-		for (BillService bs : initialBill.getBillServices()) {
-			bill.addBillService(bs);
-		}
-		
-		
+				
 		paramTupleList.clear();
 		paramTupleList.add(Quartet.with("e.bill.id = ", "billId", bill.getId() + "", "Long"));
 		queryStr =  "SELECT e FROM BillPayment e WHERE 1 = 1";
