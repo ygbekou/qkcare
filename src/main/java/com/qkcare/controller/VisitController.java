@@ -62,11 +62,7 @@ public class VisitController extends BaseController {
 			
 			VitalSign vs = ((Visit)obj).getVitalSign();
 			vs.setVisit(null);
-			
-//			for (VisitVaccine vv : ((Visit)obj).getGivenVaccines()) {
-//				vv.setVisit(null);
-//			}
-			
+				
 			return obj;
 		}
 		

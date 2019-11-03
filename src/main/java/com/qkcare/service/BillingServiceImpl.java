@@ -104,6 +104,8 @@ public class BillingServiceImpl  implements BillingService {
 			return bill;
 		}
 		
+		List<BillService> billServices = new ArrayList<BillService>();
+		
 		Bill initialBill = null;
 		if (bill.getAdmission() != null) {
 			initialBill = (Bill) this.findBillInitial("admission", bill.getAdmission().getId());
@@ -118,7 +120,6 @@ public class BillingServiceImpl  implements BillingService {
 		paramTupleList.add(Quartet.with("e.bill.id = ", "billId", bill.getId() + "", "Long"));
 		String queryStr =  "SELECT e FROM BillService e WHERE 1 = 1";
 		List<BaseEntity> services = genericService.getByCriteria(queryStr, paramTupleList, null);
-		List<BillService> billServices = new ArrayList<BillService>();
 		
 		for (BaseEntity entity : services) {
 			BillService billService = (BillService)entity;

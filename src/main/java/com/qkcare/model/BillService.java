@@ -45,6 +45,18 @@ public class BillService extends BaseEntity {
 	@JoinColumn(name = "BED_ASSIGNMENT_ID")
 	private BedAssignment bedAssignment;
 	@ManyToOne
+	@JoinColumn(name = "SERVICE_ID")
+	private Service service;
+	@ManyToOne
+	@JoinColumn(name = "PACKAGE_ID")
+	private Package pckage;
+	@ManyToOne
+	@JoinColumn(name = "PRODUCT_ID")
+	private Product product;
+	@ManyToOne
+	@JoinColumn(name = "LAB_TEST_ID")
+	private LabTest labTest;
+	@ManyToOne
 	@JoinColumn(name = "DOCTOR_ID")
 	private Employee doctor;
 	@Column(name = "SERVICE_DATE")
@@ -214,6 +226,30 @@ public class BillService extends BaseEntity {
 	public void setBedAssignment(BedAssignment bedAssignment) {
 		this.bedAssignment = bedAssignment;
 	}
+	public Service getService() {
+		return service;
+	}
+	public void setService(Service service) {
+		this.service = service;
+	}
+	public Package getPckage() {
+		return pckage;
+	}
+	public void setPckage(Package pckage) {
+		this.pckage = pckage;
+	}
+	public Product getProduct() {
+		return product;
+	}
+	public void setProduct(Product product) {
+		this.product = product;
+	}
+	public LabTest getLabTest() {
+		return labTest;
+	}
+	public void setLabTest(LabTest labTest) {
+		this.labTest = labTest;
+	}
 	public Employee getDoctor() {
 		return doctor;
 	}
@@ -302,6 +338,19 @@ public class BillService extends BaseEntity {
 		return this.getDoctorOrderType().getName();
 	}
 	public String getServiceName() {
+		if (this.getService() != null)
+			return this.getService().getName();
+		
+		if (this.getProduct() != null) 
+			return this.getProduct().getName();
+		
+		if (this.getPckage() != null) 
+			return this.getPckage().getName();
+		
+		if (this.getLabTest() != null) 
+			return this.getLabTest().getName();
+		
+		
 		if (this.getPatientService() != null)
 			return this.getPatientService().getServiceName();
 		
@@ -317,7 +366,7 @@ public class BillService extends BaseEntity {
 		if (this.getBedAssignment() != null) 
 			return this.getBedAssignment().getBedName();
 		
-		return "";
+		return this.description;
 	}
 	
 	@Override

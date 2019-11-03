@@ -30,7 +30,9 @@ public class Visit extends BaseEntity {
 	@ManyToOne
 	@JoinColumn(name = "PACKAGE_ID")
 	private com.qkcare.model.Package pckage;
-
+	@ManyToOne
+	@JoinColumn(name = "SERVICE_ID")
+	private Service service;
 	@ManyToOne
 	@JoinColumn(name = "DOCTOR_ID")
 	private Employee doctor;
@@ -103,6 +105,14 @@ public class Visit extends BaseEntity {
 
 	public void setPckage(com.qkcare.model.Package pckage) {
 		this.pckage = pckage;
+	}
+
+	public Service getService() {
+		return service;
+	}
+
+	public void setService(Service service) {
+		this.service = service;
 	}
 
 	public Employee getDoctor() {

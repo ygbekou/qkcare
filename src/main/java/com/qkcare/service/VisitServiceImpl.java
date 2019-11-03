@@ -53,7 +53,7 @@ public class VisitServiceImpl  implements VisitService {
 		
 		
 		// save symptoms 
-		List<Long> addedSymptomIds = deriveAddedChilds("VISIT", "Visit", "VISIT_IT", visit.getId(), visit.getSelectedSymptoms(), "Symptom");
+		List<Long> addedSymptomIds = deriveAddedChilds("VISIT", "Visit", "VISIT_ID", visit.getId(), visit.getSelectedSymptoms(), "Symptom");
 		// Insert newly added ones
 		for (Long addedId : addedSymptomIds) {
 			VisitSymptom vs = new VisitSymptom(visit.getId(), addedId);
@@ -158,6 +158,10 @@ public class VisitServiceImpl  implements VisitService {
 			vitalSign.setVisit(null);
 			visit.setVitalSign(vitalSign);
 			break;
+		}
+		
+		if (vitalSigns.size() == 0) {
+			visit.setVitalSign(new VitalSign());
 		}
 		
 		
