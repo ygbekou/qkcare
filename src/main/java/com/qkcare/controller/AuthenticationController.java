@@ -17,6 +17,7 @@ import org.javatuples.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -41,7 +42,7 @@ public class AuthenticationController {
 
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private AuthorizationService authorizationService;
 
@@ -50,20 +51,27 @@ public class AuthenticationController {
 
 	@RequestMapping(value = "/generate-token", method = RequestMethod.POST)
 	public ResponseEntity<?> register(@RequestBody LoginUser loginUser) throws AuthenticationException {
+		System.out.println("Authenticating user :"+loginUser);
+		try {
+			final Authentication authentication = authenticationManager.authenticate(
+					new UsernamePasswordAuthenticationToken(loginUser.getUserName(), loginUser.getPassword()));
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+			final User user = userService.getUser(null, loginUser.getUserName(), null);
+			final String token = jwtTokenUtil.generateToken(user);
 
-		
-		final Authentication authentication = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(loginUser.getUserName(), loginUser.getPassword()));
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-		final User user = userService.getUser(null, loginUser.getUserName(), null);
-		final String token = jwtTokenUtil.generateToken(user);
-		
-		Pair<List<MenuVO>, List<PermissionVO>> resources = this.authorizationService.getUserResources(user.getId(), loginUser.getLang());
-		
-		return ResponseEntity.ok(new AuthToken(token, loginUser.getUserName(), loginUser.getPassword(),
-				user.getFirstName(), user.getLastName(), user.getUserGroup().getName(), user.getPicture(),
-				user.getFirstTimeLogin(), Arrays.asList(new Long[] { user.getUserGroup().getId() }),
-				resources.getValue0(), resources.getValue1()));
+			Pair<List<MenuVO>, List<PermissionVO>> resources = this.authorizationService.getUserResources(user.getId(),
+					loginUser.getLang());
+
+			return ResponseEntity.ok(new AuthToken(token, loginUser.getUserName(), loginUser.getPassword(),
+					user.getFirstName(), user.getLastName(), user.getUserGroup().getName(), user.getPicture(),
+					user.getFirstTimeLogin(), Arrays.asList(new Long[] { user.getUserGroup().getId() }),
+					resources.getValue0(), resources.getValue1()));
+			
+		} catch (Exception b) {
+			b.printStackTrace();
+			return ResponseEntity.ok(new AuthToken(null, loginUser.getUserName(), loginUser.getPassword(),
+					null, null, null, null,null, null,null, null));
+		}
 
 	}
 
