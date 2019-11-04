@@ -131,6 +131,7 @@ public class BillService extends BaseEntity {
 		this.setDiscountPercentage(patientSaleProduct.getDiscountPercentage());
 		this.setNetAmount(this.getTotalAmount() - this.getDiscountAmount());
 		this.setDoctor(patientSaleProduct.getPatientSale().getDoctorOrder() != null 
+				&& patientSaleProduct.getPatientSale().getDoctorOrder().getDoctor() != null
 				? patientSaleProduct.getPatientSale().getDoctorOrder().getDoctor() : doctor);
 		this.setDescription(patientSaleProduct.getProduct().getDescription());
 		this.setPayerAmount(0d);

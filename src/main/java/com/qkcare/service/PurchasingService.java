@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.qkcare.model.BaseEntity;
 import com.qkcare.model.stocks.PatientSale;
+import com.qkcare.model.stocks.PatientSaleProduct;
 import com.qkcare.model.stocks.PurchaseOrder;
 import com.qkcare.model.stocks.ReceiveOrder;
 import com.qkcare.model.stocks.SaleReturn;
@@ -34,4 +35,6 @@ public interface PurchasingService {
 	public BaseEntity findSaleReturn(Class cl, Long key);
 	
 	public BaseEntity findInitialSaleReturn(Class cl, Long patientSaleId) throws NumberFormatException, ParseException;
+	
+	public BaseEntity save(PatientSaleProduct patientSaleProduct);
 }

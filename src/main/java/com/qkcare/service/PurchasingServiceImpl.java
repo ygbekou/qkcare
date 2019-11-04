@@ -40,6 +40,9 @@ public class PurchasingServiceImpl  implements PurchasingService {
 	@Autowired
 	GenericService genericService;
 	
+	@Autowired
+	BillingService billingService;
+	
 	@Transactional
 	public BaseEntity save(PurchaseOrder purchaseOrder) {
 		
@@ -70,6 +73,21 @@ public class PurchasingServiceImpl  implements PurchasingService {
 		
 		return toReturn;
 	}
+	
+	@Transactional
+	public BaseEntity save(PatientSaleProduct patientSaleProduct) {
+		
+		BaseEntity toReturn = this.genericService.save(patientSaleProduct);
+		
+		if (patientSaleProduct.getStatus() == 4) {
+			patientSaleProduct.setVisit(patientSaleProduct.getPatientSale().getVisit());
+			patientSaleProduct.setAdmission(patientSaleProduct.getPatientSale().getAdmission());
+			this.billingService.save(patientSaleProduct);
+		}
+		
+		return toReturn;
+	}
+	
 	
 	
 	public BaseEntity findPurchaseOrder(Class cl, Long key) {

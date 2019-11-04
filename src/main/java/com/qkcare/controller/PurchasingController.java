@@ -126,6 +126,14 @@ public class PurchasingController extends BaseController {
 			return obj;
 		}
 		
+		@RequestMapping(value="/patientSaleProduct/save",method = RequestMethod.POST)
+		public BaseEntity savePatientSale(@RequestBody PatientSaleProduct patientSaleProduct) {
+
+			BaseEntity obj = purchasingService.save(patientSaleProduct);
+			
+			return obj;
+		}
+		
 		@RequestMapping(value="patientSale/{id}",method = RequestMethod.GET)
 		public BaseEntity getPatientSale(@PathVariable("id") Long id) throws ClassNotFoundException {
 			BaseEntity result = purchasingService.findPatientSale(

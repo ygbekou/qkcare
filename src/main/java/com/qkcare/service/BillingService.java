@@ -8,6 +8,7 @@ import com.qkcare.model.Bill;
 import com.qkcare.model.BillPayment;
 import com.qkcare.model.PatientPackage;
 import com.qkcare.model.PatientService;
+import com.qkcare.model.stocks.PatientSaleProduct;
 
 
 @Service(value="billingService")
@@ -34,4 +35,6 @@ public interface BillingService {
 	public PatientPackage save(PatientPackage patientPackage);
 	
 	public void delete(PatientPackage patientPackage);
+	
+	public PatientSaleProduct save(PatientSaleProduct patientSaleProduct);
 }

@@ -141,6 +141,23 @@ public class BillingServiceImpl  implements BillingService {
 		this.genericService.delete(PatientPackage.class, Arrays.asList(new Long[]{patientPackage.getId()}));
 	}
 	
+	@Transactional
+	public PatientSaleProduct save(PatientSaleProduct patientSaleProduct) {
+
+		this.genericService.save(patientSaleProduct);
+		Pair<String, Long> itemLabelAndId = this.getItemLabelAndId(patientSaleProduct.getVisit(), patientSaleProduct.getAdmission());
+		
+		Bill bill = this.getItemBill(itemLabelAndId.getValue0(), itemLabelAndId.getValue1());
+		bill.setVisit(patientSaleProduct.getVisit());
+		bill.setAdmission(patientSaleProduct.getAdmission());
+		BillService billService = new BillService(patientSaleProduct, patientSaleProduct.getVisit().getDoctor());
+		bill.addBillService(billService);
+		Bill billNew  = (Bill) this.genericService.save(bill);
+		billService.setBill(billNew);
+		this.genericService.save(billService);
+		
+		return patientSaleProduct;
+	}
 	
 	private void removeBillServiceFromBill(Long originServiceId, String originService) {
 		

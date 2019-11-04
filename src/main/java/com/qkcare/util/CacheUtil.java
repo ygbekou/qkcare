@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.qkcare.domain.GenericVO;
+import com.qkcare.model.stocks.PatientSaleProduct;
 import com.qkcare.service.GenericService;
 
 import net.sf.ehcache.Cache;
@@ -35,6 +36,7 @@ public class CacheUtil implements InitializingBean {
 	public static String DOCTOR_ORDER_TYPE = "doctorOrderType";
 	public static String PRESCRIPTION_TYPE = "prescriptionType";
 	public static String EXAM_STATUS = "examStatus";
+	public static String SALE_STATUS = "saleStatus";
 	
 	
 	@Autowired 
@@ -150,6 +152,9 @@ public class CacheUtil implements InitializingBean {
 		this.addCacheToManager(EXAM_STATUS, "SELECT EXAM_STATUS_ID, NAME "
 				+ "FROM EXAM_STATUS ", this::getReferences);
 		
+		this.getReferenceMap("SELECT SALE_STATUS_ID, NAME "
+				+ "FROM SALE_STATUS ", PatientSaleProduct.SALE_STATUSES);
+		
 	}	
 	
 	private void addCacheToManager(String cacheKey, String sqlQuery, Function<String, List<GenericVO>> getCatg) {
@@ -158,5 +163,16 @@ public class CacheUtil implements InitializingBean {
 		cache.put(new Element("active", getCatg.apply(sqlQuery), true));
 	}
 	
+	
+	public void getReferenceMap(String query, Map<Integer, String> refMap) {
+		List<Quartet<String, String, String, String>> paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
+		List<Object[]> list = this.genericService.getNativeByCriteria(query, 
+				paramTupleList, null, null);
+		
+		for (Object[] objects : list) {
+			refMap.put(new Integer(objects[0].toString()), objects[1].toString());
+		}
+		
+	}
 
 }

@@ -1,6 +1,7 @@
 package com.qkcare.model.stocks;
 
 import java.util.Date;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,9 +10,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
+import org.apache.commons.collections.map.HashedMap;
+
+import com.qkcare.model.Admission;
 import com.qkcare.model.BaseEntity;
 import com.qkcare.model.Product;
+import com.qkcare.model.Visit;
 
 @Entity
 @Table(name = "PATIENT_SALE_PRODUCT")
@@ -36,7 +42,15 @@ public class PatientSaleProduct extends BaseEntity {
 	private Double discountAmount;
 	@Column(name = "TOTAL_AMOUNT")
 	private Double totalAmount;
+	private Integer status = 0;
 	
+	
+	@Transient
+	private Visit visit;
+	@Transient 
+	Admission admission;
+	
+	public static Map<Integer, String> SALE_STATUSES = new HashedMap();
 	
 	public Long getId() {
 		return id;
@@ -86,7 +100,24 @@ public class PatientSaleProduct extends BaseEntity {
 	public void setTotalAmount(Double totalAmount) {
 		this.totalAmount = totalAmount;
 	}
-	
+	public Integer getStatus() {
+		return status;
+	}
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+	public Visit getVisit() {
+		return visit;
+	}
+	public void setVisit(Visit visit) {
+		this.visit = visit;
+	}
+	public Admission getAdmission() {
+		return admission;
+	}
+	public void setAdmission(Admission admission) {
+		this.admission = admission;
+	}
 	// Transient data
 	public Date getSaleDatetime() {
 		return this.getPatientSale() != null ? this.getPatientSale().getSaleDatetime(): null;
@@ -98,5 +129,9 @@ public class PatientSaleProduct extends BaseEntity {
 	
 	public String getNotes() {
 		return this.getPatientSale() != null ? this.getPatientSale().getNotes() : "";
+	}
+	
+	public String getStatusDesc() {
+		return SALE_STATUSES.get(this.getStatus());
 	}
 }
