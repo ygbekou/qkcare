@@ -26,24 +26,24 @@ public class Permission extends BaseEntity {
 	@JoinColumn(name = "RESOURCE_ID")
 	private Resource resource;
 	@Column(name = "CAN_ADD")
-	private String canAdd;
+	private String canAdd="N";
 	@Column(name = "CAN_VIEW")
-	private String canView;
+	private String canView="N";
 	@Column(name = "CAN_EDIT")
-	private String canEdit;
+	private String canEdit="N";
 	@Column(name = "CAN_DELETE")
-	private String canDelete;
+	private String canDelete="N";
 	private String description;
 	
 	// Transient
 	@Transient
-	private Boolean canAddBool;
+	private Boolean canAddBool=false;
 	@Transient
-	private Boolean canEditBool;
+	private Boolean canEditBool=false;
 	@Transient
-	private Boolean canViewBool;
+	private Boolean canViewBool=false;
 	@Transient
-	private Boolean canDeleteBool;
+	private Boolean canDeleteBool=false;
 	
 	public Permission () {
 	}
