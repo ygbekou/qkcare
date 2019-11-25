@@ -159,6 +159,24 @@ public class BillingServiceImpl  implements BillingService {
 		return patientSaleProduct;
 	}
 	
+	@Transactional
+	public Investigation save(Investigation investigation) {
+
+		this.genericService.save(investigation);
+		Pair<String, Long> itemLabelAndId = this.getItemLabelAndId(investigation.getVisit(), investigation.getAdmission());
+		
+		Bill bill = this.getItemBill(itemLabelAndId.getValue0(), itemLabelAndId.getValue1());
+		bill.setVisit(investigation.getVisit());
+		bill.setAdmission(investigation.getAdmission());
+		BillService billService = new BillService(investigation, investigation.getVisit().getDoctor());
+		bill.addBillService(billService);
+		Bill billNew  = (Bill) this.genericService.save(bill);
+		billService.setBill(billNew);
+		this.genericService.save(billService);
+		
+		return investigation;
+	}
+	
 	private void removeBillServiceFromBill(Long originServiceId, String originService) {
 		
 		List<Quartet<String, String, String, String>> paramTupleList = new ArrayList<Quartet<String, String, String, String>>();

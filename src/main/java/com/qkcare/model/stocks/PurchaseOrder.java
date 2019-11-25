@@ -42,6 +42,9 @@ public class PurchaseOrder extends BaseEntity {
 	@Column(name = "GRAND_TOTAL")
 	private Double grandTotal;
 	private Double due;
+	@ManyToOne
+	@JoinColumn(name = "PURCHASE_ORDER_STATUS_ID")
+	private PurchaseOrderStatus purchaseOrderStatus;
 	private int status;
 	
 	// Transient
@@ -122,6 +125,15 @@ public class PurchaseOrder extends BaseEntity {
 	public void setDue(Double due) {
 		this.due = due;
 	}
+	
+	public PurchaseOrderStatus getPurchaseOrderStatus() {
+		return purchaseOrderStatus;
+	}
+
+	public void setPurchaseOrderStatus(PurchaseOrderStatus purchaseOrderStatus) {
+		this.purchaseOrderStatus = purchaseOrderStatus;
+	}
+
 	public int getStatus() {
 		return status;
 	}
@@ -139,10 +151,14 @@ public class PurchaseOrder extends BaseEntity {
 	
 	
 	
-	public void decreaseAmount(PurchaseOrderProduct pop) {
-		this.setSubTotal(this.getSubTotal() - pop.getTotalAmount());
-		this.setGrandTotal(this.getGrandTotal() - pop.getTotalAmount());
-		
+	public void decreaseAmount(List<PurchaseOrderProduct> pops) {
+		for (PurchaseOrderProduct pop : pops) {
+			this.setSubTotal(this.getSubTotal() - pop.getTotalAmount());
+			this.setGrandTotal(this.getGrandTotal() - pop.getTotalAmount());
+			this.setDue(this.getDue() - pop.getTotalAmount());
+			
+			
+		}
 		if (this.getPurchaseOrderProducts().isEmpty()) {
 			this.setTaxes(0d);
 			this.setDiscount(0d);
@@ -164,6 +180,9 @@ public class PurchaseOrder extends BaseEntity {
 	}
 	public String getStatusDesc() {
 		return status == 0 ? "Active" : "Inactive";
+	}
+	public String getPurchaseOrderStatusDesc() {
+		return this.getPurchaseOrderStatus().getName();
 	}
 	
 }

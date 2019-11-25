@@ -35,11 +35,18 @@ public class InvestigationServiceImpl  implements InvestigationService {
 	@Autowired
 	private EntityManager entityManager;
 	
+	@Autowired
+	BillingService billingService;
+	
 	@Transactional
 	public BaseEntity save(Investigation investigation) {
 		boolean isAddition = investigation.getId() == null;
 		
-		BaseEntity toReturn = this.genericService.save(investigation);
+		BaseEntity toReturn = this.genericService.save(investigation); 
+		
+		if (investigation.getStatus() == 4) {
+			this.billingService.save(investigation);
+		}
 		
 		if (isAddition) {
 			// Initial save 
@@ -83,7 +90,11 @@ public class InvestigationServiceImpl  implements InvestigationService {
 		
 		StringBuilder queryBuilder = new StringBuilder("SELECT e FROM Investigation e "
 				+ "LEFT OUTER JOIN e.visit v "
+				+ "LEFT OUTER JOIN v.patient p1 "
+				+ "LEFT OUTER JOIN p1.user u1 "
 				+ "LEFT OUTER JOIN e.admission a "
+				+ "LEFT OUTER JOIN a.patient p2 "
+				+ "LEFT OUTER JOIN p2.user u2 "
 				+ "WHERE 1 = 1 ");
 		
 		
@@ -91,6 +102,16 @@ public class InvestigationServiceImpl  implements InvestigationService {
 		// Build the query
 		if (StringUtils.isNotBlank(searchCriteria.getMedicalRecordNumber())) {
 			queryBuilder.append(" AND (v.patient.id = :patientId OR a.patient.id = :patientId) ");
+			foundCriteria = true;
+		}
+		
+		if (StringUtils.isNotBlank(searchCriteria.getFirstName())) {
+			queryBuilder.append(" AND (u1.firstName like :patientFirstName OR u2.firstName like :patientFirstName) ");
+			foundCriteria = true;
+		}
+		
+		if (StringUtils.isNotBlank(searchCriteria.getLastName())) {
+			queryBuilder.append(" AND (u1.lastName like :patientLastName OR u2.lastName like :patientLastName) ");
 			foundCriteria = true;
 		}
 		
@@ -122,6 +143,14 @@ public class InvestigationServiceImpl  implements InvestigationService {
 			query.setParameter("patientId", new Long(searchCriteria.getMedicalRecordNumber()));
 		}
 
+		if (StringUtils.isNotBlank(searchCriteria.getFirstName())) {
+			query.setParameter("patientFirstName", '%' + searchCriteria.getFirstName() + '%');
+		}
+		
+		if (StringUtils.isNotBlank(searchCriteria.getLastName())) {
+			query.setParameter("patientLastName", '%' + searchCriteria.getLastName() + '%');
+		}
+		
 		if (searchCriteria.getAdmissionId() != null) {
 			query.setParameter("admissionId", searchCriteria.getAdmissionId());
 		}
@@ -132,11 +161,8 @@ public class InvestigationServiceImpl  implements InvestigationService {
 		
 		if (StringUtils.isNotBlank(searchCriteria.getInvestigationDateStart())) {
 			try {
-				query.setParameter("investigationDateStart", DateUtil.parseDate(
-						searchCriteria.getInvestigationDateStart().substring(1, 3) + "/"
-						+ searchCriteria.getInvestigationDateStart().substring(6, 8) + "/"
-						+ searchCriteria.getInvestigationDateStart().substring(11, 15), "MM/dd/yyyy"),
-					TemporalType.DATE);
+				query.setParameter("investigationDateStart", DateUtil.parseDate(searchCriteria.getInvestigationDateStart(), "MM/dd/yyyy"),
+					TemporalType.TIMESTAMP);
 			} catch (ParseException pe) {
 				logger.error("Exception happened: " + pe);
 			}
@@ -144,10 +170,8 @@ public class InvestigationServiceImpl  implements InvestigationService {
 		
 		if (StringUtils.isNotBlank(searchCriteria.getInvestigationDateEnd())) {
 			try {
-				query.setParameter("investigationDateEnd", DateUtil.parseDate(searchCriteria.getInvestigationDateEnd().substring(1, 3) + "/"
-						+ searchCriteria.getInvestigationDateEnd().substring(6, 8) + "/"
-						+ searchCriteria.getInvestigationDateEnd().substring(11, 15), "MM/dd/yyyy"),
-					TemporalType.DATE);
+				query.setParameter("investigationDateEnd", DateUtil.parseDate(searchCriteria.getInvestigationDateEnd(), "MM/dd/yyyy"),
+					TemporalType.TIMESTAMP);
 			} catch (ParseException pe) {
 				logger.error("Exception happened: " + pe);
 			}

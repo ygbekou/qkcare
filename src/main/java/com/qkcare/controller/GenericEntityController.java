@@ -104,13 +104,15 @@ public class GenericEntityController extends BaseController {
 		BaseEntity obj = (BaseEntity) this.genericDtoToEntiityClassObject(dto, entity);
 
 		Pair<Boolean, List<String>> results = this.validateEntity(context, obj, entity);
-
+		BaseEntity savedObject = null;
 		if (results.getValue0()) {
-			genericService.save(obj);
+			savedObject = genericService.save(obj);
+			savedObject = this.genericService.find(obj.getClass(), obj.getId());
 		} else {
-			obj.setErrors(results.getValue1());
+			savedObject = obj;
+			savedObject.setErrors(results.getValue1());
 		}
-		return obj;
+		return savedObject;
 	}
 
 	@RequestMapping(value = "/saveHospital", method = RequestMethod.POST)

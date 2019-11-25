@@ -1,7 +1,7 @@
 package com.qkcare.model.stocks;
 
-import java.sql.Date;
-import java.util.List;
+
+import java.sql.Timestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,11 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import com.qkcare.model.BaseEntity;
-import com.qkcare.model.Employee;
-import com.qkcare.model.InvestigationTest;
 import com.qkcare.model.Product;
 
 @Entity
@@ -32,7 +29,11 @@ public class PurchaseOrderProduct extends BaseEntity {
 	@JoinColumn(name = "PRODUCT_ID")
 	private Product product;
 	@Column(name = "QUANTITY")
-	private int quantity;
+	private Integer quantity;
+	@Column(name = "RECEIVED_QUANTITY")
+	private Integer receivedQuantity;
+	@Column(name = "RECEIVED_DATETIME")
+	private Timestamp receivedDatetime;
 	@Column(name = "UNIT_PRICE")
 	private Double unitPrice;
 	@Column(name = "TOTAL_AMOUNT")
@@ -62,11 +63,23 @@ public class PurchaseOrderProduct extends BaseEntity {
 	public void setProduct(Product product) {
 		this.product = product;
 	}
-	public int getQuantity() {
+	public Integer getQuantity() {
 		return quantity;
 	}
-	public void setQuantity(int quantity) {
+	public void setQuantity(Integer quantity) {
 		this.quantity = quantity;
+	}
+	public Integer getReceivedQuantity() {
+		return receivedQuantity;
+	}
+	public void setReceivedQuantity(Integer receivedQuantity) {
+		this.receivedQuantity = receivedQuantity;
+	}
+	public Timestamp getReceivedDatetime() {
+		return receivedDatetime;
+	}
+	public void setReceivedDatetime(Timestamp receivedDatetime) {
+		this.receivedDatetime = receivedDatetime;
 	}
 	public Double getUnitPrice() {
 		return unitPrice;
@@ -98,6 +111,16 @@ public class PurchaseOrderProduct extends BaseEntity {
 	public void setDiscountAmount(Double discountAmount) {
 		this.discountAmount = discountAmount;
 	}
+	
+	public PurchaseOrderProduct clone(PurchaseOrderProduct pop) {  
+		PurchaseOrderProduct popCopy = new PurchaseOrderProduct();
+		popCopy.setProduct(pop.getProduct());
+		popCopy.setUnitPrice(pop.getUnitPrice());
+		popCopy.setQuantity(pop.getQuantity() - pop.getReceivedQuantity());
+		popCopy.setTotalAmount(popCopy.getUnitPrice() * popCopy.getQuantity());
+		
+		return popCopy;
+	}  
 	
 	public boolean equals(Object a) { 
 		if (!(a instanceof PurchaseOrderProduct)) {

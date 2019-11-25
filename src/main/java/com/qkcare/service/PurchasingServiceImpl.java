@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,18 +18,15 @@ import javax.transaction.Transactional;
 
 import org.javatuples.Quartet;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 
 import com.qkcare.model.BaseEntity;
-import com.qkcare.model.Investigation;
-import com.qkcare.model.InvestigationTest;
-import com.qkcare.model.LabTest;
 import com.qkcare.model.Product;
 import com.qkcare.model.stocks.PatientSale;
 import com.qkcare.model.stocks.PatientSaleProduct;
 import com.qkcare.model.stocks.PurchaseOrder;
 import com.qkcare.model.stocks.PurchaseOrderProduct;
+import com.qkcare.model.stocks.PurchaseOrderStatus;
 import com.qkcare.model.stocks.ReceiveOrder;
 import com.qkcare.model.stocks.ReceiveOrderProduct;
 import com.qkcare.model.stocks.SaleReturn;
@@ -53,21 +51,44 @@ public class PurchasingServiceImpl  implements PurchasingService {
 		BaseEntity toReturn = this.genericService.save(purchaseOrder);
 		
 		List<PurchaseOrderProduct> removedPops = new ArrayList<>();
+		List<PurchaseOrderProduct> newPops = new ArrayList<>();
+		Integer leftQty = 0;
 		
 		for (PurchaseOrderProduct pop : purchaseOrder.getPurchaseOrderProducts()) {
 			if (pop.getStatus() == 9) {
 				this.genericService.delete(PurchaseOrderProduct.class, Arrays.asList(new Long[]{pop.getId()}));
 				removedPops.add(pop);
-				purchaseOrder.decreaseAmount(pop);
+				
 			} else {
-				if (pop.getId() != null) {
-					pop.setPurchaseOrder((PurchaseOrder)toReturn);
-					this.genericService.save(pop);
+				leftQty += pop.getQuantity() - (pop.getReceivedQuantity() != null ? pop.getReceivedQuantity() : 0);
+				if (pop.getReceivedQuantity() != null && pop.getReceivedQuantity() > 0 && pop.getStatus() == 0) {
+					
+					if (pop.getQuantity() > pop.getReceivedQuantity()) {
+						PurchaseOrderProduct popCopy = pop.clone(pop);
+						newPops.add(popCopy);
+						popCopy.setPurchaseOrder((PurchaseOrder)toReturn);
+						this.genericService.save(popCopy);
+						pop.setQuantity(pop.getReceivedQuantity());
+					}
+					
+					pop.setReceivedDatetime(new Timestamp(new Date().getTime()));
+					pop.setStatus(1);
 				}
+				pop.setPurchaseOrder((PurchaseOrder)toReturn);
+				this.genericService.save(pop);
 			}
 		}
 		
+		purchaseOrder.getPurchaseOrderProducts().addAll(newPops);
 		purchaseOrder.getPurchaseOrderProducts().removeAll(removedPops);
+		purchaseOrder.decreaseAmount(removedPops);
+		
+		Long purchaseOrderStatusId = purchaseOrder.getPurchaseOrderStatus().getId();
+		if (purchaseOrderStatusId == 3L || purchaseOrderStatusId == 4L) {
+			purchaseOrderStatusId = leftQty > 0 ? 4L : 5L;
+		}
+		purchaseOrder.setPurchaseOrderStatus((PurchaseOrderStatus)this.genericService.find(PurchaseOrderStatus.class, purchaseOrderStatusId));
+		
 		
 		toReturn = this.genericService.save(purchaseOrder);
 		
