@@ -1,5 +1,6 @@
 package com.qkcare.model.stocks;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Map;
 
@@ -42,6 +43,10 @@ public class PatientSaleProduct extends BaseEntity {
 	private Double discountAmount;
 	@Column(name = "TOTAL_AMOUNT")
 	private Double totalAmount;
+	@Column(name = "DELIVERY_QUANTITY")
+	private Integer deliveryQuantity;
+	@Column(name = "DELIVERY_DATETIME")
+	private Timestamp deliveryDatetime;
 	private Integer status = 0;
 	
 	
@@ -117,6 +122,19 @@ public class PatientSaleProduct extends BaseEntity {
 	}
 	public void setAdmission(Admission admission) {
 		this.admission = admission;
+	}
+	
+	public Integer getDeliveryQuantity() {
+		return deliveryQuantity;
+	}
+	public void setDeliveryQuantity(Integer deliveryQuantity) {
+		this.deliveryQuantity = deliveryQuantity;
+	}
+	public Timestamp getDeliveryDatetime() {
+		return deliveryDatetime;
+	}
+	public void setDeliveryDatetime(Timestamp deliveryDatetime) {
+		this.deliveryDatetime = deliveryDatetime;
 	}
 	// Transient data
 	public Date getSaleDatetime() {

@@ -1,6 +1,5 @@
 package com.qkcare.model.stocks;
 
-import java.util.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +45,9 @@ public class PatientSale extends BaseEntity {
 	private Double discount;
 	@Column(name = "GRAND_TOTAL")
 	private Double grandTotal;
+	@ManyToOne
+	@JoinColumn(name = "PATIENT_SALE_STATUS_ID")
+	private PatientSaleStatus patientSaleStatus;
 	private int status;
 	
 	// Transient
@@ -149,6 +151,13 @@ public class PatientSale extends BaseEntity {
 	public void setGrandTotal(Double grandTotal) {
 		this.grandTotal = grandTotal;
 	}
+	public PatientSaleStatus getPatientSaleStatus() {
+		return patientSaleStatus;
+	}
+	public void setPatientSaleStatus(PatientSaleStatus patientSaleStatus) {
+		this.patientSaleStatus = patientSaleStatus;
+	}
+
 	// Transient
 	public List<PatientSaleProduct> getPatientSaleProducts() {
 		return patientSaleProducts;
@@ -171,5 +180,7 @@ public class PatientSale extends BaseEntity {
 	public String getPatientName() {
 		return this.getVisit() != null ? this.getVisit().getPatient().getName() : "";
 	}
-	
+	public String getPatientSaleStatusDesc() {
+		return this.getPatientSaleStatus().getName();
+	}
 }
