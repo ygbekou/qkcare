@@ -3,9 +3,6 @@ package com.qkcare.controller;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +24,6 @@ import com.qkcare.model.stocks.PatientSale;
 import com.qkcare.model.stocks.PatientSaleProduct;
 import com.qkcare.model.stocks.PurchaseOrder;
 import com.qkcare.model.stocks.PurchaseOrderProduct;
-import com.qkcare.model.stocks.ReceiveOrder;
-import com.qkcare.model.stocks.ReceiveOrderProduct;
 import com.qkcare.model.stocks.SaleReturn;
 import com.qkcare.model.stocks.SaleReturnProduct;
 import com.qkcare.service.GenericService;
@@ -75,39 +70,39 @@ public class PurchasingController extends BaseController {
 			return result != null ? result : new PurchaseOrder();
 		}
 		
-		@RequestMapping(value="/receiveOrder/save",method = RequestMethod.POST)
-		public BaseEntity saveReceiveOrder(@RequestBody GenericDto dto) throws JsonParseException, 
-		JsonMappingException, IOException, ClassNotFoundException {
-			ObjectMapper mapper = new ObjectMapper();
-			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-			BaseEntity obj = (BaseEntity) mapper.readValue(dto.getJson()
-					.replaceAll("'", "\"").replaceAll("/", "\\/"),
-					this.getClass("com.qkcare.model.stocks.ReceiveOrder"));
-			purchasingService.save((ReceiveOrder)obj);
-			
-			for (ReceiveOrderProduct rop : ((ReceiveOrder)obj).getReceiveOrderProducts()) {
-				rop.setReceiveOrder(null);
-			}
-			
-			return obj;
-		}
+//		@RequestMapping(value="/receiveOrder/save",method = RequestMethod.POST)
+//		public BaseEntity saveReceiveOrder(@RequestBody GenericDto dto) throws JsonParseException, 
+//		JsonMappingException, IOException, ClassNotFoundException {
+//			ObjectMapper mapper = new ObjectMapper();
+//			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+//			BaseEntity obj = (BaseEntity) mapper.readValue(dto.getJson()
+//					.replaceAll("'", "\"").replaceAll("/", "\\/"),
+//					this.getClass("com.qkcare.model.stocks.ReceiveOrder"));
+//			purchasingService.save((ReceiveOrder)obj);
+//			
+//			for (ReceiveOrderProduct rop : ((ReceiveOrder)obj).getReceiveOrderProducts()) {
+//				rop.setReceiveOrder(null);
+//			}
+//			
+//			return obj;
+//		}
 		
-		@RequestMapping(value="purchaseOrder/newReceiveOrder/{id}",method = RequestMethod.GET)
-		public List<ReceiveOrder> getInitialReceive(@PathVariable("id") Long id) 
-				throws ClassNotFoundException, NumberFormatException, ParseException {
-			List<ReceiveOrder> results = purchasingService.findInitialReceiveOrder(
-					this.getClass("com.qkcare.model.stocks.PurchaseOrder"), id);
-			
-			return results != null ? results : Collections.EMPTY_LIST;
-		}
+//		@RequestMapping(value="purchaseOrder/newReceiveOrder/{id}",method = RequestMethod.GET)
+//		public List<ReceiveOrder> getInitialReceive(@PathVariable("id") Long id) 
+//				throws ClassNotFoundException, NumberFormatException, ParseException {
+//			List<ReceiveOrder> results = purchasingService.findInitialReceiveOrder(
+//					this.getClass("com.qkcare.model.stocks.PurchaseOrder"), id);
+//			
+//			return results != null ? results : Collections.EMPTY_LIST;
+//		}
 		
-		@RequestMapping(value="receiveOrder/{id}",method = RequestMethod.GET)
-		public BaseEntity getReceiveOrder(@PathVariable("id") Long id) throws ClassNotFoundException {
-			BaseEntity result = purchasingService.findReceiveOrder(
-					this.getClass("com.qkcare.model.stocks.ReceiveOrder"), id);
-			
-			return result != null ? result : new ReceiveOrder();
-		}
+//		@RequestMapping(value="receiveOrder/{id}",method = RequestMethod.GET)
+//		public BaseEntity getReceiveOrder(@PathVariable("id") Long id) throws ClassNotFoundException {
+//			BaseEntity result = purchasingService.findReceiveOrder(
+//					this.getClass("com.qkcare.model.stocks.ReceiveOrder"), id);
+//			
+//			return result != null ? result : new ReceiveOrder();
+//		}
 
 		@RequestMapping(value="/patientSale/save",method = RequestMethod.POST)
 		public BaseEntity savePatientSale(@RequestBody GenericDto dto) throws JsonParseException, 

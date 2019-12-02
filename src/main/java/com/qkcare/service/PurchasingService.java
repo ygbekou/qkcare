@@ -20,11 +20,11 @@ public interface PurchasingService {
 	
 	public BaseEntity findPurchaseOrder(Class cl, Long key);
 	
-	public BaseEntity save(ReceiveOrder receiveOrder);
-	
-	public List<ReceiveOrder> findInitialReceiveOrder(Class cl, Long key) throws NumberFormatException, ParseException;
-	
-	public BaseEntity findReceiveOrder(Class cl, Long key);
+//	public BaseEntity save(ReceiveOrder receiveOrder);
+//	
+//	public List<ReceiveOrder> findInitialReceiveOrder(Class cl, Long key) throws NumberFormatException, ParseException;
+//	
+//	public BaseEntity findReceiveOrder(Class cl, Long key);
 	
 	public BaseEntity save(PatientSale patientSale);
 	

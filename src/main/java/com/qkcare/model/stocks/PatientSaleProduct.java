@@ -152,4 +152,23 @@ public class PatientSaleProduct extends BaseEntity {
 	public String getStatusDesc() {
 		return SALE_STATUSES.get(this.getStatus());
 	}
+	
+	
+	public PatientSaleProduct clone(PatientSaleProduct psp) {  
+		PatientSaleProduct pspCopy = new PatientSaleProduct();
+		pspCopy.setProduct(psp.getProduct());
+		pspCopy.setUnitPrice(psp.getUnitPrice());
+		pspCopy.setQuantity(psp.getQuantity() - psp.getDeliveryQuantity());
+		pspCopy.setTotalAmount(pspCopy.getUnitPrice() * pspCopy.getQuantity());
+		
+		return pspCopy;
+	}  
+	
+	public boolean equals(Object a) { 
+		if (!(a instanceof PatientSaleProduct)) {
+			return false;
+		}
+		
+		return this.getId() == ((PatientSaleProduct)a).getId();
+	}
 }

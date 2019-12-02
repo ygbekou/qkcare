@@ -174,11 +174,26 @@ public class PatientSale extends BaseEntity {
 		}
 	}
 	
+	public void decreaseAmount(List<PatientSaleProduct> psps) {
+		for (PatientSaleProduct psp : psps) {
+			this.setSubTotal(this.getSubTotal() - psp.getTotalAmount());
+			this.setGrandTotal(this.getGrandTotal() - psp.getTotalAmount());
+			//this.setDue(this.getDue() - psp.getTotalAmount());
+		}
+		if (this.getPatientSaleProducts().isEmpty()) {
+			this.setTaxes(0d);
+			this.setDiscount(0d);
+			this.setGrandTotal(0d);
+			//this.setDue(0d);
+		}
+	}
+	
 	public String getPatientId() {
 		return this.getVisit() != null ? this.getVisit().getPatient().getMedicalRecordNumber() : "";
 	}
 	public String getPatientName() {
-		return this.getVisit() != null ? this.getVisit().getPatient().getName() : "";
+		return this.getVisit() != null ? this.getVisit().getPatientName() 
+				: (this.getAdmission() != null ? this.getAdmission().getPatientName() : "");
 	}
 	public String getPatientSaleStatusDesc() {
 		return this.getPatientSaleStatus().getName();
