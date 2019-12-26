@@ -83,6 +83,8 @@ public class PatientSale extends BaseEntity {
 			patientSaleProduct.setTotalAmount(patientSaleProduct.getQuantity() * patientSaleProduct.getUnitPrice());
 			this.addPatientSaleProduct(patientSaleProduct);
 		}
+		
+		this.setPatientSaleStatus(new PatientSaleStatus(2L));
 	}
 	
 	public Long getId() {

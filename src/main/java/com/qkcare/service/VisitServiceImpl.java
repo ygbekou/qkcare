@@ -183,6 +183,7 @@ public class VisitServiceImpl  implements VisitService {
 	public BaseEntity getAllergies(Patient patient) {
 		
 		List<Quartet<String, String, String, String>> paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
+		paramTupleList.add(Quartet.with("e.patient.id = ", "patientId", patient.getId() + "", "Long"));
 		
 		// Get allergies
 		String queryStr =  "SELECT e FROM PatientAllergy e WHERE 1 = 1 ";
@@ -201,8 +202,9 @@ public class VisitServiceImpl  implements VisitService {
 	}
 	
 	public BaseEntity getMedicalHistories(Patient patient) {
-		
 		List<Quartet<String, String, String, String>> paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
+		paramTupleList.add(Quartet.with("e.patient.id = ", "patientId", patient.getId() + "", "Long"));
+		
 		
 		// Get medical histories
 		String queryStr =  "SELECT e FROM PatientMedicalHistory e WHERE 1 = 1 ";
@@ -219,8 +221,8 @@ public class VisitServiceImpl  implements VisitService {
 	}
 
 	public BaseEntity getSocialHistories(Patient patient) {
-	
 		List<Quartet<String, String, String, String>> paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
+		paramTupleList.add(Quartet.with("e.patient.id = ", "patientId", patient.getId() + "", "Long"));
 		
 		// Get social histories
 		String queryStr =  "SELECT e FROM PatientSocialHistory e WHERE 1 = 1 ";

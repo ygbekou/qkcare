@@ -114,4 +114,10 @@ public class InvestigationTest extends BaseEntity {
 	public String getUnit() {
 		return this.getLabTest().getLabTestUnit() == null ? "" : this.getLabTest().getLabTestUnit().getName();
 	}
+	public String getInvestigationName() {
+		return this.getInvestigation().getName();
+	}
+	public String getInvestigationDate() {
+		return this.getInvestigation().getInvestigationDatetime().toString();
+	}
 }

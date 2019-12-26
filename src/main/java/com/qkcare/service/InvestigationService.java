@@ -18,7 +18,7 @@ public interface InvestigationService {
 	
 	public void saveInvestigationTests(List<InvestigationTest> investigationTests);
 	
-	public List<BaseEntity> getInvestigations(SearchCriteria searchCriteria);
+	public List<BaseEntity> getInvestigations(SearchCriteria searchCriteria, String queryHeader);
 	
 	public LabTest saveLabTest(LabTest labTest);
 	

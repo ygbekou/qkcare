@@ -2,12 +2,18 @@ package com.qkcare.controller;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -65,10 +71,46 @@ public class InvestigationController extends BaseController {
 			return Collections.singletonMap("response", "SUCCESS");
 		}
 		
+		@RequestMapping(value="/investigationTest/list/byDate",method = RequestMethod.POST)
+		public List<JSONObject> getInvestigationTests(@RequestBody SearchCriteria searchCriteria) throws JsonParseException, 
+		JsonMappingException, IOException, ClassNotFoundException {
+			String queryHeader = "SELECT it FROM InvestigationTest it "
+				+ "JOIN it.investigation e ";
+			List<BaseEntity> investigationTests = this.investigationService.getInvestigations(searchCriteria, queryHeader);
+			Map<String, List<BaseEntity>> investMap = new HashMap<>();
+			
+			Map<String, List<BaseEntity>> invTestMap = investigationTests.stream()
+				     .collect(Collectors.groupingBy(x -> ((InvestigationTest)x).getName())); 
+			
+			List<JSONObject> jsonObjects = new ArrayList<>();
+			JSONObject jsonObject1 = new JSONObject();
+			jsonObjects.add(jsonObject1);
+			Set<String> attributeList = new HashSet<>();
+			
+			for (Map.Entry mapElement : invTestMap.entrySet()) { 
+	            String key = (String)mapElement.getKey(); 
+	            
+	            JSONObject jsonObject = new JSONObject();
+	            jsonObject.put("name", key);
+	  
+	            for (BaseEntity entity: (List<BaseEntity>)mapElement.getValue()) {
+					InvestigationTest invTest = (InvestigationTest)entity;
+					jsonObject.put(invTest.getInvestigationDate(), invTest.getResult());
+					attributeList.add(invTest.getInvestigationDate());
+				}
+	            
+	            jsonObjects.add(jsonObject);
+	        } 
+			
+			jsonObject1.put("attributes", attributeList);
+			
+			return jsonObjects;
+		}
+		
 		
 		@RequestMapping(value = "/investigation/search", method = RequestMethod.POST)
 		public List<BaseEntity> searchInvestigations(@RequestBody SearchCriteria searchCriteria) throws ClassNotFoundException {
-			List<BaseEntity> investigations = this.investigationService.getInvestigations(searchCriteria);
+			List<BaseEntity> investigations = this.investigationService.getInvestigations(searchCriteria, "SELECT e FROM Investigation e ");
 			return investigations;
 		}
 

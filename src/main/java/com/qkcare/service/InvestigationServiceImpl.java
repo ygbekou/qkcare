@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.javatuples.Quartet;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.qkcare.domain.SearchCriteria;
 import com.qkcare.model.BaseEntity;
@@ -82,13 +83,13 @@ public class InvestigationServiceImpl  implements InvestigationService {
 		
 	}
 	
-	
+
 	@Transactional
-	public List<BaseEntity> getInvestigations(SearchCriteria searchCriteria) {
+	public List<BaseEntity> getInvestigations(SearchCriteria searchCriteria, String queryHeader) {
 		
 		boolean foundCriteria = false;
 		
-		StringBuilder queryBuilder = new StringBuilder("SELECT e FROM Investigation e "
+		StringBuilder queryBuilder = new StringBuilder(queryHeader
 				+ "LEFT OUTER JOIN e.visit v "
 				+ "LEFT OUTER JOIN v.patient p1 "
 				+ "LEFT OUTER JOIN p1.user u1 "

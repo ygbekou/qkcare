@@ -2,17 +2,13 @@ package com.qkcare.service;
 
 
 import java.sql.Timestamp;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.transaction.Transactional;
 
@@ -28,8 +24,6 @@ import com.qkcare.model.stocks.PatientSaleStatus;
 import com.qkcare.model.stocks.PurchaseOrder;
 import com.qkcare.model.stocks.PurchaseOrderProduct;
 import com.qkcare.model.stocks.PurchaseOrderStatus;
-import com.qkcare.model.stocks.ReceiveOrder;
-import com.qkcare.model.stocks.ReceiveOrderProduct;
 import com.qkcare.model.stocks.SaleReturn;
 import com.qkcare.model.stocks.SaleReturnProduct;
 
