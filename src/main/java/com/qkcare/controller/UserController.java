@@ -185,8 +185,10 @@ public class UserController extends BaseController {
 		try {
 			LoginUser lu = new LoginUser();
 			lu.setPassword(user.getPassword());
-			lu.setUserName(user.getUserName());
+			lu.setUserName(user.getEmail());
 			user.setPassword(encoder.encode(user.getPassword()));
+			user.setFirstTimeLogin("N"); 
+			user.setUserName(user.getEmail());
 			userService.save(user);
 			UserRole ur= new UserRole();
 			ur.setUser(user);
