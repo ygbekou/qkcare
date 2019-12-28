@@ -1,6 +1,5 @@
 package com.qkcare.controller;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.security.SecureRandom;
@@ -205,6 +204,16 @@ public class UserController extends BaseController {
 						null, null, null, null,null, null,null, null));
 			}
 		}
+	}
+
+	@RequestMapping(value = "/changePassword", method = RequestMethod.POST)
+	public @ResponseBody GenericResponse changePassword(@PathVariable("entity") String entity, @RequestBody User user) {
+
+		if (user == null || (user.getUserName() == null)) {
+			return new GenericResponse("Failure");
+		}
+
+		return new GenericResponse(this.userService.changePassword(user, user.getPassword()));
 	}
 
 	@RequestMapping(value = "/generate-token", method = RequestMethod.POST)

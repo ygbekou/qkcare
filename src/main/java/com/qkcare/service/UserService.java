@@ -16,4 +16,6 @@ public interface UserService extends GenericService{
 	public User getUser(String email, String userName, String password);
 
 	public User getTempUser(String userName, Date birthDate);
+	
+	public String changePassword(User user, String password);
 }
