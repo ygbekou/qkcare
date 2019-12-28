@@ -197,7 +197,13 @@ public class UserController extends BaseController {
 			return this.register(lu);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return null;
+			if(e.getMessage().contains("ConstraintViolationException")) {
+				return ResponseEntity.ok(new AuthToken("", user.getUserName(), user.getPassword(),
+						null, null, null, null,null, null,null, null));				
+			}else {
+				return ResponseEntity.ok(new AuthToken(null, user.getUserName(), user.getPassword(),
+						null, null, null, null,null, null,null, null));
+			}
 		}
 	}
 

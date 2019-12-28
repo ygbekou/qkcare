@@ -69,7 +69,7 @@ public class AuthenticationController {
 			
 		} catch (Exception b) {
 			b.printStackTrace();
-			return ResponseEntity.ok(new AuthToken(null, loginUser.getUserName(), loginUser.getPassword(),
+			return ResponseEntity.ok(new AuthToken("", loginUser.getUserName(), loginUser.getPassword(),
 					null, null, null, null,null, null,null, null));
 		}
 
