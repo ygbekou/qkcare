@@ -112,6 +112,7 @@ public class UserServiceImpl extends GenericServiceImpl implements UserService, 
 
 			}
 			user = (User) userField.get(entity);
+
 			Patient p = (Patient) entity;
 			if (p.getVisitReason() != null && p.getVisitReason().trim().equals("")) {// this is from Kiosk
 				List<User> users = userDao.getExistingUser(user.getFirstName(), user.getLastName(), user.getSex(),
@@ -154,7 +155,13 @@ public class UserServiceImpl extends GenericServiceImpl implements UserService, 
 					}
 				}
 			}
-
+			if (user != null && (user.getPicture() == null || user.getPicture().equals("user.jpg"))) {
+				if (user.getSex() != null && user.getSex().equals("M")) {
+					user.setPicture("male.png");
+				} else {
+					user.setPicture("female.png");
+				}
+			}
 			passwordField = user.getClass().getDeclaredField("password");
 			if (passwordField != null) {
 				passwordField.setAccessible(true);
@@ -283,6 +290,6 @@ public class UserServiceImpl extends GenericServiceImpl implements UserService, 
 	@Override
 	public User getTempUser(String userName, Date birthDate) {
 		// TODO Auto-generated method stub
-		return this.userDao.getTempUser(  userName,   birthDate);
+		return this.userDao.getTempUser(userName, birthDate);
 	}
 }
