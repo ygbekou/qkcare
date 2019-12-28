@@ -2,11 +2,13 @@ package com.qkcare.controller;
 
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -85,7 +87,7 @@ public class InvestigationController extends BaseController {
 			List<JSONObject> jsonObjects = new ArrayList<>();
 			JSONObject jsonObject1 = new JSONObject();
 			jsonObjects.add(jsonObject1);
-			Set<String> attributeList = new HashSet<>();
+			List<String> attributeList = new ArrayList<>();
 			
 			for (Map.Entry mapElement : invTestMap.entrySet()) { 
 	            String key = (String)mapElement.getKey(); 
@@ -102,6 +104,8 @@ public class InvestigationController extends BaseController {
 	            jsonObjects.add(jsonObject);
 	        } 
 			
+			Collections.sort(attributeList);
+			Collections.reverse(attributeList);
 			jsonObject1.put("attributes", attributeList);
 			
 			return jsonObjects;

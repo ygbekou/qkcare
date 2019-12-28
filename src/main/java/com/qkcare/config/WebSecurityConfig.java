@@ -52,6 +52,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/css/**", "/js/**","/images/**").permitAll()
                 .antMatchers("/service/token/*").permitAll()
                 .antMatchers("/service/user/forgot/*").permitAll() 
+                .antMatchers("/service/user/forgot/changePassword").permitAll() 
                 .antMatchers("/service/com.qkcare.model.website.SectionItem/allByCriteriaAndOrderBy").permitAll()
                 .antMatchers("/service/com.qkcare.model.website.Section/allByCriteriaAndOrderBy").permitAll()
                 .antMatchers("/service/com.qkcare.model.website.SliderText/allByCriteriaAndOrderBy").permitAll()

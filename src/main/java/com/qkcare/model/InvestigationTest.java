@@ -10,6 +10,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.qkcare.util.DateUtil;
+
 @Entity
 @Table(name = "INVESTIGATION_TEST")
 public class InvestigationTest extends BaseEntity {
@@ -118,6 +120,6 @@ public class InvestigationTest extends BaseEntity {
 		return this.getInvestigation().getName();
 	}
 	public String getInvestigationDate() {
-		return this.getInvestigation().getInvestigationDatetime().toString();
+		return DateUtil.formatDate(this.getInvestigation().getInvestigationDatetime(), DateUtil.DATE_TIME_WITHOUT_SECONDS);
 	}
 }
