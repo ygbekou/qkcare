@@ -37,6 +37,8 @@ public class CacheUtil implements InitializingBean {
 	public static String PRESCRIPTION_TYPE = "prescriptionType";
 	public static String EXAM_STATUS = "examStatus";
 	public static String SALE_STATUS = "saleStatus";
+	public static String SUMMARY_STATUS = "summaryStatus";
+	public static String SUMMARY_TYPE = "summaryType";
 	
 	
 	@Autowired 
@@ -151,6 +153,12 @@ public class CacheUtil implements InitializingBean {
 		
 		this.addCacheToManager(EXAM_STATUS, "SELECT EXAM_STATUS_ID, NAME "
 				+ "FROM EXAM_STATUS ", this::getReferences);
+		
+		this.addCacheToManager(SUMMARY_STATUS, "SELECT SUMMARY_STATUS_ID, NAME "
+				+ "FROM SUMMARY_STATUS ", this::getReferences);
+		
+		this.addCacheToManager(SUMMARY_TYPE, "SELECT SUMMARY_TYPE_ID, NAME "
+				+ "FROM SUMMARY_TYPE ", this::getReferences);
 		
 		this.getReferenceMap("SELECT SALE_STATUS_ID, NAME "
 				+ "FROM SALE_STATUS ", PatientSaleProduct.SALE_STATUSES);

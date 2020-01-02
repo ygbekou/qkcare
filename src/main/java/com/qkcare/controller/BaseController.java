@@ -1,6 +1,7 @@
 package com.qkcare.controller;
 
 import java.lang.reflect.InvocationTargetException;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,8 @@ import org.springframework.context.ApplicationContext;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.qkcare.domain.GenericDto;
 import com.qkcare.model.BaseEntity;
 import com.qkcare.util.Constants;
@@ -58,7 +61,9 @@ public class BaseController {
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-			obj =  (BaseEntity) mapper.readValue(dto.getJson().replaceAll("'", "\"").replaceAll("/", "\\/"), 
+			mapper.configure(Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
+			obj =  (BaseEntity) mapper.readValue(dto.getJson().replaceAll("'", "\"")
+					.replaceAll("/", "\\/").replaceAll("/", "\\/"), 
 					myClass);
 		} catch(Exception e) {
 			obj = new BaseEntity();

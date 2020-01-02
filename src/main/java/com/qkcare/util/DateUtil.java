@@ -8,6 +8,8 @@ import java.util.Date;
 public class DateUtil {
 	
 	public static String DATE_TIME_WITHOUT_SECONDS = "yyyy-MM-dd hh:mm";
+	public static String DATE_FORMAT = "yyyy-MM-dd";
+	public static String TIME_WITHOUT_SECONDS_FORMAT = "hh:mm";
 	
 	public static Date addOneDay(Date date) {
 		return addDays(date, 1);
