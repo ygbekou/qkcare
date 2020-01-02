@@ -338,7 +338,7 @@ public class VisitServiceImpl  implements VisitService {
 		return results;
 	}
 	
-	public Map<Integer, List<Visit>> getVisitsByMonth() {
+	public Map<Integer, List<Visit>> getVisitsByMonth(Long id) {
 		
 		LocalDate today = LocalDate.now();
 		LocalDate startDate = today.withDayOfMonth(1).plusMonths(-12);
@@ -350,7 +350,9 @@ public class VisitServiceImpl  implements VisitService {
 		paramTupleList.add(Quartet.with("e.visitDatetime >= ", "visitStartDate", startDate.format(formatter), "Date"));
 		paramTupleList.add(Quartet.with("e.visitDatetime <= ", "visitEndDate", endDate.format(formatter), "Date"));
 		String queryStr =  "SELECT e FROM Visit e WHERE 1 = 1";
-		
+		if (id != null && id > 0) {
+			queryStr += " AND e.patient.user.id=" + id;
+		}
 		List<Visit> visits = (List)this.genericService.getByCriteria(queryStr, 
 				paramTupleList, " ORDER BY visitDatetime");
 		

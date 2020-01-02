@@ -191,7 +191,7 @@ public class AdmissionServiceImpl  implements AdmissionService {
 		
 	}
 	
-	public Map<Integer, List<Admission>> getAdmissionsByMonth() {
+	public Map<Integer, List<Admission>> getAdmissionsByMonth(Long id) {
 		
 		LocalDate today = LocalDate.now();
 		LocalDate startDate = today.withDayOfMonth(1).plusMonths(-12);
@@ -203,7 +203,9 @@ public class AdmissionServiceImpl  implements AdmissionService {
 		paramTupleList.add(Quartet.with("e.admissionDatetime >= ", "admissionStartDate", startDate.format(formatter), "Date"));
 		paramTupleList.add(Quartet.with("e.admissionDatetime <= ", "admissionEndDate", endDate.format(formatter), "Date"));
 		String queryStr =  "SELECT e FROM Admission e WHERE 1 = 1";
-		
+		if (id != null && id > 0) {
+			queryStr += " AND e.patient.user.id=" + id;
+		}
 		List<Admission> admissions = (List)this.genericService.getByCriteria(queryStr, 
 				paramTupleList, " ORDER BY admissionDatetime");
 		

@@ -65,12 +65,12 @@ public class AuthenticationController {
 			return ResponseEntity.ok(new AuthToken(token, loginUser.getUserName(), loginUser.getPassword(),
 					user.getFirstName(), user.getLastName(), user.getUserGroup().getName(), user.getPicture(),
 					user.getFirstTimeLogin(), Arrays.asList(new Long[] { user.getUserGroup().getId() }),
-					resources.getValue0(), resources.getValue1()));
+					resources.getValue0(), resources.getValue1(),user.getId()));
 			
 		} catch (Exception b) {
 			b.printStackTrace();
 			return ResponseEntity.ok(new AuthToken("", loginUser.getUserName(), loginUser.getPassword(),
-					null, null, null, null,null, null,null, null));
+					null, null, null, null,null, null,null, null,null));
 		}
 
 	}

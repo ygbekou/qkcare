@@ -26,5 +26,5 @@ public interface AdmissionService {
 	
 	public BaseEntity findPrescription(Class cl, Long key);
 	
-	public Map<Integer, List<Admission>> getAdmissionsByMonth();
+	public Map<Integer, List<Admission>> getAdmissionsByMonth(Long id);
 }

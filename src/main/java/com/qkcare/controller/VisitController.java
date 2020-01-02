@@ -160,9 +160,9 @@ public class VisitController extends BaseController {
 			return obj;
 		}
 		
-		@RequestMapping(value = "/list/byMonth", method = RequestMethod.GET, headers = "Accept=application/json")
-		public Map<Integer, List<Visit>> getVisitsByMonth() {
-			Map<Integer, List<Visit>> visites= this.visitService.getVisitsByMonth();
+		@RequestMapping(value = "/list/byMonth/{id}", method = RequestMethod.GET, headers = "Accept=application/json")
+		public Map<Integer, List<Visit>> getVisitsByMonth(@PathVariable("id") Long id) {
+			Map<Integer, List<Visit>> visites= this.visitService.getVisitsByMonth(id);
 			return visites;
 		}
 		
