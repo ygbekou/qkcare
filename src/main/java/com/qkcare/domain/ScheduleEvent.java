@@ -1,5 +1,7 @@
 package com.qkcare.domain;
 
+import com.qkcare.model.Appointment;
+
 public class ScheduleEvent {
 
 	private Long id;
@@ -14,7 +16,29 @@ public class ScheduleEvent {
 	private String docName;
 	private String docFirstName;
 	private String docLastName;
-	private String designation;	
+	private String designation;
+	private String location;
+
+	public ScheduleEvent() {
+
+	}
+
+	public ScheduleEvent(Appointment apt) {
+		this.start = apt.getBeginTime();
+		this.end = apt.getEndTime();
+		this.docName = apt.getDoctorName();
+		this.docFirstName = apt.getDoctor() == null ? null : apt.getDoctor().getFirstName();
+		this.docLastName = apt.getDoctor() == null ? null : apt.getDoctor().getLastName();
+		this.location = apt.getHospitalLocation() == null ? null : apt.getHospitalLocation().getName();
+	}
+
+	public String getLocation() {
+		return location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
+	}
 
 	public String getDesignation() {
 		return designation;

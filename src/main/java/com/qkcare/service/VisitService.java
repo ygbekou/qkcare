@@ -44,5 +44,7 @@ public interface VisitService {
 	public BaseEntity getMedicalHistories(Patient patient);
 	
 	public BaseEntity getSocialHistories(Patient patient);
+
+	public Map<Integer, List<Visit>> getVisitsByYear(Long id);
 	
 }

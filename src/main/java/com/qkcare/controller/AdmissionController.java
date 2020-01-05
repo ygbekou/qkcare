@@ -115,4 +115,10 @@ public class AdmissionController extends BaseController {
 		Map<Integer, List<Admission>> admissions= this.admissionService.getAdmissionsByMonth(id);
 		return admissions;
 	}
+	
+	@RequestMapping(value = "/list/byYear/{id}", method = RequestMethod.GET, headers = "Accept=application/json")
+	public Map<Integer, List<Admission>> getAdmissionsByYear(@PathVariable("id") Long id) {
+		Map<Integer, List<Admission>> admissions= this.admissionService.getAdmissionsByYear(id);
+		return admissions;
+	}
 }

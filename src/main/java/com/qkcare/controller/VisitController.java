@@ -166,6 +166,13 @@ public class VisitController extends BaseController {
 			return visites;
 		}
 		
+		
+		@RequestMapping(value = "/list/byYear/{id}", method = RequestMethod.GET, headers = "Accept=application/json")
+		public Map<Integer, List<Visit>> getVisitsByYear(@PathVariable("id") Long id) {
+			Map<Integer, List<Visit>> visites= this.visitService.getVisitsByYear(id);
+			return visites;
+		}
+		
 		@RequestMapping(value = "/getWaitList/{topN}", method = RequestMethod.GET, headers = "Accept=application/json")
 		public  List<Visit>  getWaitList(@PathVariable("topN") int topN) {
 			return this.visitService.getWaitList(topN);
@@ -225,4 +232,17 @@ public class VisitController extends BaseController {
 			return result;
 		}
 
+		@RequestMapping(value="patient/all/{id}", method = RequestMethod.GET)
+		public BaseEntity getPatientAll(@PathVariable("id") Long id) throws ClassNotFoundException{
+			
+			BaseEntity result1 = visitService.getAllergies(new Patient(id));
+			BaseEntity result2 = visitService.getMedicalHistories(new Patient(id));
+			BaseEntity result3 = visitService.getSocialHistories(new Patient(id));
+			
+			Patient p = new Patient(id);
+			p.setSelectedAllergies(((Patient)result1).getSelectedAllergies());
+			p.setSelectedMedicalHistories(((Patient)result2).getSelectedMedicalHistories());
+			p.setSelectedSocialHistories(((Patient)result3).getSelectedSocialHistories());
+			return p;
+		}
 }

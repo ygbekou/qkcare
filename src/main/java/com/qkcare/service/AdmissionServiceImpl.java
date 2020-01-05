@@ -4,6 +4,8 @@ package com.qkcare.service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -212,8 +214,36 @@ public class AdmissionServiceImpl  implements AdmissionService {
 		Map<Integer, List<Admission>> dataMap = new HashMap<>();
 		
 		for (Admission admission : admissions) {
-			Integer monthIndex = admission.getAdmissionDatetime().getMonth();
+			Calendar calendar = new GregorianCalendar();
+			calendar.setTime(admission.getAdmissionDatetime());
+			Integer monthIndex = calendar.get(Calendar.MONTH);
 			
+			if (dataMap.get(monthIndex) == null) {
+				dataMap.put(monthIndex, new ArrayList<Admission>());
+			}
+			
+			dataMap.get(monthIndex).add(admission);
+		}
+		
+		return dataMap;
+	}
+	
+	public Map<Integer, List<Admission>> getAdmissionsByYear(Long id) { 
+		
+		List<Quartet<String, String, String, String>> paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
+ 		String queryStr =  "SELECT e FROM Admission e WHERE 1 = 1";
+		if (id != null && id > 0) {
+			queryStr += " AND e.patient.user.id=" + id;
+		}
+		List<Admission> admissions = (List)this.genericService.getByCriteria(queryStr, 
+				paramTupleList, " ORDER BY admissionDatetime");
+		
+		Map<Integer, List<Admission>> dataMap = new HashMap<>();
+		
+		for (Admission admission : admissions) { 
+			Calendar calendar = new GregorianCalendar();
+			calendar.setTime(admission.getAdmissionDatetime());
+			Integer monthIndex = calendar.get(Calendar.YEAR); 
 			if (dataMap.get(monthIndex) == null) {
 				dataMap.put(monthIndex, new ArrayList<Admission>());
 			}

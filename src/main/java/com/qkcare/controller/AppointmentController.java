@@ -127,10 +127,21 @@ public class AppointmentController extends BaseController {
 		//id is the user id. 
 			return this.appointmentService.getAppointmentsByMonth(id); 
 	}
-
+	@RequestMapping(value = "/list/byYear/{id}", method = RequestMethod.GET, headers = "Accept=application/json")
+	public Map<Integer, List<Appointment>> getAppointmentsByYear(@PathVariable("id") Long id) {
+		//id is the user id. 
+			return this.appointmentService.getAppointmentsByYear(id); 
+	}
 	@RequestMapping(value = "/list/upcomings", method = RequestMethod.GET, headers = "Accept=application/json")
 	public List<Appointment> getUpcomingAppointments() {
 		return this.appointmentService.getUpcomingAppointments();
 	}
+	
+	@RequestMapping(value = "/getNextAppointment/{id}", method = RequestMethod.GET, headers = "Accept=application/json")
+	public  Appointment getNextAppointment(@PathVariable("id") Long id) {
+		//id is the user id. 
+		return this.appointmentService.getNextAppointment(id); 
+	}
+
 
 }

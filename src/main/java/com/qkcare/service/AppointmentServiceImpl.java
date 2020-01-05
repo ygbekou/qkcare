@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -105,9 +107,10 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 		Map<Integer, List<Appointment>> dataMap = new HashMap<>();
 
-		for (Appointment appointment : appointments) {
-			Integer monthIndex = appointment.getAppointmentDate().getMonth();
-
+		for (Appointment appointment : appointments) { 		 
+			Calendar calendar = new GregorianCalendar();
+			calendar.setTime(appointment.getAppointmentDate());
+			Integer monthIndex = calendar.get(Calendar.MONTH);
 			if (dataMap.get(monthIndex) == null) {
 				dataMap.put(monthIndex, new ArrayList<Appointment>());
 			}
@@ -118,6 +121,36 @@ public class AppointmentServiceImpl implements AppointmentService {
 		return dataMap;
 	}
 
+	/**
+	 * This method is really meant for patients
+	 */
+	public Map<Integer, List<Appointment>> getAppointmentsByYear(Long id) { 
+
+		List<Quartet<String, String, String, String>> paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
+ 
+		String queryStr = "SELECT e FROM Appointment e WHERE 1 = 1";
+
+		if (id != null && id > 0) {
+			queryStr += " AND e.patient.user.id=" + id;
+		}
+		List<Appointment> appointments = (List) this.genericService.getByCriteria(queryStr, paramTupleList,
+				" ORDER BY appointmentDate");
+
+		Map<Integer, List<Appointment>> dataMap = new HashMap<>();
+
+		for (Appointment appointment : appointments) {
+			Calendar calendar = new GregorianCalendar();
+			calendar.setTime(appointment.getAppointmentDate());
+			Integer monthIndex = calendar.get(Calendar.YEAR);
+			if (dataMap.get(monthIndex) == null) {
+				dataMap.put(monthIndex, new ArrayList<Appointment>());
+			}
+
+			dataMap.get(monthIndex).add(appointment);
+		}
+
+		return dataMap;
+	}
 	public List<Appointment> getUpcomingAppointments() {
 
 		LocalDate startDate = LocalDate.now().plusDays(-365);
@@ -257,6 +290,33 @@ public class AppointmentServiceImpl implements AppointmentService {
 			myDate = relativeDate.with(TemporalAdjusters.previous(DayOfWeek.SUNDAY));
 
 		return myDate;
+	}
+
+	@Override
+	public Appointment getNextAppointment(Long id) {
+		// TODO Auto-generated method stub
+		LocalDate startDate = LocalDate.now();
+		// LocalDate endDate = LocalDate.now();
+
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+
+		List<Quartet<String, String, String, String>> paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
+		paramTupleList.add(
+				Quartet.with("e.appointmentDate >= ", "appointmentStartDate", startDate.format(formatter), "Date"));
+
+		paramTupleList.add(Quartet.with("e.status <= ", "status", "0", "Integer"));
+
+		paramTupleList.add(Quartet.with("e.patient.user.id = ", "userId", id + "", "Long"));
+
+		String queryStr = "SELECT e FROM Appointment e WHERE 1 = 1";
+
+		List<Appointment> appointments = (List) this.genericService.getByCriteria(queryStr, paramTupleList,
+				" ORDER BY appointmentDate");
+
+		if (appointments != null && appointments.size() > 0) {
+			return appointments.get(0);
+		}
+		return null;
 	}
 
 }
