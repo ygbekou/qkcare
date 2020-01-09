@@ -2,6 +2,7 @@ package com.qkcare.service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Session;
 import org.javatuples.Quartet;
@@ -37,4 +38,8 @@ public interface GenericService {
 	public List<BaseEntity> getByCriteria(Class<? extends BaseEntity> c, String parentName, Long parentId);
 	public List<String> readFiles(String entityName, String id);
 	public void deleteFiles(String entityName, String id, List<String> fileNames) throws IOException;
+	public List<Long> deriveAddedChilds(String parentTable, String parentEntity, String keyColumn, 
+			Long parentId, Set<Long> selectedIds, String childEntity);
+	public List<Long> deriveAddedChilds(String parentTable, String parentEntity, String keyColumn, 
+			Long parentId, Set<Long> selectedIds, String childEntity, String childTable, String relationEntity, String relationTable);
  }

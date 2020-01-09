@@ -10,8 +10,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -255,4 +257,49 @@ public class GenericServiceImpl implements GenericService {
 		return genericDao.getByCriteria(c, parentName, parentId);
 	}
  
+	public List<Long> deriveAddedChilds(String parentTable, String parentEntity, String keyColumn, 
+			Long parentId, Set<Long> selectedIds, String childEntity) {
+		return this.deriveAddedChilds(parentTable, parentEntity, keyColumn, parentId, selectedIds, childEntity, null, null, null);
+	}
+	
+	public List<Long> deriveAddedChilds(String parentTable, String parentEntity, String keyColumn, 
+			Long parentId, Set<Long> selectedIds, String childEntity, String childTable, String relationEntity, String relationTable) {
+		
+		String derivedRelationTable = (relationTable == null ? parentTable + "_" + childEntity.toUpperCase() : relationTable);
+		String derivedChildTable = (childTable == null ? childEntity.toUpperCase() : childTable);
+		String derivedRelationEntity = (relationEntity == null ? parentEntity + childEntity : relationEntity);
+		
+		List<Quartet<String, String, String, String>> paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
+		paramTupleList.add(Quartet.with(keyColumn + " = ", "parentId", parentId + "", "Long"));
+		List<Object[]> list = this.getNativeByCriteria("SELECT "
+				+ derivedChildTable + "_ID FROM " 
+				+  derivedRelationTable
+				+ " WHERE 1 = 1 ", paramTupleList, null, null);
+		Set<Long> existingAllergyIds = new HashSet<Long>();
+		
+		for (Object object : list) {
+			existingAllergyIds.add(new Long(object.toString()));
+		}
+		
+		// Find differences in both list
+		List<Long> removedIds = existingAllergyIds.stream().filter(aObject -> {
+		     return !selectedIds.contains(aObject);
+		 }).collect(Collectors.toList());
+		
+		List<Long> addedIds = selectedIds.stream().filter(aObject -> {
+		     return !existingAllergyIds.contains(aObject);
+		 }).collect(Collectors.toList());
+
+		// delete allergies 
+		if (removedIds.size() > 0) {
+			paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
+			String childEntityAttribute = childEntity.replaceFirst(childEntity.substring(0,1), 
+					childEntity.substring(0,1).toLowerCase());
+			paramTupleList.add(Quartet.with("e." + childEntityAttribute + ".id IN ", childEntityAttribute + "Id", 
+					removedIds.toString().substring(1, removedIds.toString().length() - 1) + "", "List"));
+			int deleteds = this.deleteByCriteria("DELETE FROM " + derivedRelationEntity + " e WHERE 1 = 1 ", paramTupleList);
+		}
+		
+		return addedIds;
+	}
 }

@@ -108,7 +108,11 @@ public class GenericDaoImpl<E, K>  implements GenericDao<E, K> {
 		// Build the query
 		if (addParameters) {
 			for (Quartet<String, String, String, String> parameter : parameters) {
-				queryBuilder.append(" AND " + parameter.getValue0() + " :" + parameter.getValue1());
+				if (parameter.getValue0().trim().endsWith("IS NULL")) {
+					queryBuilder.append(" AND " + parameter.getValue0());
+				} else {
+					queryBuilder.append(" AND " + parameter.getValue0() + " :" + parameter.getValue1());
+				}
 			}
 		}
 
@@ -129,7 +133,9 @@ public class GenericDaoImpl<E, K>  implements GenericDao<E, K> {
 
 		// Set the parameters on the query
 		for (Quartet<String, String, String, String> parameter : parameters) {
-			if ("Long".equals(parameter.getValue3())) {
+			if (parameter.getValue0().trim().endsWith("IS NULL")) {
+				// No need to do anything
+			} else if ("Long".equals(parameter.getValue3())) {
 				query.setParameter(parameter.getValue1(), new Long(parameter.getValue2()));
 			} else if ("Integer".equals(parameter.getValue3())) {
 				query.setParameter(parameter.getValue1(), new Integer(parameter.getValue2()));

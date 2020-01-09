@@ -28,6 +28,7 @@ import com.qkcare.model.authorization.Permission;
 import com.qkcare.model.authorization.Resource;
 import com.qkcare.model.authorization.Role;
 import com.qkcare.model.authorization.UserRole;
+import com.qkcare.util.Utils;
 
 @Service(value="authorizationService")
 public class AuthorizationServiceImpl  implements AuthorizationService {
@@ -112,9 +113,9 @@ public class AuthorizationServiceImpl  implements AuthorizationService {
 		List<Permission> permissions = new ArrayList<Permission>();
 		
 		for (Object[] objects : list) {
-			permissions.add(new Permission(getLongValue(objects[7]), new Role(id, "", ""), 
-					new Resource(getLongValue(objects[0]), getStrValue(objects[1]), getStrValue(objects[2])), 
-					getStrValue(objects[3]), getStrValue(objects[4]), getStrValue(objects[5]), getStrValue(objects[6])));
+			permissions.add(new Permission(Utils.getLongValue(objects[7]), new Role(id, "", ""), 
+					new Resource(Utils.getLongValue(objects[0]), Utils.getStrValue(objects[1]), Utils.getStrValue(objects[2])), 
+					Utils.getStrValue(objects[3]), Utils.getStrValue(objects[4]), Utils.getStrValue(objects[5]), Utils.getStrValue(objects[6])));
 		}
 		
 		role.setPermissions(permissions);
@@ -151,22 +152,22 @@ public class AuthorizationServiceImpl  implements AuthorizationService {
 		List<PermissionVO> nonMenuPermissions = new ArrayList<>();
 		
 		for (Object[] objects : list) {
-			String roleName = getStrValue(objects[0]);
-			String resourceName = getStrValue(objects[1]);
-			String urlPath = getStrValue(objects[2]);
-			Long menuId = getLongValue(objects[3]);
-			String label = getNullStrValue(objects[4]);
-			String icon = getStrValue(objects[5]);
-			Long parentMenuId = getLongValue(objects[6]);
-			String parentLabel = getNullStrValue(objects[7]);
-			String parentIcon = getStrValue(objects[8]);
-			Long level = getLongValue(objects[9]);
-			Integer order = getIntegerValue(objects[10]);
-			Integer parentOrder = getIntegerValue(objects[11]);
-			String canAdd = getStrValue(objects[12]);
-			String canEdit = getStrValue(objects[13]);
-			String canView = getStrValue(objects[14]);
-			String canDelete = getStrValue(objects[15]);
+			String roleName = Utils.getStrValue(objects[0]);
+			String resourceName = Utils.getStrValue(objects[1]);
+			String urlPath = Utils.getStrValue(objects[2]);
+			Long menuId = Utils.getLongValue(objects[3]);
+			String label = Utils.getNullStrValue(objects[4]);
+			String icon = Utils.getStrValue(objects[5]);
+			Long parentMenuId = Utils.getLongValue(objects[6]);
+			String parentLabel = Utils.getNullStrValue(objects[7]);
+			String parentIcon = Utils.getStrValue(objects[8]);
+			Long level = Utils.getLongValue(objects[9]);
+			Integer order = Utils.getIntegerValue(objects[10]);
+			Integer parentOrder = Utils.getIntegerValue(objects[11]);
+			String canAdd = Utils.getStrValue(objects[12]);
+			String canEdit = Utils.getStrValue(objects[13]);
+			String canView = Utils.getStrValue(objects[14]);
+			String canDelete = Utils.getStrValue(objects[15]);
 			
 			if (label != null) {
 				if ( parentLabel != null) {
@@ -196,21 +197,7 @@ public class AuthorizationServiceImpl  implements AuthorizationService {
 	
 	
 	
-	private String getStrValue(Object obj) {
-		return obj == null ? "" : obj.toString();
-	}
 	
-	private String getNullStrValue(Object obj) {
-		return obj == null ? null : obj.toString();
-	}
-	
-	private Long getLongValue(Object obj) {
-		return obj == null ? null : new Long(obj.toString());
-	}
-	
-	private Integer getIntegerValue(Object obj) {
-		return obj == null ? null : new Integer(obj.toString());
-	}
 	
 	private int deleteRemovedRoles(User user) {
 		List<Role> selectedRoles = user.getRoles();

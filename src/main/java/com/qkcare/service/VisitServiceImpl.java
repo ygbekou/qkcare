@@ -53,7 +53,8 @@ public class VisitServiceImpl  implements VisitService {
 		
 		
 		// save symptoms 
-		List<Long> addedSymptomIds = deriveAddedChilds("VISIT", "Visit", "VISIT_ID", visit.getId(), visit.getSelectedSymptoms(), "Symptom");
+		List<Long> addedSymptomIds = this.genericService.deriveAddedChilds("VISIT", "Visit", "VISIT_ID", 
+				visit.getId(), visit.getSelectedSymptoms(), "Symptom");
 		// Insert newly added ones
 		for (Long addedId : addedSymptomIds) {
 			VisitSymptom vs = new VisitSymptom(visit.getId(), addedId);
@@ -68,7 +69,7 @@ public class VisitServiceImpl  implements VisitService {
 	public BaseEntity saveAllergies(Patient patient) {
 		
 		// save allergies 
-		List<Long> addedAllergyIds = deriveAddedChilds("PATIENT", "Patient", "PATIENT_ID", 
+		List<Long> addedAllergyIds = this.genericService.deriveAddedChilds("PATIENT", "Patient", "PATIENT_ID", 
 								patient.getId(), patient.getSelectedAllergies(), "Allergy");
 		// Insert newly added ones
 		for (Long addedId : addedAllergyIds) {
@@ -83,7 +84,7 @@ public class VisitServiceImpl  implements VisitService {
 	public BaseEntity saveMedicalHistories(Patient patient) {
 		
 		// save medical histories 
-		List<Long> addedMedicalHistoryIds = deriveAddedChilds("PATIENT", "Patient", "PATIENT_ID", 
+		List<Long> addedMedicalHistoryIds = this.genericService.deriveAddedChilds("PATIENT", "Patient", "PATIENT_ID", 
 								patient.getId(), patient.getSelectedMedicalHistories(), "MedicalHistory");
 		// Insert newly added ones
 		for (Long addedId : addedMedicalHistoryIds) {
@@ -98,7 +99,7 @@ public class VisitServiceImpl  implements VisitService {
 	public BaseEntity saveSocialHistories(Patient patient) {
 		
 		// save social histories 
-		List<Long> addedSocialHistoryIds = deriveAddedChilds("PATIENT", "Patient", "PATIENT_ID", 
+		List<Long> addedSocialHistoryIds = this.genericService.deriveAddedChilds("PATIENT", "Patient", "PATIENT_ID", 
 								patient.getId(), patient.getSelectedSocialHistories(), "SocialHistory");
 		// Insert newly added ones
 		for (Long addedId : addedSocialHistoryIds) {
@@ -108,41 +109,6 @@ public class VisitServiceImpl  implements VisitService {
 		
 		return patient;
 	}
-	
-
-	private List<Long> deriveAddedChilds(String parentTable, String parentEntity, String keyColumn, 
-			Long parentId, Set<Long> selectedIds, String childEntity) {
-		List<Quartet<String, String, String, String>> paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
-		paramTupleList.add(Quartet.with(keyColumn + " = ", "parentId", parentId + "", "Long"));
-		List<Object[]> list = this.genericService.getNativeByCriteria("SELECT "
-				+ childEntity.toUpperCase() + "_ID FROM " + parentTable + "_" + childEntity.toUpperCase() 
-				+ " WHERE 1 = 1 ", paramTupleList, null, null);
-		Set<Long> existingAllergyIds = new HashSet<Long>();
-		
-		for (Object object : list) {
-			existingAllergyIds.add(new Long(object.toString()));
-		}
-		
-		// Find differences in both list
-		List<Long> removedIds = existingAllergyIds.stream().filter(aObject -> {
-		     return !selectedIds.contains(aObject);
-		 }).collect(Collectors.toList());
-		
-		List<Long> addedIds = selectedIds.stream().filter(aObject -> {
-		     return !existingAllergyIds.contains(aObject);
-		 }).collect(Collectors.toList());
-
-		// delete allergies 
-		if (removedIds.size() > 0) {
-			paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
-			paramTupleList.add(Quartet.with("e." + childEntity.toLowerCase() + ".id IN ", childEntity.toLowerCase() + "Id", 
-					removedIds.toString().substring(1, removedIds.toString().length() - 1) + "", "List"));
-			int deleteds = this.genericService.deleteByCriteria("DELETE FROM " + parentEntity + childEntity + " e WHERE 1 = 1 ", paramTupleList);
-		}
-		
-		return addedIds;
-	}
-	
 	
 	public BaseEntity findVisit(Class cl, Long key) {
 		Visit visit = (Visit) this.genericService.find(cl, key);

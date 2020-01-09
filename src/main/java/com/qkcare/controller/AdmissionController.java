@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import javax.transaction.Transactional;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -19,13 +21,19 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qkcare.domain.GenericDto;
+import com.qkcare.domain.GenericVO;
 import com.qkcare.model.BaseEntity;
 import com.qkcare.model.BedAssignment;
 import com.qkcare.model.DoctorAssignment;
+import com.qkcare.model.PhysicalExam;
+import com.qkcare.model.Visit;
+import com.qkcare.model.VisitSymptom;
+import com.qkcare.model.VitalSign;
 import com.qkcare.model.Admission;
 import com.qkcare.model.enums.TransferType;
 import com.qkcare.service.AdmissionService;
 import com.qkcare.service.GenericService;
+import com.qkcare.service.SummaryService;
 import com.qkcare.util.Constants;
 
 @RestController
@@ -42,6 +50,10 @@ public class AdmissionController extends BaseController {
 	@Autowired
 	@Qualifier("admissionService")
 	AdmissionService admissionService;
+	
+	@Autowired
+	@Qualifier("summaryService")
+	SummaryService summaryService;
 
 	@RequestMapping(value = "/admission/save", method = RequestMethod.POST)
 	public BaseEntity saveAdmission(@RequestBody GenericDto dto)

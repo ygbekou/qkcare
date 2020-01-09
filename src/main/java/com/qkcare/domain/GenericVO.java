@@ -41,10 +41,10 @@ public class GenericVO implements Serializable {
 		this.childs = childs;
 	}
 	
-	public boolean equals(GenericVO o) {
+	public boolean equals(Object o) {
 		if (o == null) return false;
 		
-		return this.id.intValue() == o.id.intValue();
+		return this.id.intValue() == ((GenericVO)o).getId().intValue();
 	}
 	
 	@Override

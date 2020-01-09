@@ -9,21 +9,21 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "PHYS_EXAM_TYPE_ASSIGNMENT")
-public class PhysicalExamTypeAssignment extends BaseEntity {
+@Table(name = "SYSTEM_REVIEW_Q_ASSIGNMENT")
+public class SystemReviewQuestionAssignment extends BaseEntity {
 	
 	@Id
 	@GeneratedValue
-	@Column(name = "PHYS_EXAM_TYPE_ASSIGNMENT_ID")
+	@Column(name = "SYSTEM_REVIEW_Q_ASSIGNMENT_ID")
 	private Long id;	
 	private String description;
 	@ManyToOne(optional = true)
-	@JoinColumn(name = "PHYSICAL_EXAM_SYSTEM_ID")
-	private PhysicalExamSystem physicalExamType;
+	@JoinColumn(name = "SYSTEM_REVIEW_QUESTION_ID")
+	private SystemReviewQuestion systemReviewQuestion;
 	@ManyToOne()
 	@JoinColumn(name = "SUMMARY_TYPE_ID")
 	private SummaryType summaryType;
-	public PhysicalExamTypeAssignment() {}
+	public SystemReviewQuestionAssignment() {}
 
 	
 	public Long getId() {
@@ -42,12 +42,12 @@ public class PhysicalExamTypeAssignment extends BaseEntity {
 		this.description = description;
 	}
 
-	public PhysicalExamSystem getPhysicalExamType() {
-		return physicalExamType;
+	public SystemReviewQuestion getSystemReviewQuestion() {
+		return systemReviewQuestion;
 	}
 
-	public void setPhysicalExamType(PhysicalExamSystem physicalExamType) {
-		this.physicalExamType = physicalExamType;
+	public void setSystemReviewQuestion(SystemReviewQuestion systemReviewQuestion) {
+		this.systemReviewQuestion = systemReviewQuestion;
 	}
 
 	public SummaryType getSummaryType() {
@@ -67,8 +67,8 @@ public class PhysicalExamTypeAssignment extends BaseEntity {
 		return this.getSummaryType().getName();
 	}
 	
-	public String getPhysicalExamTypeName() {
-		return this.getPhysicalExamType().getName();
+	public String getSystemReviewQuestionName() {
+		return this.getSystemReviewQuestion().getName();
 	}
 	
 }

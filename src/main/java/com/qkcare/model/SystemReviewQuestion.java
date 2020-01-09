@@ -9,24 +9,24 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "PHYSICAL_EXAM_SYSTEM")
-public class PhysicalExamSystem extends BaseEntity {
+@Table(name = "SYSTEM_REVIEW_QUESTION")
+public class SystemReviewQuestion extends BaseEntity {
 	
 	@Id
-	@Column(name = "PHYSICAL_EXAM_SYSTEM_ID")
+	@Column(name = "SYSTEM_REVIEW_QUESTION_ID")
 	@GeneratedValue
 	private Long id;
 	@ManyToOne
 	@JoinColumn(name = "PARENT_ID")
-	private PhysicalExamSystem parent;
+	private SystemReviewQuestion parent;
 	private String name;
 	private String description;
 	private int status;
 	
 	
-	public PhysicalExamSystem() {}
+	public SystemReviewQuestion() {}
 
-	public PhysicalExamSystem(Long id) {
+	public SystemReviewQuestion(Long id) {
 		this.id = id;
 	}
 
@@ -36,10 +36,10 @@ public class PhysicalExamSystem extends BaseEntity {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public PhysicalExamSystem getParent() {
+	public SystemReviewQuestion getParent() {
 		return parent;
 	}
-	public void setParent(PhysicalExamSystem parent) {
+	public void setParent(SystemReviewQuestion parent) {
 		this.parent = parent;
 	}
 	public String getName() {

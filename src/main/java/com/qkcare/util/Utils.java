@@ -281,4 +281,20 @@ public class Utils {
 		 */
 		return result;
 	}
+	
+	public static String getStrValue(Object obj) {
+		return obj == null ? "" : obj.toString();
+	}
+	
+	public static String getNullStrValue(Object obj) {
+		return obj == null ? null : obj.toString();
+	}
+	
+	public static Long getLongValue(Object obj) {
+		return obj == null ? null : new Long(obj.toString());
+	}
+	
+	public static Integer getIntegerValue(Object obj) {
+		return obj == null ? null : new Integer(obj.toString());
+	}
 }
