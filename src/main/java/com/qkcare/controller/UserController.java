@@ -186,22 +186,22 @@ public class UserController extends BaseController {
 			lu.setPassword(user.getPassword());
 			lu.setUserName(user.getEmail());
 			user.setPassword(encoder.encode(user.getPassword()));
-			user.setFirstTimeLogin("N"); 
+			user.setFirstTimeLogin("N");
 			user.setUserName(user.getEmail());
 			userService.save(user);
-			UserRole ur= new UserRole();
+			UserRole ur = new UserRole();
 			ur.setUser(user);
-			ur.setRole((Role)userService.find(Role.class, 2L));
+			ur.setRole((Role) userService.find(Role.class, 2L));
 			userService.save(ur);
 			return this.register(lu);
 		} catch (Exception e) {
 			e.printStackTrace();
-			if(e.getMessage().contains("ConstraintViolationException")) {
-				return ResponseEntity.ok(new AuthToken("", user.getUserName(), user.getPassword(),
-						null, null, null, null,null, null,null, null));				
-			}else {
-				return ResponseEntity.ok(new AuthToken(null, user.getUserName(), user.getPassword(),
-						null, null, null, null,null, null,null, null));
+			if (e.getMessage().contains("ConstraintViolationException")) {
+				return ResponseEntity.ok(new AuthToken("", user.getUserName(), user.getPassword(), null, null, null,
+						null, null, null, null, null, null));
+			} else {
+				return ResponseEntity.ok(new AuthToken(null, user.getUserName(), user.getPassword(), null, null, null,
+						null, null, null, null, null, null));
 			}
 		}
 	}
@@ -231,7 +231,7 @@ public class UserController extends BaseController {
 		return ResponseEntity.ok(new AuthToken(token, loginUser.getUserName(), loginUser.getPassword(),
 				user.getFirstName(), user.getLastName(), user.getUserGroup().getName(), user.getPicture(),
 				user.getFirstTimeLogin(), Arrays.asList(new Long[] { user.getUserGroup().getId() }),
-				resources.getValue0(), resources.getValue1()));
+				resources.getValue0(), resources.getValue1(), user.getId()));
 
 	}
 

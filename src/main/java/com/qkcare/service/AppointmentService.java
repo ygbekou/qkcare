@@ -23,5 +23,9 @@ public interface AppointmentService {
 	
 	public List<Appointment> getUpcomingAppointments();
 	
-	public Map<Integer, List<Appointment>> getAppointmentsByMonth();
+	public Map<Integer, List<Appointment>> getAppointmentsByMonth(Long id);
+
+	public Appointment getNextAppointment(Long id);
+
+	public Map<Integer, List<Appointment>> getAppointmentsByYear(Long id);
 }

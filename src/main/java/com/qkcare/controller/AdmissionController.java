@@ -122,9 +122,15 @@ public class AdmissionController extends BaseController {
 		return obj;
 	}
 
-	@RequestMapping(value = "/list/byMonth", method = RequestMethod.GET, headers = "Accept=application/json")
-	public Map<Integer, List<Admission>> getAdmissionsByMonth() {
-		Map<Integer, List<Admission>> admissions= this.admissionService.getAdmissionsByMonth();
+	@RequestMapping(value = "/list/byMonth/{id}", method = RequestMethod.GET, headers = "Accept=application/json")
+	public Map<Integer, List<Admission>> getAdmissionsByMonth(@PathVariable("id") Long id) {
+		Map<Integer, List<Admission>> admissions= this.admissionService.getAdmissionsByMonth(id);
+		return admissions;
+	}
+	
+	@RequestMapping(value = "/list/byYear/{id}", method = RequestMethod.GET, headers = "Accept=application/json")
+	public Map<Integer, List<Admission>> getAdmissionsByYear(@PathVariable("id") Long id) {
+		Map<Integer, List<Admission>> admissions= this.admissionService.getAdmissionsByYear(id);
 		return admissions;
 	}
 }

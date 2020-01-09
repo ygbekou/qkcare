@@ -29,7 +29,7 @@ public interface VisitService {
 	
 	public List<GenericVO> getSocialHistories();
 	
-	public Map<Integer, List<Visit>> getVisitsByMonth();
+	public Map<Integer, List<Visit>> getVisitsByMonth(Long id);
 
 	public List<Visit> getWaitList(int id);
 	
@@ -44,5 +44,7 @@ public interface VisitService {
 	public BaseEntity getMedicalHistories(Patient patient);
 	
 	public BaseEntity getSocialHistories(Patient patient);
+
+	public Map<Integer, List<Visit>> getVisitsByYear(Long id);
 	
 }
