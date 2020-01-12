@@ -293,6 +293,9 @@ public class Utils {
 	public static Long getLongValue(Object obj) {
 		return obj == null ? null : new Long(obj.toString());
 	}
+	public static Double getDoubleValue(Object obj) {
+		return obj == null ? null : new Double(obj.toString());
+	}
 	
 	public static Integer getIntegerValue(Object obj) {
 		return obj == null ? null : new Integer(obj.toString());

@@ -28,4 +28,6 @@ public interface AppointmentService {
 	public Appointment getNextAppointment(Long id);
 
 	public Map<Integer, List<Appointment>> getAppointmentsByYear(Long id);
+
+	public Prescription getLastPrescription(Long id);
 }

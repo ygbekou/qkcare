@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.qkcare.model.BaseEntity;
 import com.qkcare.model.Company;
+import com.qkcare.model.Patient;
 import com.qkcare.model.User;
 
 @Service(value="genericService")
@@ -45,4 +46,6 @@ public interface GenericService {
 			Long parentId, Set<Long> selectedIds, String childEntity, String childTable, String relationEntity, String relationTable);
 	
 	public String getHomePage(User user);
+	
+	public Patient getPatient(User user);
 }
