@@ -15,6 +15,7 @@ public class AuthToken {
 	private List authorities;
 	private List<MenuVO> menus;
 	private Long userId;
+	private String homePage;
 	private List<PermissionVO> nonMenuPermissions;
 
 	public AuthToken() {
@@ -23,7 +24,7 @@ public class AuthToken {
 
 	public AuthToken(String token, String userName, String password, String firstName, String lastName, String roleName,
 			String picture, String firstTimeLogin, List authorities, List<MenuVO> menus,
-			List<PermissionVO> nonMenuPermissions, Long userId) {
+			List<PermissionVO> nonMenuPermissions, Long userId, String homePage) {
 		this.token = token;
 		this.userName = userName;
 		this.password = password;
@@ -36,6 +37,15 @@ public class AuthToken {
 		this.menus = menus;
 		this.nonMenuPermissions = nonMenuPermissions;
 		this.userId = userId;
+		this.homePage = homePage;
+	}
+
+	public String getHomePage() {
+		return homePage;
+	}
+
+	public void setHomePage(String homePage) {
+		this.homePage = homePage;
 	}
 
 	public Long getUserId() {

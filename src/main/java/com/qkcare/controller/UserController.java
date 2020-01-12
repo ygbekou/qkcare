@@ -198,10 +198,10 @@ public class UserController extends BaseController {
 			e.printStackTrace();
 			if (e.getMessage().contains("ConstraintViolationException")) {
 				return ResponseEntity.ok(new AuthToken("", user.getUserName(), user.getPassword(), null, null, null,
-						null, null, null, null, null, null));
+						null, null, null, null, null, null,null));
 			} else {
 				return ResponseEntity.ok(new AuthToken(null, user.getUserName(), user.getPassword(), null, null, null,
-						null, null, null, null, null, null));
+						null, null, null, null, null, null,null));
 			}
 		}
 	}
@@ -231,7 +231,7 @@ public class UserController extends BaseController {
 		return ResponseEntity.ok(new AuthToken(token, loginUser.getUserName(), loginUser.getPassword(),
 				user.getFirstName(), user.getLastName(), user.getUserGroup().getName(), user.getPicture(),
 				user.getFirstTimeLogin(), Arrays.asList(new Long[] { user.getUserGroup().getId() }),
-				resources.getValue0(), resources.getValue1(), user.getId()));
+				resources.getValue0(), resources.getValue1(), user.getId(),userService.getHomePage(user)));
 
 	}
 

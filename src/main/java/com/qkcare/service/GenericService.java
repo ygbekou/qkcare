@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.qkcare.model.BaseEntity;
 import com.qkcare.model.Company;
+import com.qkcare.model.User;
 
 @Service(value="genericService")
 public interface GenericService {
@@ -42,4 +43,6 @@ public interface GenericService {
 			Long parentId, Set<Long> selectedIds, String childEntity);
 	public List<Long> deriveAddedChilds(String parentTable, String parentEntity, String keyColumn, 
 			Long parentId, Set<Long> selectedIds, String childEntity, String childTable, String relationEntity, String relationTable);
- }
+	
+	public String getHomePage(User user);
+}
