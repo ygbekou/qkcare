@@ -28,6 +28,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.qkcare.dao.GenericDao;
 import com.qkcare.model.BaseEntity;
 import com.qkcare.model.Company;
+import com.qkcare.model.User;
+import com.qkcare.model.authorization.UserRole;
 import com.qkcare.util.Constants;
 
 @Service(value = "genericService")
@@ -256,50 +258,64 @@ public class GenericServiceImpl implements GenericService {
 	public List<BaseEntity> getByCriteria(Class<? extends BaseEntity> c, String parentName, Long parentId) {
 		return genericDao.getByCriteria(c, parentName, parentId);
 	}
- 
-	public List<Long> deriveAddedChilds(String parentTable, String parentEntity, String keyColumn, 
-			Long parentId, Set<Long> selectedIds, String childEntity) {
-		return this.deriveAddedChilds(parentTable, parentEntity, keyColumn, parentId, selectedIds, childEntity, null, null, null);
+
+	public List<Long> deriveAddedChilds(String parentTable, String parentEntity, String keyColumn, Long parentId,
+			Set<Long> selectedIds, String childEntity) {
+		return this.deriveAddedChilds(parentTable, parentEntity, keyColumn, parentId, selectedIds, childEntity, null,
+				null, null);
 	}
-	
-	public List<Long> deriveAddedChilds(String parentTable, String parentEntity, String keyColumn, 
-			Long parentId, Set<Long> selectedIds, String childEntity, String childTable, String relationEntity, String relationTable) {
-		
-		String derivedRelationTable = (relationTable == null ? parentTable + "_" + childEntity.toUpperCase() : relationTable);
+
+	public List<Long> deriveAddedChilds(String parentTable, String parentEntity, String keyColumn, Long parentId,
+			Set<Long> selectedIds, String childEntity, String childTable, String relationEntity, String relationTable) {
+
+		String derivedRelationTable = (relationTable == null ? parentTable + "_" + childEntity.toUpperCase()
+				: relationTable);
 		String derivedChildTable = (childTable == null ? childEntity.toUpperCase() : childTable);
 		String derivedRelationEntity = (relationEntity == null ? parentEntity + childEntity : relationEntity);
-		
+
 		List<Quartet<String, String, String, String>> paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
 		paramTupleList.add(Quartet.with(keyColumn + " = ", "parentId", parentId + "", "Long"));
-		List<Object[]> list = this.getNativeByCriteria("SELECT "
-				+ derivedChildTable + "_ID FROM " 
-				+  derivedRelationTable
-				+ " WHERE 1 = 1 ", paramTupleList, null, null);
+		List<Object[]> list = this.getNativeByCriteria(
+				"SELECT " + derivedChildTable + "_ID FROM " + derivedRelationTable + " WHERE 1 = 1 ", paramTupleList,
+				null, null);
 		Set<Long> existingAllergyIds = new HashSet<Long>();
-		
+
 		for (Object object : list) {
 			existingAllergyIds.add(new Long(object.toString()));
 		}
-		
+
 		// Find differences in both list
 		List<Long> removedIds = existingAllergyIds.stream().filter(aObject -> {
-		     return !selectedIds.contains(aObject);
-		 }).collect(Collectors.toList());
-		
-		List<Long> addedIds = selectedIds.stream().filter(aObject -> {
-		     return !existingAllergyIds.contains(aObject);
-		 }).collect(Collectors.toList());
+			return !selectedIds.contains(aObject);
+		}).collect(Collectors.toList());
 
-		// delete allergies 
+		List<Long> addedIds = selectedIds.stream().filter(aObject -> {
+			return !existingAllergyIds.contains(aObject);
+		}).collect(Collectors.toList());
+
+		// delete allergies
 		if (removedIds.size() > 0) {
 			paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
-			String childEntityAttribute = childEntity.replaceFirst(childEntity.substring(0,1), 
-					childEntity.substring(0,1).toLowerCase());
-			paramTupleList.add(Quartet.with("e." + childEntityAttribute + ".id IN ", childEntityAttribute + "Id", 
+			String childEntityAttribute = childEntity.replaceFirst(childEntity.substring(0, 1),
+					childEntity.substring(0, 1).toLowerCase());
+			paramTupleList.add(Quartet.with("e." + childEntityAttribute + ".id IN ", childEntityAttribute + "Id",
 					removedIds.toString().substring(1, removedIds.toString().length() - 1) + "", "List"));
-			int deleteds = this.deleteByCriteria("DELETE FROM " + derivedRelationEntity + " e WHERE 1 = 1 ", paramTupleList);
+			int deleteds = this.deleteByCriteria("DELETE FROM " + derivedRelationEntity + " e WHERE 1 = 1 ",
+					paramTupleList);
 		}
-		
+
 		return addedIds;
+	}
+
+	public String getHomePage(User user) {
+		List<Quartet<String, String, String, String>> paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
+
+		String queryStr = "SELECT c FROM UserRole c WHERE c.user.id=" + user.getId();
+		List<UserRole> userRoles = (List) this.getByCriteria(queryStr, paramTupleList, null);
+		if (userRoles != null && userRoles.size() > 0) {
+			UserRole ur = (UserRole) userRoles.get(0);
+			return ur.getRole().getHomePage() == null ? "/admin/dashboard" : ur.getRole().getHomePage().getUrlPath();
+		}
+		return "/admin/dashboard";
 	}
 }
