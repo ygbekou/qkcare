@@ -58,5 +58,16 @@ public class AdmissionDiagnosis extends BaseEntity {
 	public void setInstructions(String instructions) {
 		this.instructions = instructions;
 	}
+	
+	
+	// Transient
+
+	public String getDiagnosisName() {
+		return this.diagnosis.getName();
+	}
+	
+	public String getMedicalHistoryValue() {
+		return this.getDiagnosis().getDescription() + " - " + this.getDiagnosis().getName() + "\n";
+	}
 
 }

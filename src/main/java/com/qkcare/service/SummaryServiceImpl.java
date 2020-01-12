@@ -1,6 +1,9 @@
 package com.qkcare.service;
 
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,9 +18,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.qkcare.domain.GenericVO;
+import com.qkcare.model.Admission;
+import com.qkcare.model.AdmissionDiagnosis;
 import com.qkcare.model.BaseEntity;
 import com.qkcare.model.PhysicalExam;
 import com.qkcare.model.PhysicalExamResult;
+import com.qkcare.model.Summary;
 import com.qkcare.model.SystemReview;
 import com.qkcare.model.SystemReviewResult;
 import com.qkcare.model.Visit;
@@ -30,6 +36,83 @@ public class SummaryServiceImpl  implements SummaryService {
 	
 	@Autowired
 	GenericService genericService;
+	
+	@Transactional
+	public BaseEntity save(Summary summary) {
+		Summary su = (Summary)this.genericService.save(summary);	
+		
+		Admission admission = (Admission) this.genericService.find(Summary.class, summary.getAdmission().getId());
+		
+		if (summary.getVisit() != null) {
+			Visit visit = (Visit) this.genericService.find(Summary.class, summary.getVisit().getId());
+			visit.setChiefOfComplain(summary.getChiefOfComplain());
+		}
+		
+		
+				
+		
+		return su;
+	}
+	
+	
+	public BaseEntity findSummaryByPresence(String label, Long labelId) {
+		Summary summary = new Summary();
+		summary.setSummaryDatetime(Timestamp.valueOf(LocalDateTime.now()));
+		List<Quartet<String, String, String, String>> paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
+		
+		paramTupleList.clear();
+		if ("Admission".equals(label)) {
+			paramTupleList.add(Quartet.with("e.admission.id = ", "admissionId", labelId + "", "Long"));
+		} else if ("Visit".equals(label)){
+			paramTupleList.add(Quartet.with("e.visit.id = ", "visitId", summary.getVisit().getId() + "", "Long"));
+		}
+		
+		// Get diagnosis
+		
+		String queryStr =  "SELECT e FROM AdmissionDiagnosis e WHERE 1 = 1 ";
+		
+		List<BaseEntity> vss = genericService.getByCriteria(queryStr, paramTupleList, " ");
+		
+		for (BaseEntity entity : vss) {
+			AdmissionDiagnosis ad = (AdmissionDiagnosis)entity;
+			summary.addMedicalHistory(ad.getDiagnosisName());
+		}
+		
+		return summary;
+		
+	}
+	
+	public BaseEntity findSummary(Class cl, Long key) {
+		Summary summary = (Summary) this.genericService.find(cl, key);
+		List<Quartet<String, String, String, String>> paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
+		paramTupleList.add(Quartet.with("e.summary.id = ", "summaryId", key + "", "Long"));
+		
+		if (key == 0) {
+			summary = new Summary();
+		
+			paramTupleList.clear();
+			if (summary.getAdmission() != null) {
+				paramTupleList.add(Quartet.with("e.admission.id = ", "admissionId", summary.getAdmission().getId() + "", "Long"));
+			} else if (summary.getVisit() != null){
+				paramTupleList.add(Quartet.with("e.visit.id = ", "visitId", summary.getVisit().getId() + "", "Long"));
+			}
+			
+			// Get physical exam systems
+			
+			String queryStr =  "SELECT e FROM AdmissionDiagnosis e WHERE 1 = 1 ";
+			
+			List<BaseEntity> vss = genericService.getByCriteria(queryStr, paramTupleList, " ");
+			
+			for (BaseEntity entity : vss) {
+				AdmissionDiagnosis ad = (AdmissionDiagnosis)entity;
+				summary.setMedicalHistory(ad.getMedicalHistoryValue() + "\n");
+			}
+		}
+		
+		return summary;
+		
+	}
+	
 	
 	@Transactional
 	public BaseEntity save(PhysicalExam physicalExam) {

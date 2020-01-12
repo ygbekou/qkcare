@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.qkcare.util.DateUtil;
 
@@ -40,10 +41,10 @@ public class Summary extends BaseEntity {
 	private Timestamp summaryDatetime;
 	private String description;
 	private String subject;
-	
-	
-	// Transient
-	
+	@Column(name = "CHIEF_OF_COMPLAIN")
+	private String chiefOfComplain;
+	@Column(name = "MEDICAL_HISTORY")
+	private String medicalHistory;
 	
 	public Long getId() {
 		return id;
@@ -108,6 +109,28 @@ public class Summary extends BaseEntity {
 	
 	public String getShortMenu() {
 		return DateUtil.formatDate(this.getSummaryDatetime(), DateUtil.TIME_WITHOUT_SECONDS_FORMAT) 
-				+ " " + this.getAuthor().getName() + " - " + this.getSubject();
+				+ " " + (this.getAuthor() != null ? this.getAuthor().getName() : "") + " - " + this.getSubject();
 	}
+	
+	
+	public String getChiefOfComplain() {
+		return chiefOfComplain;
+	}
+	public void setChiefOfComplain(String chiefOfComplain) {
+		this.chiefOfComplain = chiefOfComplain;
+	}
+	public String getMedicalHistory() {
+		return medicalHistory;
+	}
+	public void setMedicalHistory(String medicalHistory) {
+		this.medicalHistory = medicalHistory;
+	}
+	
+	public String addMedicalHistory(String medicalHistory) {
+		this.setMedicalHistory((this.getMedicalHistory() != null ? (this.getMedicalHistory() + "<br/>") : "")  + medicalHistory);
+		return this.getMedicalHistory();
+	}
+	
+	
+	
 }

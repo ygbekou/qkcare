@@ -22,6 +22,7 @@ import com.qkcare.domain.GenericDto;
 import com.qkcare.domain.GenericVO;
 import com.qkcare.model.BaseEntity;
 import com.qkcare.model.PhysicalExam;
+import com.qkcare.model.Summary;
 import com.qkcare.model.SystemReview;
 import com.qkcare.service.GenericService;
 import com.qkcare.service.SummaryService;
@@ -49,6 +50,33 @@ public class SummaryController extends BaseController {
 		return physicalExamSystems;
 	}
 	
+	@RequestMapping(value="/summary/save",method = RequestMethod.POST)
+	public BaseEntity saveSummary(@RequestBody GenericDto dto) throws JsonParseException, 
+	JsonMappingException, IOException, ClassNotFoundException {
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		BaseEntity obj = (BaseEntity) mapper.readValue(dto.getJson().replaceAll("'", "\"").replaceAll("/", "\\/"),
+				Class.forName(Constants.PACKAGE_NAME + "Summary"));
+		summaryService.save((Summary)obj);
+			
+		return obj;
+	}
+	
+	@RequestMapping(value="/get/{id}", method = RequestMethod.GET)
+	public BaseEntity getSummary(@PathVariable("id") Long id) throws ClassNotFoundException {
+		BaseEntity result = summaryService.findSummary(Class.forName(Constants.PACKAGE_NAME + "Summary"), id);
+		
+		return result;
+	}
+	
+	@RequestMapping(value="/getByPresence/{label}/{labelId}", method = RequestMethod.GET)
+	public BaseEntity getSummaryByPresence(@PathVariable("label") String label, @PathVariable("labelId") Long labelId) 
+			throws ClassNotFoundException {
+		BaseEntity result = summaryService.findSummaryByPresence(label, labelId);
+		
+		return result;
+	}
+	
 	@RequestMapping(value="/physicalExam/save",method = RequestMethod.POST)
 	public BaseEntity savePhysicalExam(@RequestBody GenericDto dto) throws JsonParseException, 
 	JsonMappingException, IOException, ClassNotFoundException {
@@ -61,7 +89,7 @@ public class SummaryController extends BaseController {
 		return obj;
 	}
 	
-	@RequestMapping(value="physicalExam/get/{id}", method = RequestMethod.GET)
+	@RequestMapping(value="/physicalExam/get/{id}", method = RequestMethod.GET)
 	public BaseEntity getPhysicalExam(@PathVariable("id") Long id) throws ClassNotFoundException{
 		BaseEntity result = summaryService.findPhysicalExam(Class.forName(Constants.PACKAGE_NAME + "PhysicalExam"), id);
 		
@@ -90,7 +118,7 @@ public class SummaryController extends BaseController {
 		return obj;
 	}
 	
-	@RequestMapping(value="systemReview/get/{id}", method = RequestMethod.GET)
+	@RequestMapping(value="/systemReview/get/{id}", method = RequestMethod.GET)
 	public BaseEntity getSystemReview(@PathVariable("id") Long id) throws ClassNotFoundException{
 		BaseEntity result = summaryService.findSystemReview(Class.forName(Constants.PACKAGE_NAME + "SystemReview"), id);
 		
