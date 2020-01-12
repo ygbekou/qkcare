@@ -124,24 +124,38 @@ public class AppointmentController extends BaseController {
 
 	@RequestMapping(value = "/list/byMonth/{id}", method = RequestMethod.GET, headers = "Accept=application/json")
 	public Map<Integer, List<Appointment>> getAppointmentsByMonth(@PathVariable("id") Long id) {
-		//id is the user id. 
-			return this.appointmentService.getAppointmentsByMonth(id); 
+		// id is the user id.
+		return this.appointmentService.getAppointmentsByMonth(id);
 	}
+
 	@RequestMapping(value = "/list/byYear/{id}", method = RequestMethod.GET, headers = "Accept=application/json")
 	public Map<Integer, List<Appointment>> getAppointmentsByYear(@PathVariable("id") Long id) {
-		//id is the user id. 
-			return this.appointmentService.getAppointmentsByYear(id); 
+		// id is the user id.
+		return this.appointmentService.getAppointmentsByYear(id);
 	}
+
 	@RequestMapping(value = "/list/upcomings", method = RequestMethod.GET, headers = "Accept=application/json")
 	public List<Appointment> getUpcomingAppointments() {
 		return this.appointmentService.getUpcomingAppointments();
 	}
-	
+
 	@RequestMapping(value = "/getNextAppointment/{id}", method = RequestMethod.GET, headers = "Accept=application/json")
-	public  Appointment getNextAppointment(@PathVariable("id") Long id) {
-		//id is the user id. 
-		return this.appointmentService.getNextAppointment(id); 
+	public Appointment getNextAppointment(@PathVariable("id") Long id) {
+		// id is the user id.
+		return this.appointmentService.getNextAppointment(id);
 	}
 
+	@RequestMapping(value = "/getLastPrescription/{id}", method = RequestMethod.GET, headers = "Accept=application/json")
+	public Prescription getLastPrescription(@PathVariable("id") Long id) {
+		// id is the user id.
+		try {
+			Prescription p = this.appointmentService.getLastPrescription(id);
+
+			return p;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 }

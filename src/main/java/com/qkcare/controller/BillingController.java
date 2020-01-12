@@ -24,8 +24,10 @@ import com.qkcare.model.Bill;
 import com.qkcare.model.BillPayment;
 import com.qkcare.model.BillService;
 import com.qkcare.model.PackageService;
+import com.qkcare.model.Patient;
 import com.qkcare.model.PatientPackage;
 import com.qkcare.model.PatientService;
+import com.qkcare.model.User;
 import com.qkcare.service.BillingService;
 import com.qkcare.service.GenericService;
 import com.qkcare.util.Constants;
@@ -157,6 +159,12 @@ public class BillingController extends BaseController {
 		public void deletePatientPackage(@RequestBody PatientPackage patientPackage) {
 			
 			this.billingService.delete(patientPackage);
+		}
+		
+		@RequestMapping(value="/getPatientBillAmount/{id}", method = RequestMethod.GET)
+		public Double getPatientBillAmount(@PathVariable("id") Long id) throws ClassNotFoundException{
+			
+			return billingService.getPatientBillAmount(this.billingService.getPatient(new User(id)));  
 		}
 		
 }

@@ -28,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.qkcare.dao.GenericDao;
 import com.qkcare.model.BaseEntity;
 import com.qkcare.model.Company;
+import com.qkcare.model.Patient;
 import com.qkcare.model.User;
 import com.qkcare.model.authorization.UserRole;
 import com.qkcare.util.Constants;
@@ -317,5 +318,18 @@ public class GenericServiceImpl implements GenericService {
 			return ur.getRole().getHomePage() == null ? "/admin/dashboard" : ur.getRole().getHomePage().getUrlPath();
 		}
 		return "/admin/dashboard";
+	}
+
+	@Override
+	public Patient getPatient(User user) {
+		// TODO Auto-generated method stub
+		List<Quartet<String, String, String, String>> paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
+
+		String queryStr = "SELECT c FROM Patient c WHERE c.user.id=" + user.getId();
+		List<Patient> patients = (List) this.getByCriteria(queryStr, paramTupleList, null);
+		if (patients != null && patients.size() > 0) {
+			return patients.get(0); 
+		}
+		return null;
 	}
 }

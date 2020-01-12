@@ -107,7 +107,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 		Map<Integer, List<Appointment>> dataMap = new HashMap<>();
 
-		for (Appointment appointment : appointments) { 		 
+		for (Appointment appointment : appointments) {
 			Calendar calendar = new GregorianCalendar();
 			calendar.setTime(appointment.getAppointmentDate());
 			Integer monthIndex = calendar.get(Calendar.MONTH);
@@ -124,10 +124,10 @@ public class AppointmentServiceImpl implements AppointmentService {
 	/**
 	 * This method is really meant for patients
 	 */
-	public Map<Integer, List<Appointment>> getAppointmentsByYear(Long id) { 
+	public Map<Integer, List<Appointment>> getAppointmentsByYear(Long id) {
 
 		List<Quartet<String, String, String, String>> paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
- 
+
 		String queryStr = "SELECT e FROM Appointment e WHERE 1 = 1";
 
 		if (id != null && id > 0) {
@@ -151,6 +151,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 		return dataMap;
 	}
+
 	public List<Appointment> getUpcomingAppointments() {
 
 		LocalDate startDate = LocalDate.now().plusDays(-365);
@@ -315,6 +316,39 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 		if (appointments != null && appointments.size() > 0) {
 			return appointments.get(0);
+		}
+		return null;
+	}
+
+	@Override
+	public Prescription getLastPrescription(Long id) {
+		try {
+			List<Quartet<String, String, String, String>> paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
+
+			String queryStr = "SELECT p FROM Prescription p WHERE p.id in(" 
+					+ "SELECT e.id FROM Prescription e WHERE e.visit.patient.user.id = " + id + ") OR p.id in ( "
+					+ "SELECT e.id FROM Prescription e WHERE e.admission.patient.user.id = " + id +" )";
+
+			List<Prescription> prescs = (List) this.genericService.getByCriteria(queryStr, paramTupleList,
+					" ORDER BY prescriptionDatetime desc");
+
+			if (prescs != null && prescs.size() > 0) {
+				Prescription p = prescs.get(0);
+				List<Quartet<String, String, String, String>> paramTupleList1 = new ArrayList<Quartet<String, String, String, String>>();
+
+				String queryStr1 = "SELECT e FROM PrescriptionMedicine e WHERE e.prescription.id = " + p.getId();
+				List<PrescriptionMedicine> prescs1 = (List) this.genericService.getByCriteria(queryStr1,
+						paramTupleList1, " ORDER BY 1");
+				for(PrescriptionMedicine pm:prescs1) {
+					pm.setPrescription(null);
+				}
+				p.setPrescriptionMedicines(prescs1);
+
+				return p;
+
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return null;
 	}

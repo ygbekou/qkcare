@@ -7,13 +7,14 @@ import com.qkcare.model.BaseEntity;
 import com.qkcare.model.Bill;
 import com.qkcare.model.BillPayment;
 import com.qkcare.model.Investigation;
+import com.qkcare.model.Patient;
 import com.qkcare.model.PatientPackage;
 import com.qkcare.model.PatientService;
 import com.qkcare.model.stocks.PatientSaleProduct;
 
 
 @Service(value="billingService")
-public interface BillingService {
+public interface BillingService extends GenericService {
 	
 	public BaseEntity save(com.qkcare.model.Package pckage);
 	
@@ -40,4 +41,6 @@ public interface BillingService {
 	public PatientSaleProduct save(PatientSaleProduct patientSaleProduct);
 	
 	public Investigation save(Investigation investigation);
+
+	public Double getPatientBillAmount(Patient patient);
 }

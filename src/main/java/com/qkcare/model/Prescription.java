@@ -37,6 +37,9 @@ public class Prescription extends BaseEntity {
 	private String isDischarge;
 	private String notes;
 	private int status;
+	@ManyToOne
+	@JoinColumn(name = "EMPLOYEE_ID")
+	private Employee doctor;
 	
 	@Transient
 	List<PrescriptionMedicine> prescriptionMedicines;
@@ -44,6 +47,12 @@ public class Prescription extends BaseEntity {
 	@Transient
 	List<PrescriptionDiagnosis> prescriptionDiagnoses;
 	
+	public Employee getDoctor() {
+		return doctor;
+	}
+	public void setDoctor(Employee doctor) {
+		this.doctor = doctor;
+	}
 	public Long getId() {
 		return id;
 	}
