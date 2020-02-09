@@ -52,6 +52,12 @@ public class AppointmentController extends BaseController {
 		List<ScheduleEvent> result = appointmentService.getScheduleEvents(searchCriteria);
 		return result;
 	}
+	
+	@RequestMapping(value = "/getFutureAvailableSpots", method = RequestMethod.POST)
+	public List<ScheduleEvent> getFutureAvailableSpots(@RequestBody SearchCriteria searchCriteria) throws ClassNotFoundException {
+		List<ScheduleEvent> result = appointmentService.getFutureAvailableSpots(searchCriteria);
+		return result;
+	}
 
 	@RequestMapping(value = "/getTodayAppointments", method = RequestMethod.POST)
 	public List<ScheduleEvent> getTodayAppointments(@RequestBody SearchCriteria searchCriteria)

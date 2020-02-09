@@ -353,4 +353,21 @@ public class AppointmentServiceImpl implements AppointmentService {
 		return null;
 	}
 
+	@Override
+	public List<ScheduleEvent> getFutureAvailableSpots(SearchCriteria searchCriteria) {
+		// TODO Auto-generated method stub
+		List<ScheduleEvent> retList= new ArrayList<ScheduleEvent>();
+		List<ScheduleEvent> scheduleEvents = this.appointmentDao.getScheduleEvents(searchCriteria);
+		Map<String, String> apptMap = scheduleEvents.stream()
+				.collect(Collectors.toMap(ScheduleEvent::getStart, ScheduleEvent::getEnd));
+		scheduleEvents.addAll(this.generateDoctorAvailabilities(searchCriteria, apptMap));
+		
+		for(ScheduleEvent se:scheduleEvents) {
+			if(se.getId()==null) {
+				retList.add(se);
+			}
+		}
+		return retList;
+	}
+
 }
