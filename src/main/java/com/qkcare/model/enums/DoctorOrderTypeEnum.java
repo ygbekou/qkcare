@@ -13,8 +13,8 @@ public enum DoctorOrderTypeEnum {
 	Pharmacie(1),
 	Laboratoire(2),
 	Medical(3),
-	Lit(4);
-	
+	Lit(4),
+	Autre(5); 
 	private static Map<Integer, String> typeMap = new HashMap<>();
     private Integer type;
 	
