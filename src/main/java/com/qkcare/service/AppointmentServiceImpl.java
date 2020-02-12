@@ -128,7 +128,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 		List<Quartet<String, String, String, String>> paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
 
-		String queryStr = "SELECT e FROM Appointment e WHERE 1 = 1";
+		String queryStr = "SELECT e FROM Appointment e WHERE e.status<3";
 
 		if (id != null && id > 0) {
 			queryStr += " AND e.patient.user.id=" + id;
