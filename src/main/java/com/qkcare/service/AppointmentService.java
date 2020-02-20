@@ -32,4 +32,6 @@ public interface AppointmentService {
 	public Prescription getLastPrescription(Long id);
 
 	public List<ScheduleEvent> getFutureAvailableSpots(SearchCriteria searchCriteria);
+
+	public Map<Integer, List<Prescription>>  getUserPrescriptions(Long id);
 }

@@ -156,7 +156,6 @@ public class AppointmentController extends BaseController {
 		// id is the user id.
 		try {
 			Prescription p = this.appointmentService.getLastPrescription(id);
-
 			return p;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -164,4 +163,15 @@ public class AppointmentController extends BaseController {
 		return null;
 	}
 
+	@RequestMapping(value = "/getUserPrescriptions/{id}", method = RequestMethod.GET, headers = "Accept=application/json")
+	public Map<Integer, List<Prescription>>  getUserPrescriptions(@PathVariable("id") Long id) {
+		// id is the user id.
+		try {
+			Map<Integer, List<Prescription>>  p = this.appointmentService.getUserPrescriptions(id);
+			return p;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 }
