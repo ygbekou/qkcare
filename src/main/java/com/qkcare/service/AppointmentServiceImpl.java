@@ -128,7 +128,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 		List<Quartet<String, String, String, String>> paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
 
-		String queryStr = "SELECT e FROM Appointment e WHERE 1 = 1";
+		String queryStr = "SELECT e FROM Appointment e WHERE e.status<3";
 
 		if (id != null && id > 0) {
 			queryStr += " AND e.patient.user.id=" + id;
@@ -325,9 +325,9 @@ public class AppointmentServiceImpl implements AppointmentService {
 		try {
 			List<Quartet<String, String, String, String>> paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
 
-			String queryStr = "SELECT p FROM Prescription p WHERE p.id in(" 
+			String queryStr = "SELECT p FROM Prescription p WHERE p.id in("
 					+ "SELECT e.id FROM Prescription e WHERE e.visit.patient.user.id = " + id + ") OR p.id in ( "
-					+ "SELECT e.id FROM Prescription e WHERE e.admission.patient.user.id = " + id +" )";
+					+ "SELECT e.id FROM Prescription e WHERE e.admission.patient.user.id = " + id + " )";
 
 			List<Prescription> prescs = (List) this.genericService.getByCriteria(queryStr, paramTupleList,
 					" ORDER BY prescriptionDatetime desc");
@@ -339,7 +339,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 				String queryStr1 = "SELECT e FROM PrescriptionMedicine e WHERE e.prescription.id = " + p.getId();
 				List<PrescriptionMedicine> prescs1 = (List) this.genericService.getByCriteria(queryStr1,
 						paramTupleList1, " ORDER BY 1");
-				for(PrescriptionMedicine pm:prescs1) {
+				for (PrescriptionMedicine pm : prescs1) {
 					pm.setPrescription(null);
 				}
 				p.setPrescriptionMedicines(prescs1);
@@ -351,6 +351,71 @@ public class AppointmentServiceImpl implements AppointmentService {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	@Override
+	public List<ScheduleEvent> getFutureAvailableSpots(SearchCriteria searchCriteria) {
+		// TODO Auto-generated method stub
+		List<ScheduleEvent> retList = new ArrayList<ScheduleEvent>();
+		List<ScheduleEvent> scheduleEvents = this.appointmentDao.getScheduleEvents(searchCriteria);
+		Map<String, String> apptMap = scheduleEvents.stream()
+				.collect(Collectors.toMap(ScheduleEvent::getStart, ScheduleEvent::getEnd));
+		scheduleEvents.addAll(this.generateDoctorAvailabilities(searchCriteria, apptMap));
+
+		for (ScheduleEvent se : scheduleEvents) {
+			if (se.getId() == null) {
+				retList.add(se);
+			}
+		}
+		return retList;
+	}
+
+	@Override
+	public Map<Integer, List<Prescription>> getUserPrescriptions(Long id) {
+		// TODO Auto-generated method stub
+		try {
+			List<Quartet<String, String, String, String>> paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
+
+			String queryStr = "SELECT p FROM Prescription p WHERE p.id in("
+					+ "SELECT e.id FROM Prescription e WHERE e.visit.patient.user.id = " + id + ") OR p.id in ( "
+					+ "SELECT e.id FROM Prescription e WHERE e.admission.patient.user.id = " + id + " )";
+
+			List<Prescription> prescs = (List) this.genericService.getByCriteria(queryStr, paramTupleList,
+					" ORDER BY prescriptionDatetime desc");
+			if (prescs != null)
+				for (Prescription p : prescs) {
+					List<Quartet<String, String, String, String>> paramTupleList1 = new ArrayList<Quartet<String, String, String, String>>();
+
+					String queryStr1 = "SELECT e FROM PrescriptionMedicine e WHERE e.prescription.id = " + p.getId();
+					List<PrescriptionMedicine> prescs1 = (List) this.genericService.getByCriteria(queryStr1,
+							paramTupleList1, " ORDER BY 1");
+					for (PrescriptionMedicine pm : prescs1) {
+						pm.setPrescription(null);
+					}
+					p.setPrescriptionMedicines(prescs1);
+				}
+
+			Map<Integer, List<Prescription>> dataMap = new HashMap<>();
+
+			for (Prescription presc : prescs) {
+				Calendar calendar = new GregorianCalendar();
+				calendar.setTime(presc.getCreateDate());
+				Integer monthIndex = calendar.get(Calendar.YEAR);
+				if (dataMap.get(monthIndex) == null) {
+					dataMap.put(monthIndex, new ArrayList<Prescription>());
+				}
+				if (presc.getPrescriptionMedicines() != null && presc.getPrescriptionMedicines().size() > 0) {
+					dataMap.get(monthIndex).add(presc);
+				}
+			}
+
+			return dataMap;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+
 	}
 
 }

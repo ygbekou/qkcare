@@ -37,7 +37,7 @@ public class DoctorOrderTypeConverter implements AttributeConverter<DoctorOrderT
             case 4:
                 return DoctorOrderTypeEnum.Lit;
             default:
-                throw new IllegalArgumentException("Unknown" + dbData);
+            	return DoctorOrderTypeEnum.Autre;
         }
     }
 
