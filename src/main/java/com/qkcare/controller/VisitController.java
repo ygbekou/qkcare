@@ -82,6 +82,14 @@ public class VisitController extends BaseController {
 			return patient;
 		}
 		
+		@RequestMapping(value="/familyHistories/save",method = RequestMethod.POST)
+		public BaseEntity saveFamilyHistories(@RequestBody Patient patient) throws JsonParseException, 
+		JsonMappingException, IOException, ClassNotFoundException {
+			visitService.saveFamilyHistories(patient);
+			
+			return patient;
+		}
+		
 		@RequestMapping(value="/socialHistories/save",method = RequestMethod.POST)
 		public BaseEntity saveSocilaHistories(@RequestBody Patient patient) throws JsonParseException, 
 		JsonMappingException, IOException, ClassNotFoundException {
@@ -220,6 +228,14 @@ public class VisitController extends BaseController {
 		public BaseEntity getPatientMedicalHistories(@PathVariable("id") Long id) throws ClassNotFoundException{
 			
 			BaseEntity result = visitService.getMedicalHistories(new Patient(id));
+			
+			return result;
+		}
+		
+		@RequestMapping(value="patient/familyHistories/{id}", method = RequestMethod.GET)
+		public BaseEntity getPatientFamilyHistories(@PathVariable("id") Long id) throws ClassNotFoundException{
+			
+			BaseEntity result = visitService.getFamilyHistories(new Patient(id));
 			
 			return result;
 		}

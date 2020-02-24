@@ -9,25 +9,25 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "PATIENT_ALLERGY")
-public class PatientAllergy extends BaseEntity {
+@Table(name = "PATIENT_FAMILY_HISTORY")
+public class PatientFamilyHistory extends BaseEntity {
 	
 	@Id
-	@Column(name = "PATIENT_ALLERGY_ID")
+	@Column(name = "PATIENT_FAMILY_HISTORY_ID")
 	@GeneratedValue
 	private Long id;
 	@ManyToOne
 	@JoinColumn(name = "PATIENT_ID")
 	private Patient patient;
 	@ManyToOne
-	@JoinColumn(name = "ALLERGY_ID")
-	private Allergy allergy;
+	@JoinColumn(name = "MEDICALHISTORY_ID")
+	private MedicalHistory medicalHistory;
 	
-	public PatientAllergy() {}
+	public PatientFamilyHistory() {}
 	
-	public PatientAllergy(Long patientId, Long allergyId) {
+	public PatientFamilyHistory(Long patientId, Long medicalHistoryId) {
 		this.patient = new Patient(patientId);
-		this.allergy = new Allergy(allergyId);
+		this.medicalHistory = new MedicalHistory(medicalHistoryId);
 	}
 	
 	public Long getId() {
@@ -42,17 +42,10 @@ public class PatientAllergy extends BaseEntity {
 	public void setPatient(Patient patient) {
 		this.patient = patient;
 	}
-	public Allergy getAllergy() {
-		return allergy;
+	public MedicalHistory getMedicalHistory() {
+		return medicalHistory;
 	}
-	public void setAllergy(Allergy allergy) {
-		this.allergy = allergy;
+	public void setMedicalHistory(MedicalHistory medicalHistory) {
+		this.medicalHistory = medicalHistory;
 	}
-	
-	
-	//Transient
-	public String getAllergyDescription() {
-		return this.getAllergy().getName();
-	}
-	
 }

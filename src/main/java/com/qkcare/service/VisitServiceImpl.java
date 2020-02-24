@@ -25,6 +25,7 @@ import com.qkcare.model.BaseEntity;
 import com.qkcare.model.MedicalHistory;
 import com.qkcare.model.Patient;
 import com.qkcare.model.PatientAllergy;
+import com.qkcare.model.PatientFamilyHistory;
 import com.qkcare.model.PatientMedicalHistory;
 import com.qkcare.model.PatientSocialHistory;
 import com.qkcare.model.Prescription;
@@ -97,6 +98,22 @@ public class VisitServiceImpl  implements VisitService {
 		return patient;
 	}
 
+	@Transactional
+	public BaseEntity saveFamilyHistories(Patient patient) {
+		
+		// save medical histories 
+		List<Long> addedMedicalHistoryIds = this.genericService.deriveAddedChilds("PATIENT", "Patient", "PATIENT_ID", 
+								patient.getId(), patient.getSelectedFamilyHistories(), "MedicalHistory", "MEDICALHISTORY",
+								null, "PATIENT_FAMILY_HISTORY");
+		// Insert newly added ones
+		for (Long addedId : addedMedicalHistoryIds) {
+			PatientFamilyHistory va = new PatientFamilyHistory(patient.getId(), addedId);
+			this.genericService.save(va);
+		}
+		
+		return patient;
+	}
+	
 	@Transactional
 	public BaseEntity saveSocialHistories(Patient patient) {
 		
@@ -188,6 +205,25 @@ public class VisitServiceImpl  implements VisitService {
 		return patient;	
 	}
 
+	public BaseEntity getFamilyHistories(Patient patient) {
+		List<Quartet<String, String, String, String>> paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
+		paramTupleList.add(Quartet.with("e.patient.id = ", "patientId", patient.getId() + "", "Long"));
+		
+		
+		// Get medical histories
+		String queryStr =  "SELECT e FROM PatientFamilyHistory e WHERE 1 = 1 ";
+		List<BaseEntity> vas = genericService.getByCriteria(queryStr, paramTupleList, " ");
+		Set<Long> medicalHistoryIds = new HashSet<Long>();
+		
+		for (BaseEntity entity : vas) {
+			PatientFamilyHistory patientFamilyHistory = (PatientFamilyHistory)entity;
+			medicalHistoryIds.add(patientFamilyHistory.getMedicalHistory().getId());
+		}
+		patient.setSelectedFamilyHistories(medicalHistoryIds);
+		
+		return patient;	
+	}
+	
 	public BaseEntity getSocialHistories(Patient patient) {
 		List<Quartet<String, String, String, String>> paramTupleList = new ArrayList<Quartet<String, String, String, String>>();
 		paramTupleList.add(Quartet.with("e.patient.id = ", "patientId", patient.getId() + "", "Long"));

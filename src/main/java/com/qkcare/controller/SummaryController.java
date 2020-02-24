@@ -1,6 +1,7 @@
 package com.qkcare.controller;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -52,9 +54,11 @@ public class SummaryController extends BaseController {
 	
 	@RequestMapping(value="/summary/save",method = RequestMethod.POST)
 	public BaseEntity saveSummary(@RequestBody GenericDto dto) throws JsonParseException, 
-	JsonMappingException, IOException, ClassNotFoundException {
+	JsonMappingException, IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, 
+	IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		mapper.configure(Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
 		BaseEntity obj = (BaseEntity) mapper.readValue(dto.getJson().replaceAll("'", "\"").replaceAll("/", "\\/"),
 				Class.forName(Constants.PACKAGE_NAME + "Summary"));
 		summaryService.save((Summary)obj);

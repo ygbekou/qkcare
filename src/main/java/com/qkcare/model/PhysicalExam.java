@@ -29,6 +29,9 @@ public class PhysicalExam extends BaseEntity {
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "VISIT_ID", nullable = true)
 	private Visit visit;
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "SUMMARY_ID", nullable = true)
+	private Summary summary;
 	@ManyToOne
 	@JoinColumn(name = "AUTHOR_ID")
 	private Employee author;
@@ -65,6 +68,12 @@ public class PhysicalExam extends BaseEntity {
 	}
 	public void setVisit(Visit visit) {
 		this.visit = visit;
+	}
+	public Summary getSummary() {
+		return summary;
+	}
+	public void setSummary(Summary summary) {
+		this.summary = summary;
 	}
 	public Employee getAuthor() {
 		return author;

@@ -2,8 +2,15 @@ package com.qkcare.service;
 
 
 import java.text.ParseException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -13,6 +20,7 @@ import javax.transaction.Transactional;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.javatuples.Quartet;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -23,6 +31,8 @@ import com.qkcare.model.Investigation;
 import com.qkcare.model.InvestigationTest;
 import com.qkcare.model.LabTest;
 import com.qkcare.model.Service;
+import com.qkcare.model.Summary;
+import com.qkcare.model.VitalSign;
 import com.qkcare.util.DateUtil;
 
 @org.springframework.stereotype.Service(value="investigationService")
@@ -205,5 +215,70 @@ public class InvestigationServiceImpl  implements InvestigationService {
 		}
 		
 		return labTest;
+	}
+	
+	public void getPatientPastInvestigations(Summary summary, List<Quartet<String, String, String, String>> paramTupleList) {
+		String queryStr =  "SELECT e FROM InvestigationTest e WHERE 1 = 1 ";
+		LocalDateTime endDateTime = LocalDateTime.now();
+		LocalDateTime startDateTime = endDateTime.minusDays(100);
+		List<Quartet<String, String, String, String>> paramTupleListCopy = new ArrayList<>();
+		paramTupleListCopy.addAll(paramTupleList);
+		
+		paramTupleListCopy.add(Quartet.with("e.investigation.investigationDatetime >= ", "investigationDatetimeStart", 
+				DateUtil.formatDate(startDateTime, "MM/dd/yyyy hh:mm:ss a"), "Timestamp"));
+		paramTupleListCopy.add(Quartet.with("e.investigation.investigationDatetime <= ", "investigationDatetimeEnd", 
+				DateUtil.formatDate(endDateTime, "MM/dd/yyyy hh:mm:ss a"), "Timestamp"));
+		
+		List<BaseEntity> its = genericService.getByCriteria(queryStr, paramTupleListCopy, " ");
+		
+		for (BaseEntity entity : its) {
+			InvestigationTest it = (InvestigationTest)entity;
+			summary.addInvestigationTest(it);
+		}
+		
+		this.deriveInvestigationTableJson(summary);
+	}
+	
+	private void deriveInvestigationTableJson(Summary summary) {
+		Map<String, List<BaseEntity>> investMap = new HashMap<>();
+		
+		Map<String, List<BaseEntity>> invTestMap = summary.getInvestigationTests().stream()
+			     .collect(Collectors.groupingBy(x -> ((InvestigationTest)x).getInvestigationName())); 
+		
+		List<List<JSONObject>> listJsonObjects = new ArrayList<>();
+		
+		for (Map.Entry mapElement : invTestMap.entrySet()) { 
+            //String key = (String)mapElement.getKey(); 
+			List<JSONObject> jsonObjects  = new ArrayList<>();
+			JSONObject jsonObject1 = new JSONObject();
+			jsonObjects.add(jsonObject1);
+			Set<String> attributeList = new HashSet<>();
+            InvestigationTest firstElement = (InvestigationTest)((List<BaseEntity>)mapElement.getValue()).get(0);
+            attributeList.add(firstElement.getInvestigationName());
+            Map<Long, JSONObject> jsonObjectMap = new HashMap<>();
+            
+            for (BaseEntity entity: (List<BaseEntity>)mapElement.getValue()) {
+            	 
+            	
+            	InvestigationTest invTest = (InvestigationTest)entity;
+            	JSONObject jsonObject = jsonObjectMap.get(invTest.getInvestigation().getId());
+            	if (jsonObject == null) {
+            		jsonObject = new JSONObject();
+            		jsonObjectMap.put(invTest.getInvestigation().getId(), jsonObject);
+            		jsonObjects.add(jsonObject);
+            	}
+            	jsonObject.put(invTest.getInvestigationName(), invTest.getInvestigationDate());
+				jsonObject.put(invTest.getLabTest().getName(), invTest.getResult());
+				
+				if (invTest.getInvestigation().getId() == firstElement.getInvestigation().getId()) {
+					attributeList.add(invTest.getLabTest().getName());
+				}
+				
+			}
+            jsonObject1.put("attributes", attributeList);
+            listJsonObjects.add(jsonObjects);
+        } 
+		
+		summary.setInvestigationJsonObjects(listJsonObjects);
 	}
 }

@@ -41,6 +41,7 @@ public class CacheUtil implements InitializingBean {
 	public static String SUMMARY_TYPE = "summaryType";
 	public static String PHYSICAL_EXAM_SYSTEM_TYPE = "physicalExamSystemType";
 	public static String SYSTEM_REVIEW_QUESTION_GROUPS = "systemReviewQuestionGroups";
+	public static String CODE_STATUS = "codeStatus";
 	
 	
 	@Autowired 
@@ -170,6 +171,9 @@ public class CacheUtil implements InitializingBean {
 		
 		this.addCacheToManager(SYSTEM_REVIEW_QUESTION_GROUPS, "SELECT SYSTEM_REVIEW_QUESTION_ID, NAME "
 				+ "FROM SYSTEM_REVIEW_QUESTION WHERE PARENT_ID IS NULL AND STATUS = 0 ", this::getReferences);
+		
+		this.addCacheToManager(CODE_STATUS, "SELECT CODE_STATUS_ID, NAME "
+				+ "FROM CODE_STATUS ", this::getReferences);
 		
 	}	
 	

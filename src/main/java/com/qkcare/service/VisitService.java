@@ -37,11 +37,15 @@ public interface VisitService {
 	
 	public BaseEntity saveMedicalHistories(Patient patient);
 	
+	public BaseEntity saveFamilyHistories(Patient patient);
+	
 	public BaseEntity saveSocialHistories(Patient patient);
 	
 	public BaseEntity getAllergies(Patient patient);
 	
 	public BaseEntity getMedicalHistories(Patient patient);
+	
+	public BaseEntity getFamilyHistories(Patient patient);
 	
 	public BaseEntity getSocialHistories(Patient patient);
 

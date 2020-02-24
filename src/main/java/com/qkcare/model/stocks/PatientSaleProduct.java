@@ -164,6 +164,11 @@ public class PatientSaleProduct extends BaseEntity {
 		return pspCopy;
 	}  
 	
+	public String getProcductDescription() {
+		return this.product.getName() + " " + this.getQuantity();
+	}
+	
+	
 	public boolean equals(Object a) { 
 		if (!(a instanceof PatientSaleProduct)) {
 			return false;

@@ -93,6 +93,9 @@ public class Patient extends BaseEntity {
 
 	@Transient
 	private Set<Long> selectedMedicalHistories;
+	
+	@Transient
+	private Set<Long> selectedFamilyHistories;
 
 	@Transient
 	private Set<Long> selectedSocialHistories;
@@ -342,6 +345,14 @@ public class Patient extends BaseEntity {
 
 	public void setSelectedMedicalHistories(Set<Long> selectedMedicalHistories) {
 		this.selectedMedicalHistories = selectedMedicalHistories;
+	}
+
+	public Set<Long> getSelectedFamilyHistories() {
+		return selectedFamilyHistories;
+	}
+
+	public void setSelectedFamilyHistories(Set<Long> selectedFamilyHistories) {
+		this.selectedFamilyHistories = selectedFamilyHistories;
 	}
 
 	public Set<Long> getSelectedSocialHistories() {

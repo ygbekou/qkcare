@@ -64,4 +64,7 @@ public class PatientVaccine extends BaseEntity {
 		return this.getVaccine().getName();
 	}
 	
+	public String getImmunizationDescription() {
+		return this.getVaccineName() + " " + this.getGivenDate();
+	}
 }

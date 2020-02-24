@@ -28,9 +28,16 @@ public class VitalSign extends BaseEntity {
 	private Timestamp vitalSignDatetime;
 	private Double temperature;
 	private String pulse;
-	private String respiration;
-	@Column(name = "BLOOD_PRESSURE")
-	private String bloodPressure;
+	@Column(name = "RESPIRATORY_RATE")
+	private Integer respiratoryRate;
+	@Column(name = "HEART_RATE")
+	private Integer heartRate;
+	@Column(name = "SYSTOLIC_BLOOD_PRESSURE")
+	private Integer systolicBloodPressure;
+	@Column(name = "DIASTOLIC_BLOOD_PRESSURE")
+	private Integer diastolicBloodPressure;
+	@Column(name = "MEAN_BLOOD_PRESSURE")
+	private Integer meanBloodPressure;
 	@Column(name = "BLOOD_SUGAR")
 	private Double bloodSugar;
 	private String pain;
@@ -75,17 +82,35 @@ public class VitalSign extends BaseEntity {
 	public void setPulse(String pulse) {
 		this.pulse = pulse;
 	}
-	public String getRespiration() {
-		return respiration;
+	public Integer getRespiratoryRate() {
+		return respiratoryRate;
 	}
-	public void setRespiration(String respiration) {
-		this.respiration = respiration;
+	public void setRespiratoryRate(Integer respiratoryRate) {
+		this.respiratoryRate = respiratoryRate;
 	}
-	public String getBloodPressure() {
-		return bloodPressure;
+	public Integer getHeartRate() {
+		return heartRate;
 	}
-	public void setBloodPressure(String bloodPressure) {
-		this.bloodPressure = bloodPressure;
+	public void setHeartRate(Integer heartRate) {
+		this.heartRate = heartRate;
+	}
+	public Integer getSystolicBloodPressure() {
+		return systolicBloodPressure;
+	}
+	public void setSystolicBloodPressure(Integer systolicBloodPressure) {
+		this.systolicBloodPressure = systolicBloodPressure;
+	}
+	public Integer getDiastolicBloodPressure() {
+		return diastolicBloodPressure;
+	}
+	public void setDiastolicBloodPressure(Integer diastolicBloodPressure) {
+		this.diastolicBloodPressure = diastolicBloodPressure;
+	}
+	public Integer getMeanBloodPressure() {
+		return meanBloodPressure;
+	}
+	public void setMeanBloodPressure(Integer meanBloodPressure) {
+		this.meanBloodPressure = meanBloodPressure;
 	}
 	public Double getBloodSugar() {
 		return bloodSugar;
