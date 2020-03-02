@@ -252,9 +252,9 @@ public class InvestigationServiceImpl  implements InvestigationService {
 			List<JSONObject> jsonObjects  = new ArrayList<>();
 			JSONObject jsonObject1 = new JSONObject();
 			jsonObjects.add(jsonObject1);
-			Set<String> attributeList = new HashSet<>();
+			List<String> attributeList = new ArrayList<>();
             InvestigationTest firstElement = (InvestigationTest)((List<BaseEntity>)mapElement.getValue()).get(0);
-            attributeList.add(firstElement.getInvestigationName());
+            attributeList.add(firstElement.getInvestigationName() + " ");
             Map<Long, JSONObject> jsonObjectMap = new HashMap<>();
             
             for (BaseEntity entity: (List<BaseEntity>)mapElement.getValue()) {
@@ -267,7 +267,7 @@ public class InvestigationServiceImpl  implements InvestigationService {
             		jsonObjectMap.put(invTest.getInvestigation().getId(), jsonObject);
             		jsonObjects.add(jsonObject);
             	}
-            	jsonObject.put(invTest.getInvestigationName(), invTest.getInvestigationDate());
+            	jsonObject.put(invTest.getInvestigationName() + " ", invTest.getInvestigationDate());
 				jsonObject.put(invTest.getLabTest().getName(), invTest.getResult());
 				
 				if (invTest.getInvestigation().getId() == firstElement.getInvestigation().getId()) {

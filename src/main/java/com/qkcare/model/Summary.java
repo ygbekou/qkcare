@@ -309,7 +309,8 @@ public class Summary extends BaseEntity {
 	
 	public String getShortMenu() {
 		return DateUtil.formatDate(this.getSummaryDatetime(), DateUtil.TIME_WITHOUT_SECONDS_FORMAT) 
-				+ " " + (this.getAuthor() != null ? this.getAuthor().getName() : "") + " - " + this.getSubject();
+				+ " " + (this.getAuthor() != null ? this.getAuthor().getName() : "") 
+				+ (this.getSubject() != null ? " - " + this.getSubject(): "");
 	}
 	
 	public void addMedicalHistory(String medicalHistory) {
